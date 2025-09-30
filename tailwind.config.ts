@@ -12,6 +12,7 @@ const config: Config = {
       colors: {
         // Gray scale (from lightest to darkest)
         'gray': {
+          neutral: '#8E8C8C',
           50: '#F0F0F0',   // light-gray
           100: '#B1B1B1',  // medium-gray
           200: '#D2D4C7',  // sage
@@ -20,6 +21,7 @@ const config: Config = {
           500: '#2C2C2C',  // charcoal
           600: '#555555',
           700: '#F5F2F2',
+          800: '#1C1C1C',
         },
         
         // Green scale (from lightest to darkest)
@@ -59,6 +61,14 @@ const config: Config = {
         },
         'pink': {
           50: '#FCEDF9',
+        },
+        'white': {
+          50: 'F2F2F2',
+          100: '#DBDBDB',
+        },
+        'red': {
+          300: '#FA7155',
+          500: '#DE2222'
         },
 
         

@@ -31,6 +31,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-gray-neutral: var(--gray-neutral);
   --color-gray-50: var(--gray-50);
   --color-gray-100: var(--gray-100);
   --color-gray-200: var(--gray-200);
@@ -39,6 +40,7 @@
   --color-gray-500: var(--gray-500);
   --color-gray-600: var(--gray-600);
   --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
   --color-green-50: var(--green-50);
   --color-green-100: var(--green-100);
   --color-green-200: var(--green-200);
@@ -59,6 +61,11 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-green: var(--brand-green);
   --color-brand-gray: var(--brand-gray);
+  --color-white-50: var(--white-50);
+  --color-white-100: var(--white-100);
+  --color-red-300: var(--red-300);
+  --color-red-400: var(--red-400);
+  --color-red-500: var(--red-500);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -114,6 +121,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --gray-neutral: #3C3C3C;
   --gray-50: #F0F0F0;
   --gray-100: #B1B1B1;
   --gray-200: #D2D4C7;
@@ -122,6 +130,7 @@
   --gray-500: #2C2C2C;
   --gray-600: #555555;
   --gray-700: #F5F2F2;
+  --gray-800: #1C1C1C;
   --green-50: #F9FED9;
   --green-100: #FAFFD8;
   --green-200: #D7FED8;
@@ -139,9 +148,14 @@
   --blue-50: #EEEEFF;
   --pink-50: #FCEDF9;
   --yellow-400: #EBBC08;
+  --white-50: #F2F2F2;
+  --white-100: #DBDBDB;
   --brand-dark: #212121;
   --brand-green: #4CAF50;
   --brand-gray: #3C3C3C;
+  --red-300: #FA7155;
+  --red-400: #EBBC08;
+  --red-500: #DE2222;
 }
 
 .dark {
@@ -176,6 +190,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --gray-neutral: #3C3C3C;
+  --gray-800: #1C1C1C;
+  --white-50: #F2F2F2;
+  --white-100: #DBDBDB;
   --brand-dark: #212121;
   --brand-green: #4CAF50;
   --brand-gray: #3C3C3C;
@@ -183,6 +201,9 @@
   --success-green: #4CAF50;
   --dark-green: #193A1B;
   --text-gray: #3C3C3C;
+  --red-300: #FA7155;
+  --red-400: #EBBC08;
+  --red-500: #DE2222;
 }
 
 @layer base {

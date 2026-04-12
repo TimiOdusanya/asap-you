@@ -1,29 +1,25 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { RocketIcon } from "lucide-react";
 import Image from "next/image";
+import { GetStartedButton } from "@/components/landing-page/get-started-button";
 
 const Home = () => {
   return (
     <div className="mt-20 space-y-20 max-w-[90%] lg:max-w-[85%] mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-6">
-          <h1 className="text-[32px] sm:text-[32px] md:text-[40px] xl:text-[64px] font-normal leading-[100%] text-gray-400">
+          <h1 className="text-[32px] sm:text-[32px] md:text-[40px] xl:text-[64px] font-normal leading-[100%] text-content-neutral-primary">
             Skip the Queue,
           </h1>
-          <h1 className="text-[32px] sm:text-[32px] md:text-[40px] xl:text-[64px] font-normal leading-[100%] text-gray-400">
+          <h1 className="text-[32px] sm:text-[32px] md:text-[40px] xl:text-[64px] font-normal leading-[100%] text-content-neutral-primary">
             Shop in Seconds.
           </h1>
         </div>
         <div className="flex flex-col gap-6">
-          <p className="text-[16px] sm:text-[16px] md:text-[24px] xl:text-[24px] font-normal leading-[140%] text-gray-300 sm:max-w-[300px] md:max-w-[300px] xl:max-w-[500px]">
+          <p className="text-[16px] sm:text-[16px] md:text-[24px] xl:text-[24px] font-normal leading-[140%] text-content-neutral-secondary sm:max-w-[300px] md:max-w-[300px] xl:max-w-[500px]">
             No more long lines or traffic. Order from your favorite stores in
             minute — with 99.9% on-time delivery
           </p>
-          <Button variant="default" className="w-[150px]">
-            {" "}
-            <RocketIcon className="size-4" /> Get Started
-          </Button>
+          <GetStartedButton />
         </div>
       </div>
 

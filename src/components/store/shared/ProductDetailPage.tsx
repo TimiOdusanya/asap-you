@@ -60,12 +60,12 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumbs */}
-        <div className="bg-white px-6 py-4">
-          <nav className="text-sm text-gray-600">
+        <div className="bg-surface-canvas px-6 py-4">
+          <nav className="text-sm text-content-neutral-tertiary">
             {breadcrumbs.map((crumb, index) => (
               <span key={index}>
                 {index > 0 && <span className="mx-2">/</span>}
-                <span className={index === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : ''}>
+                <span className={index === breadcrumbs.length - 1 ? 'text-content-neutral-primary font-medium' : ''}>
                   {crumb}
                 </span>
               </span>
@@ -77,9 +77,9 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Back Button */}
           <Link 
             href={`/store/${category.toLowerCase()}`}
-            className="inline-flex items-center text-green-600 hover:text-green-700 mb-6"
+            className="mb-6 inline-flex cursor-pointer items-center text-surface-forest hover:text-surface-forest-deep"
           >
-            <ChevronLeft size={20} className="mr-2 text-green-600" />
+            <ChevronLeft size={20} className="mr-2 text-surface-forest" />
             Back to {category}
           </Link>
 
@@ -105,7 +105,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={`cursor-pointer relative w-30 h-30 rounded-lg overflow-hidden border-2 ${
-                        selectedImage === index ? 'border-green-500' : 'border-gray-200'
+                        selectedImage === index ? 'border-surface-brand-muted' : 'border-border-subtle'
                       }`}
                     >
                       <Image
@@ -122,8 +122,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               {/* Product Details */}
               <div className="space-y-6">
                 <div>
-                  <h1 className="text-3xl font-semibold text-gray-400 mb-2">{product.name}</h1>
-                  <p className="text-gray-600 text-lg text-light">{product.description}</p>
+                  <h1 className="text-3xl font-semibold text-content-neutral-primary mb-2">{product.name}</h1>
+                  <p className="text-content-neutral-tertiary text-lg text-light">{product.description}</p>
                 </div>
 
                 {/* Rating */}
@@ -133,25 +133,25 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                          i < Math.floor(product.rating) ? 'text-content-warning fill-current' : 'text-content-neutral-muted'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="ml-2 text-gray-600">({product.rating})</span>
+                  <span className="ml-2 text-content-neutral-tertiary">({product.rating})</span>
                 </div>
 
-                <div className="text-sm text-gray-500 border-b border-gray-200 pb-4"></div>
+                <div className="text-sm text-content-neutral-tertiary border-b border-border-subtle pb-4"></div>
 
                 {/* Price */}
-                <div className="text-2xl font-semibold text-gray-400">
+                <div className="text-2xl font-semibold text-content-neutral-primary">
                   {product.price} / {product.unit}
                 </div>
 
                 {/* Quantity Selector */}
                 <div className="flex items-center space-x-4">
                   {/* <span className="text-gray-700 font-medium">Quantity:</span> */}
-                  <div className="flex items-center border-[1px] border-gray-600 rounded-full">
+                  <div className="flex items-center border-[1px] border-content-neutral-tertiary rounded-full">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -161,7 +161,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
-                    <span className="px-4 py-2 min-w-[40px] text-center text-gray-400">
+                    <span className="px-4 py-2 min-w-[40px] text-center text-content-neutral-primary">
                       {quantity}
                     </span>
                     <Button
@@ -177,33 +177,33 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
 
                 {/* Stock Information */}
-                <div className="text-base text-gray-500 font-light">
-                  Only <span className="text-red-300">{product.stock} packs</span> left - Don&apos;t miss out
+                <div className="text-base text-content-neutral-tertiary font-light">
+                  Only <span className="text-content-negative">{product.stock} packs</span> left - Don&apos;t miss out
                 </div>
 
-                <div className="text-sm text-gray-500 border-b border-gray-200 pb-4"></div>
+                <div className="text-sm text-content-neutral-tertiary border-b border-border-subtle pb-4"></div>
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4 pt-4">
                   <Button className=" w-[188px]">
                     Buy Now
                   </Button>
-                  <Button variant="outline" className="w-[188px] border-[1px] border-gray-400">
+                  <Button variant="outline" className="w-[188px] border-[1px] border-content-neutral-primary">
                     Add to Cart
                   </Button>
                 </div>
 
                 {/* Delivery Information */}
                 <div className="space-y-3 pt-6">
-                  <div className="border border-gray-200 rounded-md p-4 flex flex-col gap-2">
-                    <span className="font-medium text-gray-400">Free Delivery</span>
-                    <p className="text-sm text-coral-50 cursor-pointer underline hover:underline">
+                  <div className="border border-border-subtle rounded-md p-4 flex flex-col gap-2">
+                    <span className="font-medium text-content-neutral-primary">Free Delivery</span>
+                    <p className="text-sm text-content-accent-coral cursor-pointer underline hover:underline">
                       {product.deliveryInfo.postalCodeText}
                     </p>
                   </div>
-                  <div className="border border-gray-200 rounded-md p-4 flex flex-col gap-2">
-                    <span className="font-medium text-gray-400">Return Delivery</span>
-                    <p className="text-sm text-coral-50 cursor-pointer underline hover:underline">
+                  <div className="border border-border-subtle rounded-md p-4 flex flex-col gap-2">
+                    <span className="font-medium text-content-neutral-primary">Return Delivery</span>
+                    <p className="text-sm text-content-accent-coral cursor-pointer underline hover:underline">
                       {product.returnInfo.checkText}
                     </p>
                   </div>
@@ -213,8 +213,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </div>
 
           {/* Similar Items Section */}
-          <div className="bg-white rounded-lg p-10">
-            <h2 className="text-2xl font-medium text-gray-400 mb-6">Similar Items you might like</h2>
+          <div className="bg-surface-canvas rounded-lg p-10">
+            <h2 className="text-2xl font-medium text-content-neutral-primary mb-6">Similar Items you might like</h2>
             {similarProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {similarProducts.map((similarProduct) => (
@@ -228,8 +228,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500">No similar products found</p>
-                <p className="text-sm text-gray-400 mt-2">Debug: similarProducts.length = {similarProducts.length}</p>
+                <p className="text-content-neutral-tertiary">No similar products found</p>
+                <p className="text-sm text-content-neutral-primary mt-2">Debug: similarProducts.length = {similarProducts.length}</p>
               </div>
             )}
           </div>

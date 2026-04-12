@@ -123,25 +123,25 @@ const RecentOrders = () => {
   }
 
   return (
-    <div className='bg-white'>
+    <div className='bg-surface-canvas'>
       <div className="max-w-[90%] mx-auto py-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className='text-xl sm:text-[28px] font-semibold text-gray-400'>Recent Orders</h1>
+          <h1 className='text-xl sm:text-[28px] font-semibold text-content-neutral-primary'>Recent Orders</h1>
           
           {/* Navigation Arrows */}
           <div className="flex gap-2">
             <button
               onClick={prevSlide}
-              className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full border border-green-400 flex items-center justify-center hover:bg-green-400 hover:text-white transition-colors cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 bg-surface-canvas rounded-full border border-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 hover:text-white transition-colors" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-primary hover:text-primary-foreground transition-colors" />
             </button>
             <button
               onClick={nextSlide}
-              className="w-8 h-8 sm:w-10 sm:h-10 bg-green-400 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-full flex items-center justify-center hover:bg-surface-forest transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </button>
           </div>
         </div>
@@ -158,7 +158,7 @@ const RecentOrders = () => {
                   {recentOrders.slice(slideIndex * productsPerSlide, (slideIndex + 1) * productsPerSlide).map((order) => (
                     <div key={order.id} className="flex-1 rounded-2xl p-4 sm:p-6 min-w-[250px] sm:min-w-[280px]">
                       {/* Product Image */}
-                      <div className="mb-4 flex items-center justify-center bg-gray-50 rounded-xl w-[309px] h-[342px]">
+                      <div className="mb-4 flex items-center justify-center bg-surface-muted rounded-xl w-[309px] h-[342px]">
                           <Image 
                             src={order.image} 
                             alt={order.name} 
@@ -171,28 +171,28 @@ const RecentOrders = () => {
                       {/* Product Info */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-normal text-gray-800">
+                          <h3 className="text-lg font-normal text-content-neutral-primary">
                             {order.name}
                           </h3>
-                          <span className="text-lg font-normal text-gray-800">
+                          <span className="text-lg font-normal text-content-neutral-primary">
                             {order.price}
                           </span>
                         </div>
 
-                        <p className="text-base text-[#333333] font-normal">
+                        <p className="text-base text-content-neutral-primary font-normal">
                           {order.store}
                         </p>
 
-                        <p className="text-base text-gray-600 font-normal">
+                        <p className="text-base text-content-neutral-tertiary font-normal">
                           Last ordered: {order.lastOrdered}
                         </p>
 
                         {/* Action Buttons */}
                         <div className="flex items-center justify-between pt-2">
-                          <Button variant="outline" className="px-5 py-2 border border-gray-300 text-gray-800 rounded-full text-base font-medium hover:bg-gray-50 transition-colors cursor-pointer">
+                          <Button variant="outline" className="px-5 py-2 border border-content-neutral-secondary text-content-neutral-primary rounded-full text-base font-medium hover:bg-surface-muted transition-colors cursor-pointer">
                             Reorder
                           </Button>
-                          <button className="text-green-400 underline text-base font-light hover:text-green-600 transition-colors cursor-pointer">
+                          <button className="text-content-positive underline text-base font-light hover:text-surface-forest transition-colors cursor-pointer">
                             View Store
                           </button>
                         </div>
@@ -211,8 +211,8 @@ const RecentOrders = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                currentSlide === index ? 'bg-green-500' : 'bg-gray-300'
+              className={`w-2 h-2 cursor-pointer rounded-full transition-colors ${
+                currentSlide === index ? 'bg-surface-brand-muted' : 'bg-content-neutral-secondary'
               }`}
             />
           ))}

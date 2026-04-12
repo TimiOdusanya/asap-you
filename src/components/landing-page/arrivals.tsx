@@ -78,15 +78,15 @@ const Arrivals = () => {
   }
 
   return (
-    <div className="bg-green-600 h-[734px] w-full">
+    <div className="bg-surface-forest h-[734px] w-full">
       <div className="max-w-[85%] mx-auto h-full flex flex-col justify-center">
         <div className="flex flex-col justify-center gap-10">
           {/* Headings */}
           <div className="flex flex-col justify-center items-center gap-6">
-            <h1 className="text-[48px] font-normal leading-[100%] text-gray-200">
+            <h1 className="text-[48px] font-normal leading-[100%] text-surface-brand-soft">
               From Aisle to Arrival, Effortlessly.
             </h1>
-            <h1 className="text-[48px] font-normal leading-[100%] text-green-50">
+            <h1 className="text-[48px] font-normal leading-[100%] text-surface-brand-tint">
               Here&apos;s How We Get Your Groceries to You Fast
             </h1>
           </div>
@@ -147,7 +147,7 @@ const Arrivals = () => {
                 key={i}
                 onClick={() => setActiveIndex(i)}
                 className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-colors cursor-pointer ${
-                  activeIndex === i ? "bg-green-500" : "bg-white/30"
+                  activeIndex === i ? "bg-surface-brand-muted" : "bg-white/30"
                 }`}
               />
             ))}

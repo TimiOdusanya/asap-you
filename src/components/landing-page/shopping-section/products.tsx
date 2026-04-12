@@ -149,19 +149,19 @@ const Products = () => {
   }
 
   return (
-    <div className="bg-green-500 w-full py-20">
+    <div className="bg-surface-brand-muted w-full py-20">
       <div className="max-w-[85%] mx-auto h-full flex flex-col justify-center">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex flex-col gap-4"> 
-          <h2 className="text-white text-3xl sm:text-5xl font-normal">Got Taste? <span className="text-gray-300">You&apos;ll</span>
+          <h2 className="text-content-on-brand text-3xl sm:text-5xl font-normal">Got Taste? <span className="text-content-neutral-secondary">You&apos;ll</span>
           </h2>
-          <h2 className="text-gray-300 text-3xl sm:text-5xl font-normal">
+          <h2 className="text-content-neutral-secondary text-3xl sm:text-5xl font-normal">
             Love These Picks
           </h2>
           </div>
 
-          <button className="flex items-center text-green-800 text-lg sm:text-xl font-normal hover:text-green-900 transition-colors cursor-pointer" 
+          <button className="flex items-center text-surface-forest text-lg sm:text-xl font-normal hover:text-surface-forest-deep transition-colors cursor-pointer" 
           onClick={() => router.push('/store')}>
             SEE ALL
             <ChevronRight className="w-5 h-5 ml-1" />
@@ -176,8 +176,8 @@ const Products = () => {
               onClick={() => setActiveCategory(category)}
               className={`px-6 py-3 rounded-full whitespace-nowrap transition-colors ${
                 activeCategory === category
-                  ? 'bg-green-800 text-white cursor-pointer'
-                  : 'bg-white text-gray-600 hover:border-green-300 cursor-pointer'
+                  ? 'bg-surface-forest text-content-on-brand cursor-pointer'
+                  : 'bg-surface-canvas text-content-neutral-tertiary hover:border-primary cursor-pointer border border-transparent'
               }`}
             >
               {category}
@@ -195,10 +195,10 @@ const Products = () => {
               {Array.from({ length: Math.ceil(products.length / 4) }).map((_, slideIndex) => (
                 <div key={slideIndex} className="w-full flex gap-8">
                   {products.slice(slideIndex * 4, (slideIndex + 1) * 4).map((product) => (
-                    <div key={product.id} className="w-1/4 sm:w-1/2 lg:w-1/4 bg-green-50 rounded-lg relative h-full flex flex-col min-w-[300px] sm:min-w-[250px] lg:min-w-[300px]">
+                    <div key={product.id} className="w-1/4 sm:w-1/2 lg:w-1/4 bg-surface-brand-tint rounded-lg relative h-full flex flex-col min-w-[300px] sm:min-w-[250px] lg:min-w-[300px]">
                       {/* Low Stock Badge */}
                       {product.lowStock && (
-                        <div className="absolute top-2 right-2 bg-yellow-400 text-white text-xs px-2 py-1 rounded-[8px] font-medium z-10">
+                        <div className="absolute top-2 right-2 bg-content-warning text-content-neutral-primary text-xs px-2 py-1 rounded-[8px] font-medium z-10">
                           Low Stock
                         </div>
                       )}
@@ -216,32 +216,32 @@ const Products = () => {
 
                       {/* Product Info */}
                       <div className="space-y-2 flex-1 flex flex-col pb-6 px-4">
-                        <h3 className="text-green-800 font-medium text-lg">
+                        <h3 className="text-surface-forest font-medium text-lg">
                           {product.name}
                         </h3>
                         
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <span className="text-gray-500 text-sm">({product.rating})</span>
+                            <Star className="w-4 h-4 text-content-warning fill-current" />
+                            <span className="text-content-neutral-tertiary text-sm">({product.rating})</span>
                           </div>
-                          <span className="text-green-800 font-normal">
+                          <span className="text-surface-forest font-normal">
                             {product.price}
                           </span>
                         </div>
 
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-content-neutral-tertiary text-sm">
                           {product.market}
                         </p>
 
                         <div className="flex items-center gap-1 mb-4">
-                          <Clock className="w-4 h-4 text-gray-600" />
-                          <span className="text-gray-500 text-sm">
+                          <Clock className="w-4 h-4 text-content-neutral-tertiary" />
+                          <span className="text-content-neutral-tertiary text-sm">
                             {product.deliveryTime}
                           </span>
                         </div>
 
-                        <button className="w-full bg-green-50 border border-green-800 text-green-800 py-2 px-4 rounded-xl hover:bg-white transition-colors flex items-center justify-center gap-2 mt-auto cursor-pointer">
+                        <button className="w-full bg-surface-brand-tint border border-surface-forest text-surface-forest py-2 px-4 rounded-xl hover:bg-surface-canvas transition-colors flex items-center justify-center gap-2 mt-auto cursor-pointer">
                           <ShoppingCart className="w-4 h-4" />
                           Add to cart
                         </button>
@@ -256,15 +256,15 @@ const Products = () => {
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-surface-canvas rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600 rotate-180" />
+            <ChevronRight className="w-5 h-5 text-content-neutral-tertiary rotate-180" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-surface-canvas rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-content-neutral-tertiary" />
           </button>
         </div>
 
@@ -274,8 +274,8 @@ const Products = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                currentSlide === index ? 'bg-green-800' : 'bg-gray-300'
+              className={`w-2 h-2 cursor-pointer rounded-full transition-colors ${
+                currentSlide === index ? 'bg-surface-forest' : 'bg-content-neutral-secondary'
               }`}
             />
           ))}

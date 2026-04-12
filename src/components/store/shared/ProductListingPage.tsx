@@ -66,12 +66,12 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
           {/* Main Content */}
           <div className="flex-1 p-6">
              {/* Breadcrumbs */}
-            <div className="bg-white py-4 mb-6">
-              <nav className="text-sm text-gray-600">
+            <div className="bg-surface-canvas py-4 mb-6">
+              <nav className="text-sm text-content-neutral-tertiary">
                 {breadcrumbs.map((crumb, index) => (
                   <span key={index}>
                     {index > 0 && <span className="mx-2">/</span>}
-                    <span className={index === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : ''}>
+                    <span className={index === breadcrumbs.length - 1 ? 'text-content-neutral-primary font-medium' : ''}>
                       {crumb}
                     </span>
                   </span>
@@ -93,7 +93,7 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
 
                 {/* Sort Dropdown */}
                 <div className="flex items-center space-x-6">
-                  <span className="text-sm font-normal text-gray-300">Sort by:</span>
+                  <span className="text-sm font-normal text-content-neutral-secondary">Sort by:</span>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-[130px] rounded-full shadow-none cursor-pointer">
                       <SelectValue />
@@ -111,7 +111,7 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
 
               {/* View Mode Toggle */}
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-300">View:</span>
+                <span className="text-sm font-medium text-content-neutral-secondary">View:</span>
                 <div className="flex rounded-lg">
                   <Button
                     variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -147,22 +147,22 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
             {/* Active Filters */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-6">
-                <span className="text-base font-medium text-gray-300">Active Filter</span>
+                <span className="text-base font-medium text-content-neutral-secondary">Active Filter</span>
                 <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-400 text-white cursor-pointer">
+                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
                     Dailys <X className="ml-1" size={16}/>
                   </span>
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-400 text-white cursor-pointer">
+                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
                     Dairy & Eggs <X className="ml-1" size={16}/>
                   </span>
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-400 text-white cursor-pointer">
+                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
                     New Arrivals <X className="ml-1" size={16}/>
                   </span>
                 </div>
               </div>
               <Button
                 variant="link"
-                className="text-sm text-red-300 underline hover:text-red-400 p-0 h-auto"
+                className="text-sm text-content-negative underline hover:text-content-warning p-0 h-auto"
               >
                 Clear all
               </Button>

@@ -41,10 +41,10 @@ const ProductDetail = ({ params }: ProductDetailPageProps) => {
   } catch (error) {
     console.error('Error loading product details:', error)
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-muted flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-          <p className="text-gray-600">The product you&apos;re looking for doesn&apos;t exist.</p>
+          <h1 className="text-2xl font-bold text-content-neutral-primary mb-4">Product Not Found</h1>
+          <p className="text-content-neutral-tertiary">The product you&apos;re looking for doesn&apos;t exist.</p>
         </div>
       </div>
     )

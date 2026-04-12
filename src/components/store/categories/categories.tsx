@@ -172,11 +172,11 @@ const Categories  = () => {
   return (
     <div className="max-w-[90%] mx-auto py-10 space-y-20">
         <div className="flex flex-col space-y-6">
-            <h1 className='text-brand-dark text-2xl md:text-3xl font-medium'>Shop by Categories</h1>
+            <h1 className='text-content-neutral-primary text-2xl md:text-3xl font-medium'>Shop by Categories</h1>
             <div className="grid grid-cols-7 gap-1">
                 {categories.map((category) => (
                     <div key={category.id} className="col-span-1">
-                        <Link href={category.url}>
+                        <Link href={category.url} className="cursor-pointer">
                             <Image src={category.image} alt={category.name} width={100} height={100} />
                         </Link>
                     </div>
@@ -186,7 +186,7 @@ const Categories  = () => {
 
 
         <div className='space-y-6'>
-        <h1 className='text-brand-dark text-2xl md:text-3xl font-medium'>Top Picks Near You</h1>
+        <h1 className='text-content-neutral-primary text-2xl md:text-3xl font-medium'>Top Picks Near You</h1>
             <div className="flex gap-5 mb-8 overflow-x-auto pb-2">
             {filters.map((category) => (
                 <button
@@ -194,8 +194,8 @@ const Categories  = () => {
                 onClick={() => setActiveCategory(category)}
                 className={`px-6 py-3 rounded-[16px] whitespace-nowrap transition-colors cursor-pointer ${
                     activeCategory === category
-                    ? 'bg-green-400 text-white'
-                    : 'bg-[#F9FAFB] text-[#8E8C8C] hover:border-green-300'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-surface-subtle text-content-neutral-muted border border-transparent hover:border-primary'
                 }`}
                 >
                 {category}
@@ -219,18 +219,18 @@ const Categories  = () => {
                         
                         {/* Store Info */}
                         <div className="py-4 space-y-2">
-                            <h3 className="text-lg font-normal text-[#1C1C1C]">
+                            <h3 className="text-lg font-normal text-content-neutral-primary">
                                 {store.name}
                             </h3>
                             
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1">
-                                    <span className="text-yellow-400">★</span>
-                                    <span className="text-sm text-gray-600">({store.rating})</span>
+                                    <span className="text-content-warning">★</span>
+                                    <span className="text-sm text-content-neutral-tertiary">({store.rating})</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <span className="text-sm text-gray-600"><Clock size={16} /></span>
-                                    <span className="text-sm text-gray-600 font-light">{store.deliveryTime}</span>
+                                    <span className="text-sm text-content-neutral-tertiary"><Clock size={16} /></span>
+                                    <span className="text-sm text-content-neutral-tertiary font-light">{store.deliveryTime}</span>
                                 </div>
                             </div>
                         </div>

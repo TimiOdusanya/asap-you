@@ -1,0 +1,12 @@
+export const AUTH_ENDPOINTS = {
+  LOGIN: "/v1/auth/login",
+  REGISTER: "/v1/auth/register",
+  OTP_VERIFY: "/v1/auth/otp/verify",
+  OTP_SEND: "/v1/auth/otp/send",
+} as const;
+
+/** If the backend uses a versioned path (e.g. /v1/address), change only this value. */
+export const ADDRESS_ENDPOINTS = {
+  LIST: "/v1/address",
+  CREATE: "/v1/address",
+} as const;

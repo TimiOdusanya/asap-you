@@ -1,0 +1,30 @@
+---
+description: ASAP You — engineering standards for code quality, React, APIs, and TypeScript
+alwaysApply: true
+---
+
+# Engineering standards
+
+Follow solid software practices: clarity over cleverness, small focused changes, consistent patterns with the existing codebase, and accessible UI (semantics, contrast, keyboard use) where relevant.
+
+## UI and components
+
+- Prefer composition and reuse of existing components before adding new files.
+- Create a new component only when it improves clarity, reuse, or test boundaries; avoid splitting for its own sake.
+- New components must stay **at or under 300 lines** (including imports and exports). If larger, split by responsibility or reuse shared pieces.
+- Match existing layout, typography, spacing, and color usage so the app stays visually cohesive.
+
+## API and data mapping
+
+- Use **the exact property names** from API contracts, OpenAPI specs, or provided response examples. Do not rename keys in mapping layers unless the backend or a typed client already uses different names.
+- Prefer direct typed access (e.g. `response.data.items`) over generic `Record<string, string>` or ad-hoc renamed fields.
+
+## TypeScript
+
+- Avoid `any` and `unknown`. Use them only when there is no practical alternative (e.g. truly untyped third-party callbacks), and narrow immediately.
+- Prefer explicit interfaces/types from the API or shared types; use `satisfies` or generics where they reduce repetition without hiding types.
+
+## Comments and noise
+
+- Do not add comments that restate the code or obvious JSX structure.
+- Add comments only for non-obvious invariants, edge cases, or intentional trade-offs that a reader cannot infer from names and types.

@@ -9,7 +9,7 @@ import Footer from './footer'
 
 const Hero = () => {
   return (
-    <div className='bg-white'>
+    <div className='bg-surface-canvas'>
        <Navbar />
        <Home />
        <Arrivals />

@@ -33,25 +33,25 @@ const FaqSection = () => {
     <div className="py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-center text-3xl sm:text-4xl font-normal mb-12">
-          <span className="text-gray-100">Still</span>{' '}
-          <span className="text-gray-300">Curious?</span>
+          <span className="text-content-neutral-soft">Still</span>{' '}
+          <span className="text-content-neutral-secondary">Curious?</span>
         </h2>
         
         <div className="space-y-6">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-gray-700 rounded-lg overflow-hidden"
+              className="bg-surface-elevated rounded-lg overflow-hidden"
             >
               <button
-                className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+                className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-surface-muted transition-colors duration-200 cursor-pointer"
                 onClick={() => toggleAccordion(index)}
               >
-                <span className="text-gray-400 font-medium text-xl">
+                <span className="text-content-neutral-primary font-medium text-xl">
                   {faq.question}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
+                  className={`w-5 h-5 text-content-neutral-tertiary transition-transform duration-200 ${
                     openIndex === index ? 'rotate-180' : ''
                   }`}
                 />
@@ -59,7 +59,7 @@ const FaqSection = () => {
               
               {openIndex === index && (
                 <div className="px-6 pb-4">
-                  <p className="text-gray-300 text-base leading-relaxed">
+                  <p className="text-content-neutral-secondary text-base leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>

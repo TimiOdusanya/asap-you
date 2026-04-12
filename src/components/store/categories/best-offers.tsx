@@ -92,43 +92,43 @@ const BestOffers = () => {
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
 
   return (
-    <div className="bg-green-700">
+    <div className="bg-surface-forest-deep">
       <div className="max-w-[90%] mx-auto py-24 space-y-20">
         <div className="flex justify-around items-center">
           <div className="flex flex-col gap-10 justify-center items-center">
           <div className="flex flex-col gap-4 justify-center items-center">
-          <h1 className="text-green-400 text-xl md:text-[20px] font-normal">
+          <h1 className="text-primary text-xl md:text-[20px] font-normal">
               Deals of The Day
             </h1>
-            <h2 className="text-white text-[40px] font-semibold max-w-[400px] text-center">
+            <h2 className="text-content-on-brand text-[40px] font-semibold max-w-[400px] text-center">
               Grab The Best Offer This Week
             </h2>
           </div>
             <div className="flex flex-col gap-4 justify-center items-center">
-              <span className="text-white text-2xl font-normal">
+              <span className="text-content-on-brand text-2xl font-normal">
                 Hurry up! Offers end in:
               </span>
               <div className="flex gap-6">
                 {/* Days */}
                 <div className="flex flex-col gap-3 justify-center items-center">
                   <div className={`
-                    relative flex bg-gradient-to-br from-green-400 to-green-500 p-6 rounded-xl shadow-lg
+                    relative flex bg-gradient-to-br from-primary to-surface-brand-muted p-6 rounded-xl shadow-lg
                     transition-all duration-300 ease-out
                     ${isAnimating ? 'scale-110 shadow-2xl' : 'scale-100'}
                     ${pulseAnimation ? 'animate-pulse' : ''}
                     hover:scale-105 hover:shadow-xl
                   `}>
                     <span className={`
-                      text-white text-3xl font-bold
+                      text-primary-foreground text-3xl font-bold
                       transition-all duration-200
-                      ${isAnimating ? 'text-green-100' : 'text-white'}
+                      ${isAnimating ? 'text-surface-brand-tint' : 'text-primary-foreground'}
                     `}>
                       {formatNumber(timeLeft.days)}
                     </span>
                     {/* Glow effect */}
-                    <div className="absolute inset-0 bg-green-400 rounded-xl opacity-20 blur-sm -z-10"></div>
+                    <div className="absolute inset-0 bg-primary rounded-xl opacity-20 blur-sm -z-10"></div>
                   </div>
-                  <span className="text-white text-lg font-medium tracking-wide">
+                  <span className="text-content-on-brand text-lg font-medium tracking-wide">
                     Days
                   </span>
                 </div>
@@ -136,23 +136,23 @@ const BestOffers = () => {
                 {/* Hours */}
                 <div className="flex flex-col gap-3 justify-center items-center">
                   <div className={`
-                    relative flex bg-gradient-to-br from-green-400 to-green-500 p-6 rounded-xl shadow-lg
+                    relative flex bg-gradient-to-br from-primary to-surface-brand-muted p-6 rounded-xl shadow-lg
                     transition-all duration-300 ease-out
                     ${isAnimating ? 'scale-110 shadow-2xl' : 'scale-100'}
                     ${pulseAnimation ? 'animate-pulse' : ''}
                     hover:scale-105 hover:shadow-xl
                   `}>
                     <span className={`
-                      text-white text-3xl font-bold
+                      text-primary-foreground text-3xl font-bold
                       transition-all duration-200
-                      ${isAnimating ? 'text-green-100' : 'text-white'}
+                      ${isAnimating ? 'text-surface-brand-tint' : 'text-primary-foreground'}
                     `}>
                       {formatNumber(timeLeft.hours)}
                     </span>
                     {/* Glow effect */}
-                    <div className="absolute inset-0 bg-green-400 rounded-xl opacity-20 blur-sm -z-10"></div>
+                    <div className="absolute inset-0 bg-primary rounded-xl opacity-20 blur-sm -z-10"></div>
                   </div>
-                  <span className="text-white text-lg font-medium tracking-wide">
+                  <span className="text-content-on-brand text-lg font-medium tracking-wide">
                     Hrs
                   </span>
                 </div>
@@ -160,23 +160,23 @@ const BestOffers = () => {
                 {/* Minutes */}
                 <div className="flex flex-col gap-3 justify-center items-center">
                   <div className={`
-                    relative flex bg-gradient-to-br from-green-400 to-green-500 p-6 rounded-xl shadow-lg
+                    relative flex bg-gradient-to-br from-primary to-surface-brand-muted p-6 rounded-xl shadow-lg
                     transition-all duration-300 ease-out
                     ${isAnimating ? 'scale-110 shadow-2xl' : 'scale-100'}
                     ${pulseAnimation ? 'animate-pulse' : ''}
                     hover:scale-105 hover:shadow-xl
                   `}>
                     <span className={`
-                      text-white text-3xl font-bold
+                      text-primary-foreground text-3xl font-bold
                       transition-all duration-200
-                      ${isAnimating ? 'text-green-100' : 'text-white'}
+                      ${isAnimating ? 'text-surface-brand-tint' : 'text-primary-foreground'}
                     `}>
                       {formatNumber(timeLeft.minutes)}
                     </span>
                     {/* Glow effect */}
-                    <div className="absolute inset-0 bg-green-400 rounded-xl opacity-20 blur-sm -z-10"></div>
+                    <div className="absolute inset-0 bg-primary rounded-xl opacity-20 blur-sm -z-10"></div>
                   </div>
-                  <span className="text-white text-lg font-medium tracking-wide">
+                  <span className="text-content-on-brand text-lg font-medium tracking-wide">
                     Mins
                   </span>
                 </div>
@@ -184,39 +184,39 @@ const BestOffers = () => {
                 {/* Seconds */}
                 <div className="flex flex-col gap-3 justify-center items-center">
                   <div className={`
-                    relative flex bg-gradient-to-br from-green-400 to-green-500 p-6 rounded-xl shadow-lg
+                    relative flex bg-gradient-to-br from-primary to-surface-brand-muted p-6 rounded-xl shadow-lg
                     transition-all duration-300 ease-out
                     ${isAnimating ? 'scale-110 shadow-2xl' : 'scale-100'}
                     ${pulseAnimation ? 'animate-pulse' : ''}
                     hover:scale-105 hover:shadow-xl
                   `}>
                     <span className={`
-                      text-white text-3xl font-bold
+                      text-primary-foreground text-3xl font-bold
                       transition-all duration-200
-                      ${isAnimating ? 'text-green-100' : 'text-white'}
+                      ${isAnimating ? 'text-surface-brand-tint' : 'text-primary-foreground'}
                     `}>
                       {formatNumber(timeLeft.seconds)}
                     </span>
                     {/* Glow effect */}
-                    <div className="absolute inset-0 bg-green-400 rounded-xl opacity-20 blur-sm -z-10"></div>
+                    <div className="absolute inset-0 bg-primary rounded-xl opacity-20 blur-sm -z-10"></div>
                   </div>
-                  <span className="text-white text-lg font-medium tracking-wide">
+                  <span className="text-content-on-brand text-lg font-medium tracking-wide">
                     Secs
                   </span>
                 </div>
               </div>
             </div>
             <button className="
-              relative bg-green-700 border-2 border-green-400 text-white text-base font-medium px-8 py-4 rounded-full 
+              relative bg-surface-forest-deep border-2 border-primary text-primary-foreground text-base font-medium px-8 py-4 rounded-full 
               cursor-pointer overflow-hidden group
-              hover:bg-green-400 hover:border-green-300 hover:scale-105
+              hover:bg-primary hover:border-primary hover:scale-105
               transition-all duration-300 ease-out
-              hover:shadow-lg hover:shadow-green-400/25
+              hover:shadow-lg hover:shadow-primary/25
               active:scale-95
             ">
               <span className="relative z-10">SEE ALL</span>
               {/* Animated background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-surface-brand-muted opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               {/* Shimmer effect */}
               <div className="absolute inset-0 -top-1 -left-1 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </button>
@@ -226,12 +226,12 @@ const BestOffers = () => {
                 <div
                 key={item.id}
                 className="
-                  flex flex-col justify-center items-center gap-4 bg-white rounded-xl px-12 py-8
+                  flex flex-col justify-center items-center gap-4 bg-surface-canvas rounded-xl px-12 py-8
                   shadow-lg hover:shadow-2xl
                   transform transition-all duration-500 ease-out
                   hover:scale-105 hover:-translate-y-2
                   group cursor-pointer
-                  border border-gray-100 hover:border-green-200
+                  border border-border-muted hover:border-surface-brand-soft
                 "
                 style={{
                   animationDelay: `${index * 200}ms`,
@@ -248,31 +248,31 @@ const BestOffers = () => {
                     className="transition-transform duration-300 group-hover:scale-110"
                   />
                   {/* Overlay effect */}
-                  <div className="absolute inset-0 bg-green-400/0 group-hover:bg-green-400/10 transition-colors duration-300"></div>
+                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300"></div>
                 </div>
 
                 <div className="flex flex-col justify-center items-center gap-2">
-                    <h3 className="text-lg font-medium text-[#8E8C8C] group-hover:text-gray-600 transition-colors duration-300">
+                    <h3 className="text-lg font-medium text-content-neutral-muted group-hover:text-content-neutral-tertiary transition-colors duration-300">
                       {item.title}
                     </h3>
-                    <h3 className="text-gray-400 text-xl font-semibold group-hover:text-gray-500 transition-colors duration-300">
+                    <h3 className="text-content-neutral-primary text-xl font-semibold group-hover:text-content-neutral-tertiary transition-colors duration-300">
                       {item.subtitle}
                     </h3>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <span className="text-[#8E8C8C] text-sm font-normal line-through opacity-70">
+                    <span className="text-content-neutral-muted text-sm font-normal line-through opacity-70">
                       {item.oldPrice}
                     </span>
-                    <span className="text-red-500 text-lg font-bold bg-red-50 px-2 py-1 rounded-md">
+                    <span className="text-content-negative-strong text-lg font-bold bg-red-500/10 px-2 py-1 rounded-md">
                       {item.newPrice}
                     </span>
                 </div>
 
                 <button className="
-                  relative bg-green-400 text-white text-base font-semibold px-8 py-3 rounded-full 
+                  relative bg-primary text-primary-foreground text-base font-semibold px-8 py-3 rounded-full 
                   cursor-pointer overflow-hidden group/btn
-                  hover:bg-green-500 hover:scale-105 hover:shadow-lg
+                  hover:bg-surface-brand-muted hover:scale-105 hover:shadow-lg
                   transition-all duration-300 ease-out
                   active:scale-95
                   w-full

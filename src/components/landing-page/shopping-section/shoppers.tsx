@@ -128,10 +128,10 @@ const Shoppers = () => {
           height={500}
         />
         <div className="flex flex-col gap-6">
-          <h1 className="text-[40px] font-normal leading-[100%] text-gray-400">
+          <h1 className="text-[40px] font-normal leading-[100%] text-content-neutral-primary">
             Why Our Shoppers Stick With Us?
           </h1>
-          <p className="text-[24px] font-normal leading-[140%] text-brand-gray max-w-[600px]">
+          <p className="text-[24px] font-normal leading-[140%] text-content-neutral-secondary max-w-[600px]">
             We make everyday shopping feel effortless. From personalized picks
             to seamless updates, everything we build is centered around you.
           </p>
@@ -145,10 +145,10 @@ const Shoppers = () => {
                   height={32}
                 />
                 <div className="flex flex-col gap-2">
-                  <h1 className="text-[24px] font-normal leading-[100%] text-gray-400">
+                  <h1 className="text-[24px] font-normal leading-[100%] text-content-neutral-primary">
                     {shopper.title}
                   </h1>
-                  <p className="text-[16px] font-light leading-[140%] text-brand-gray">
+                  <p className="text-[16px] font-light leading-[140%] text-content-neutral-secondary">
                     {shopper.description}
                   </p>
                 </div>
@@ -158,10 +158,10 @@ const Shoppers = () => {
         </div>
       </div>
       <div className="flex flex-col justify-center items-center gap-6">
-        <h1 className="text-[48px] font-normal leading-[100%] text-gray-100">
+        <h1 className="text-[48px] font-normal leading-[100%] text-content-neutral-soft">
           Your Favorite Stores, One Tap Away
         </h1>
-        <h1 className="text-[48px] font-normal leading-[100%] text-gray-400">
+        <h1 className="text-[48px] font-normal leading-[100%] text-content-neutral-primary">
           We’ve partnered with stores you already trust.
         </h1>
       </div>
@@ -206,7 +206,7 @@ const Shoppers = () => {
                 </div>
               </div>
 
-              <h1 className="text-[20px] font-normal leading-[100%] text-gray-400">
+              <h1 className="text-[20px] font-normal leading-[100%] text-content-neutral-primary">
                 {supermarket.title}
               </h1>
             </div>

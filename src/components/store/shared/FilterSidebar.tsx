@@ -78,21 +78,21 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
   const activeFilters = getActiveFilters()
 
   return (
-    <div className="w-64 bg-white p-6 border-r border-gray-200 ">
-      <h2 className="text-lg font-semibold text-[#212121] mb-6">Filter by</h2>
+    <div className="w-64 bg-surface-canvas p-6 border-r border-border-subtle ">
+      <h2 className="text-lg font-semibold text-content-neutral-primary mb-6">Filter by</h2>
       
       {/* Supermarket Type */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-300 mb-4">Supermarket Type</h3>
+        <h3 className="text-lg font-semibold text-content-neutral-secondary mb-4">Supermarket Type</h3>
         <div className="space-y-3">
           {filters.supermarketType.map((option) => (
-            <Label key={option.id} className="flex items-center">
+            <Label key={option.id} className="flex cursor-pointer items-center">
               <Checkbox
                 checked={option.checked}
                 onCheckedChange={() => handleCheckboxChange('supermarketType', option.id)}
                 className="mr-3 h-5 w-5"
               />
-              <span className="text-base text-gray-600 font-light">{option.label}</span>
+              <span className="text-base text-content-neutral-tertiary font-light">{option.label}</span>
             </Label>
           ))}
         </div>
@@ -100,16 +100,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
 
       {/* Categories */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-300 mb-4">By Categories</h3>
+        <h3 className="text-lg font-semibold text-content-neutral-secondary mb-4">By Categories</h3>
         <div className="space-y-3">
           {filters.categories.map((option) => (
-            <Label key={option.id} className="flex items-center">
+            <Label key={option.id} className="flex cursor-pointer items-center">
               <Checkbox
                 checked={option.checked}
                 onCheckedChange={() => handleCheckboxChange('categories', option.id)}
                 className="mr-3 h-5 w-5"
               />
-              <span className="text-base text-gray-600 font-light">{option.label}</span>
+              <span className="text-base text-content-neutral-tertiary font-light">{option.label}</span>
             </Label>
           ))}
         </div>
@@ -117,16 +117,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
 
       {/* Popular Picks */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-300 mb-4">Popular Picks</h3>
+        <h3 className="text-lg font-semibold text-content-neutral-secondary mb-4">Popular Picks</h3>
         <div className="space-y-3">
           {filters.popularPicks.map((option) => (
-            <Label key={option.id} className="flex items-center">
+            <Label key={option.id} className="flex cursor-pointer items-center">
               <Checkbox
                 checked={option.checked}
                 onCheckedChange={() => handleCheckboxChange('popularPicks', option.id)}
                 className="mr-3 h-5 w-5"
               />
-              <span className="text-base text-gray-600 font-light">{option.label}</span>
+              <span className="text-base text-content-neutral-tertiary font-light">{option.label}</span>
             </Label>
           ))}
         </div>
@@ -134,16 +134,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
 
       {/* Promotions */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-300 mb-4">By Promotion</h3>
+        <h3 className="text-lg font-semibold text-content-neutral-secondary mb-4">By Promotion</h3>
         <div className="space-y-3">
           {filters.promotions.map((option) => (
-            <Label key={option.id} className="flex items-center">
+            <Label key={option.id} className="flex cursor-pointer items-center">
               <Checkbox
                 checked={option.checked}
                 onCheckedChange={() => handleCheckboxChange('promotions', option.id)}
                 className="mr-3 h-5 w-5"
               />
-              <span className="text-base text-gray-600 font-light">{option.label}</span>
+              <span className="text-base text-content-neutral-tertiary font-light">{option.label}</span>
             </Label>
           ))}
         </div>
@@ -151,13 +151,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
 
       {/* Active Filters */}
       {activeFilters.length > 0 && (
-        <div className="border-t border-gray-200 pt-6">
+        <div className="border-t border-border-subtle pt-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-medium text-gray-300">Active Filter</h3>
+            <h3 className="text-base font-medium text-content-neutral-secondary">Active Filter</h3>
             <Button
               variant="link"
               onClick={onClearAll}
-              className="text-sm text-red-300 underline hover:text-red-400 p-0 h-auto"
+              className="text-sm text-content-negative underline hover:text-content-warning p-0 h-auto"
             >
               Clear all
             </Button>
@@ -166,7 +166,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, onClearAl
             {activeFilters.map((filter, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-400 text-white"
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-primary-foreground"
               >
                 {filter}
                 <X className="ml-1 w-3 h-3" />

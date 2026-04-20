@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
   if (viewMode === 'list') {
     return (
       <div 
-        className="flex items-center space-x-4 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+        className="flex items-center space-x-4 p-4 bg-surface-canvas rounded-lg border border-border-subtle hover:shadow-md transition-shadow cursor-pointer"
         onClick={() => onProductClick(product)}
       >
         <div className="relative w-20 h-20 flex-shrink-0">
@@ -41,36 +41,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
             className="object-cover rounded-lg"
           />
           {isDiscounted && (
-            <div className="absolute top-1 right-1 bg-yellow-400 text-xs px-2 py-1 rounded">
+            <div className="absolute top-1 right-1 bg-content-warning text-content-neutral-primary text-xs px-2 py-1 rounded">
               {product.discount}
             </div>
           )}
         </div>
         
         <div className="flex-1 min-w-0 space-y-1">
-          <h3 className="text-lg font-normal text-gray-900 truncate">{product.name}</h3>
-          <div className="text-sm text-green-400 flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
+          <h3 className="text-lg font-normal text-content-neutral-primary truncate">{product.name}</h3>
+          <div className="text-sm text-content-positive flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
           <div className="flex items-center mt-1">
             <div className="flex items-center space-x-2">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`w-4 h-4 space-x-2 ${
-                    i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                    i < Math.floor(product.rating) ? 'text-content-warning fill-current' : 'text-content-neutral-muted'
                   }`}
                 />
               ))}
             </div>
-            <span className="ml-1 text-sm text-gray-600">({product.rating})</span>
+            <span className="ml-1 text-sm text-content-neutral-tertiary">({product.rating})</span>
           </div>
         </div>
         
         <div className="text-right">
           <div className="flex items-center space-x-2">
             {isDiscounted && (
-             <span className="text-base text-[#555555] line-through">{product.originalPrice}</span>
+             <span className="text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
             )}
-             <span className="text-lg font-normal text-[#3C3C3C]">{product.currentPrice}</span>
+             <span className="text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
       <div className="relative p-4">
         {/* Discount Badge */}
         {isDiscounted && (
-          <div className="absolute top-2 right-2 bg-yellow-400 text-xs px-2 py-1 rounded z-10 text-white">
+          <div className="absolute top-2 right-2 bg-content-warning text-xs px-2 py-1 rounded z-10 text-content-neutral-primary">
             {product.discount}
           </div>
         )}
@@ -102,8 +102,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
         
         {/* Product Info */}
         <div className="space-y-2">
-          <h3 className="text-lg font-normal text-gray-300 truncate">{product.name}</h3>
-          <div className="text-sm text-green-400 flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
+          <h3 className="text-lg font-normal text-content-neutral-secondary truncate">{product.name}</h3>
+          <div className="text-sm text-content-positive flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
           
           {/* Rating */}
           <div className="flex items-center">
@@ -112,20 +112,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
                 <Star
                   key={i}
                   className={`w-4 h-4 space-x-2 ${
-                    i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                    i < Math.floor(product.rating) ? 'text-content-warning fill-current' : 'text-content-neutral-muted'
                   }`}
                 />
               ))}
             </div>
-            <span className="ml-1 text-sm text-[#555555]">({product.rating})</span>
+            <span className="ml-1 text-sm text-content-neutral-tertiary">({product.rating})</span>
           </div>
           
           {/* Price */}
           <div className="flex items-center space-x-2">
             {isDiscounted && (
-              <span className="text-base text-[#555555] line-through">{product.originalPrice}</span>
+              <span className="text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
             )}
-            <span className="text-lg font-normal text-[#3C3C3C]">{product.currentPrice}</span>
+            <span className="text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
           </div>
         </div>
       </div>

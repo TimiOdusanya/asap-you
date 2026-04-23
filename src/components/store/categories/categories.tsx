@@ -170,29 +170,40 @@ const Categories  = () => {
     : stores.filter(store => store.category === activeCategory)
 
   return (
-    <div className="max-w-[90%] mx-auto py-10 space-y-20">
-        <div className="flex flex-col space-y-6">
-            <h1 className='text-content-neutral-primary text-2xl md:text-3xl font-medium'>Shop by Categories</h1>
-            <div className="grid grid-cols-7 gap-1">
+    <div className="max-w-[90%] mx-auto py-8 sm:py-10 space-y-12 sm:space-y-16 lg:space-y-20">
+        <div className="flex flex-col space-y-4 sm:space-y-6">
+            <h1 className='text-content-neutral-primary text-xl sm:text-2xl md:text-3xl font-medium'>Shop by Categories</h1>
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-3 sm:gap-4">
                 {categories.map((category) => (
-                    <div key={category.id} className="col-span-1">
-                        <Link href={category.url} className="cursor-pointer">
-                            <Image src={category.image} alt={category.name} width={100} height={100} />
-                        </Link>
-                    </div>
+                    <Link
+                      key={category.id}
+                      href={category.url}
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                    >
+                      <Image
+                        src={category.image}
+                        alt={category.name}
+                        width={100}
+                        height={100}
+                        className="w-full h-auto max-w-[100px]"
+                      />
+                      <span className="text-xs sm:text-sm text-content-neutral-primary text-center sm:hidden">
+                        {category.name}
+                      </span>
+                    </Link>
                 ))}
             </div>
         </div>
 
 
-        <div className='space-y-6'>
-        <h1 className='text-content-neutral-primary text-2xl md:text-3xl font-medium'>Top Picks Near You</h1>
-            <div className="flex gap-5 mb-8 overflow-x-auto pb-2">
+        <div className='space-y-4 sm:space-y-6'>
+        <h1 className='text-content-neutral-primary text-xl sm:text-2xl md:text-3xl font-medium'>Top Picks Near You</h1>
+            <div className="flex gap-3 sm:gap-5 mb-6 sm:mb-8 overflow-x-auto pb-2 -mx-1 px-1">
             {filters.map((category) => (
                 <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-3 rounded-[16px] whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-[16px] whitespace-nowrap transition-colors cursor-pointer ${
                     activeCategory === category
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-surface-subtle text-content-neutral-muted border border-transparent hover:border-primary'
@@ -203,34 +214,31 @@ const Categories  = () => {
             ))}
             </div>
 
-            {/* Store Cards Grid */}
-            <div className="grid grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                 {filteredStores.map((store) => (
                     <div key={store.id} className="rounded-lg overflow-hidden">
-                        {/* Store Image */}
-                        <div className="w-full h-48 relative rounded-2xl overflow-hidden">
-                            <Image 
-                                src={store.image} 
-                                alt={store.name} 
+                        <div className="w-full aspect-[4/3] sm:h-48 sm:aspect-auto relative rounded-2xl overflow-hidden">
+                            <Image
+                                src={store.image}
+                                alt={store.name}
                                 fill
                                 className="object-cover rounded-2xl"
                             />
                         </div>
-                        
-                        {/* Store Info */}
-                        <div className="py-4 space-y-2">
-                            <h3 className="text-lg font-normal text-content-neutral-primary">
+
+                        <div className="py-3 sm:py-4 space-y-1.5 sm:space-y-2">
+                            <h3 className="text-base sm:text-lg font-normal text-content-neutral-primary truncate">
                                 {store.name}
                             </h3>
-                            
-                            <div className="flex items-center justify-between">
+
+                            <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-1">
                                     <span className="text-content-warning">★</span>
-                                    <span className="text-sm text-content-neutral-tertiary">({store.rating})</span>
+                                    <span className="text-xs sm:text-sm text-content-neutral-tertiary">({store.rating})</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <span className="text-sm text-content-neutral-tertiary"><Clock size={16} /></span>
-                                    <span className="text-sm text-content-neutral-tertiary font-light">{store.deliveryTime}</span>
+                                    <Clock size={16} className="text-content-neutral-tertiary" aria-hidden />
+                                    <span className="text-xs sm:text-sm text-content-neutral-tertiary font-light">{store.deliveryTime}</span>
                                 </div>
                             </div>
                         </div>

@@ -119,36 +119,38 @@ const Shoppers = () => {
   }
 
   return (
-    <div className="space-y-20 max-w-[85%] mx-auto py-20">
-      <div className=" flex justify-between pb-20 gap-16">
+    <div className="space-y-16 sm:space-y-20 max-w-[90%] lg:max-w-[85%] mx-auto py-16 sm:py-20">
+      <div className="flex flex-col lg:flex-row lg:justify-between pb-10 sm:pb-16 lg:pb-20 gap-8 lg:gap-16">
         <Image
           src={"/images/landing/shoppers-1.png"}
           alt="shoppers"
           width={500}
           height={500}
+          className="w-full max-w-[420px] mx-auto lg:mx-0 h-auto"
         />
-        <div className="flex flex-col gap-6">
-          <h1 className="text-[40px] font-normal leading-[100%] text-content-neutral-primary">
+        <div className="flex flex-col gap-5 sm:gap-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-normal leading-[110%] text-content-neutral-primary">
             Why Our Shoppers Stick With Us?
           </h1>
-          <p className="text-[24px] font-normal leading-[140%] text-content-neutral-secondary max-w-[600px]">
+          <p className="text-base sm:text-lg lg:text-2xl font-normal leading-[140%] text-content-neutral-secondary max-w-[600px]">
             We make everyday shopping feel effortless. From personalized picks
             to seamless updates, everything we build is centered around you.
           </p>
-          <div className="flex gap-4 flex-wrap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
             {shoppers.map((shopper) => (
-              <div key={shopper.id} className="flex gap-6">
+              <div key={shopper.id} className="flex gap-4 sm:gap-6">
                 <Image
                   src={shopper.image}
                   alt={shopper.title}
                   width={32}
                   height={32}
+                  className="shrink-0"
                 />
                 <div className="flex flex-col gap-2">
-                  <h1 className="text-[24px] font-normal leading-[100%] text-content-neutral-primary">
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-normal leading-[110%] text-content-neutral-primary">
                     {shopper.title}
                   </h1>
-                  <p className="text-[16px] font-light leading-[140%] text-content-neutral-secondary">
+                  <p className="text-sm sm:text-base font-light leading-[140%] text-content-neutral-secondary">
                     {shopper.description}
                   </p>
                 </div>
@@ -157,17 +159,16 @@ const Shoppers = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center gap-6">
-        <h1 className="text-[48px] font-normal leading-[100%] text-content-neutral-soft">
+      <div className="flex flex-col justify-center items-center gap-3 sm:gap-6 text-center">
+        <h1 className="text-2xl sm:text-3xl lg:text-5xl font-normal leading-[110%] text-content-neutral-soft">
           Your Favorite Stores, One Tap Away
         </h1>
-        <h1 className="text-[48px] font-normal leading-[100%] text-content-neutral-primary">
+        <h1 className="text-2xl sm:text-3xl lg:text-5xl font-normal leading-[110%] text-content-neutral-primary">
           We’ve partnered with stores you already trust.
         </h1>
       </div>
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-10 sm:gap-6">
         {supermarkets.map((supermarket, index) => {
-          // background color list
           const bgColors = [
             "#FFEFEB",
             "#F0E9FF",
@@ -177,14 +178,12 @@ const Shoppers = () => {
             "#EEEEFF",
             "#FCEDF9",
           ];
-
-          // pick background based on index
           const bgColor = bgColors[index % bgColors.length];
 
           return (
             <div
               key={supermarket.id}
-              className="flex flex-col gap-8 items-center justify-center"
+              className="flex flex-col gap-6 sm:gap-8 items-center justify-center"
             >
               <div className="relative">
                 <Image
@@ -192,21 +191,20 @@ const Shoppers = () => {
                   alt={supermarket.title}
                   width={120}
                   height={120}
-                  className="rounded-lg"
+                  className="rounded-lg w-20 h-20 sm:w-[120px] sm:h-[120px] object-contain"
                 />
-                {/* Description badge */}
                 <div
-                  className="absolute bottom-[-16px] left-1/2 -translate-x-1/2 rounded-[8px] px-4 py-1 whitespace-nowrap text-base font-medium"
+                  className="absolute bottom-[-14px] left-1/2 -translate-x-1/2 rounded-[8px] px-3 py-1 whitespace-nowrap text-xs sm:text-base font-medium"
                   style={{
                     backgroundColor: bgColor,
-                    color: darkenHex(bgColor, 140), // darker text color
+                    color: darkenHex(bgColor, 140),
                   }}
                 >
                   {supermarket.description}
                 </div>
               </div>
 
-              <h1 className="text-[20px] font-normal leading-[100%] text-content-neutral-primary">
+              <h1 className="text-sm sm:text-lg lg:text-xl font-normal leading-[110%] text-content-neutral-primary text-center">
                 {supermarket.title}
               </h1>
             </div>

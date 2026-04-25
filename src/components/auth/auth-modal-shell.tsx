@@ -14,6 +14,7 @@ export function AuthModalShell({
   leftTitle,
   leftSubtitle,
   leftFooter,
+
   children,
   className,
   promoPosition = "start",
@@ -30,7 +31,7 @@ export function AuthModalShell({
 }) {
   const promoPanel = (
     <div
-      className="relative flex min-h-[200px] flex-1 flex-col md:min-h-[520px] md:max-w-[45%]"
+      className="relative hidden md:flex min-h-[200px] flex-1 flex-col md:min-h-[520px] md:max-w-[45%]"
       style={{ backgroundColor: "#0f2310" }}
     >
       <Image
@@ -64,7 +65,7 @@ export function AuthModalShell({
   );
 
   const formPanel = (
-    <div className="relative flex flex-1 flex-col bg-white md:max-w-[55%]">
+    <div className="relative flex flex-1 flex-col bg-white md:max-w-[55%] overflow-y-auto">
       {showCloseButton ? (
         <DialogClose
           className="absolute top-4 right-4 z-20 cursor-pointer rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
@@ -74,7 +75,7 @@ export function AuthModalShell({
           <span className="sr-only">Close</span>
         </DialogClose>
       ) : null}
-      <div className={cn(shellPadding, "flex min-h-0 flex-1 flex-col pt-12")}>
+      <div className={cn(shellPadding, "flex min-h-0 flex-1 flex-col pt-10 md:pt-12")}>
         {children}
       </div>
     </div>
@@ -83,7 +84,7 @@ export function AuthModalShell({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden rounded-2xl md:max-h-[90vh] md:w-[min(92vw,880px)] md:flex-row",
+        "flex flex-col overflow-hidden rounded-2xl max-h-[90svh] md:max-h-[90vh] md:w-[min(92vw,880px)] md:flex-row",
         className
       )}
     >

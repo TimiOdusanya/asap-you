@@ -124,10 +124,9 @@ const RecentOrders = () => {
 
   return (
     <div className='bg-surface-canvas'>
-      <div className="max-w-[90%] mx-auto py-20">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className='text-xl sm:text-[28px] font-semibold text-content-neutral-primary'>Recent Orders</h1>
+      <div className="max-w-[90%] mx-auto py-12 sm:py-16 lg:py-20">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <h1 className='text-xl sm:text-2xl lg:text-[28px] font-semibold text-content-neutral-primary'>Recent Orders</h1>
           
           {/* Navigation Arrows */}
           <div className="flex gap-2">
@@ -154,45 +153,42 @@ const RecentOrders = () => {
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {Array.from({ length: Math.ceil(recentOrders.length / productsPerSlide) }).map((_, slideIndex) => (
-                <div key={slideIndex} className="w-full flex gap-4 sm:gap-8">
+                <div key={slideIndex} className="w-full shrink-0 flex gap-4 sm:gap-6 lg:gap-8">
                   {recentOrders.slice(slideIndex * productsPerSlide, (slideIndex + 1) * productsPerSlide).map((order) => (
-                    <div key={order.id} className="flex-1 rounded-2xl p-4 sm:p-6 min-w-[250px] sm:min-w-[280px]">
-                      {/* Product Image */}
-                      <div className="mb-4 flex items-center justify-center bg-surface-muted rounded-xl w-[309px] h-[342px]">
-                          <Image 
-                            src={order.image} 
-                            alt={order.name} 
-                            width={120} 
-                            height={120} 
-                            className="object-cover rounded-xl w-50 h-60"
+                    <div key={order.id} className="flex-1 min-w-0 rounded-2xl p-3 sm:p-4 lg:p-6">
+                      <div className="mb-4 flex items-center justify-center bg-surface-muted rounded-xl w-full aspect-[309/342]">
+                          <Image
+                            src={order.image}
+                            alt={order.name}
+                            width={200}
+                            height={240}
+                            className="object-cover rounded-xl w-[60%] h-[70%]"
                           />
                       </div>
 
-                      {/* Product Info */}
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-normal text-content-neutral-primary">
+                      <div className="space-y-2 sm:space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-base sm:text-lg font-normal text-content-neutral-primary truncate">
                             {order.name}
                           </h3>
-                          <span className="text-lg font-normal text-content-neutral-primary">
+                          <span className="text-base sm:text-lg font-normal text-content-neutral-primary shrink-0">
                             {order.price}
                           </span>
                         </div>
 
-                        <p className="text-base text-content-neutral-primary font-normal">
+                        <p className="text-sm sm:text-base text-content-neutral-primary font-normal truncate">
                           {order.store}
                         </p>
 
-                        <p className="text-base text-content-neutral-tertiary font-normal">
+                        <p className="text-sm sm:text-base text-content-neutral-tertiary font-normal">
                           Last ordered: {order.lastOrdered}
                         </p>
 
-                        {/* Action Buttons */}
-                        <div className="flex items-center justify-between pt-2">
-                          <Button variant="outline" className="px-5 py-2 border border-content-neutral-secondary text-content-neutral-primary rounded-full text-base font-medium hover:bg-surface-muted transition-colors cursor-pointer">
+                        <div className="flex items-center justify-between gap-2 pt-2">
+                          <Button variant="outline" className="px-4 sm:px-5 py-2 border border-content-neutral-secondary text-content-neutral-primary rounded-full text-sm sm:text-base font-medium hover:bg-surface-muted transition-colors cursor-pointer">
                             Reorder
                           </Button>
-                          <button className="text-content-positive underline text-base font-light hover:text-surface-forest transition-colors cursor-pointer">
+                          <button className="text-content-positive underline text-sm sm:text-base font-light hover:text-surface-forest transition-colors cursor-pointer">
                             View Store
                           </button>
                         </div>

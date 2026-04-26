@@ -122,8 +122,8 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               {/* Product Details */}
               <div className="space-y-6">
                 <div>
-                  <h1 className="text-3xl font-semibold text-content-neutral-primary mb-2">{product.name}</h1>
-                  <p className="text-content-neutral-tertiary text-lg text-light">{product.description}</p>
+                  <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold text-content-neutral-primary mb-2">{product.name}</h1>
+                  <p className="text-content-neutral-tertiary text-base md:text-lg text-light">{product.description}</p>
                 </div>
 
                 {/* Rating */}
@@ -144,7 +144,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <div className="text-sm text-content-neutral-tertiary border-b border-border-subtle pb-4"></div>
 
                 {/* Price */}
-                <div className="text-2xl font-semibold text-content-neutral-primary">
+                <div className="text-xl md:text-2xl font-semibold text-content-neutral-primary">
                   {product.price} / {product.unit}
                 </div>
 
@@ -177,7 +177,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
 
                 {/* Stock Information */}
-                <div className="text-base text-content-neutral-tertiary font-light">
+                <div className="text-sm md:text-base text-content-neutral-tertiary font-light">
                   Only <span className="text-content-negative">{product.stock} packs</span> left - Don&apos;t miss out
                 </div>
 
@@ -214,7 +214,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
           {/* Similar Items Section */}
           <div className="bg-surface-canvas rounded-lg p-10">
-            <h2 className="text-2xl font-medium text-content-neutral-primary mb-6">Similar Items you might like</h2>
+            <h2 className="text-xl md:text-2xl font-medium text-content-neutral-primary mb-6">Similar Items you might like</h2>
             {similarProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {similarProducts.map((similarProduct) => (

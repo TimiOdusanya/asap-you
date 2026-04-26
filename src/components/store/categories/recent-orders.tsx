@@ -126,7 +126,7 @@ const RecentOrders = () => {
     <div className='bg-surface-canvas'>
       <div className="max-w-[90%] mx-auto py-12 sm:py-16 lg:py-20">
         <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <h1 className='text-xl sm:text-2xl lg:text-[28px] font-semibold text-content-neutral-primary'>Recent Orders</h1>
+          <h1 className='text-lg sm:text-xl md:text-2xl lg:text-[28px] font-semibold text-content-neutral-primary'>Recent Orders</h1>
           
           {/* Navigation Arrows */}
           <div className="flex gap-2">
@@ -168,10 +168,10 @@ const RecentOrders = () => {
 
                       <div className="space-y-2 sm:space-y-3">
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="text-base sm:text-lg font-normal text-content-neutral-primary truncate">
+                          <h3 className="text-sm sm:text-base md:text-lg font-normal text-content-neutral-primary truncate">
                             {order.name}
                           </h3>
-                          <span className="text-base sm:text-lg font-normal text-content-neutral-primary shrink-0">
+                          <span className="text-sm sm:text-base md:text-lg font-normal text-content-neutral-primary shrink-0">
                             {order.price}
                           </span>
                         </div>

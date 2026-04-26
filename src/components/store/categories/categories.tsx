@@ -172,7 +172,7 @@ const Categories  = () => {
   return (
     <div className="max-w-[90%] mx-auto py-8 sm:py-10 space-y-12 sm:space-y-16 lg:space-y-20">
         <div className="flex flex-col space-y-4 sm:space-y-6">
-            <h1 className='text-content-neutral-primary text-xl sm:text-2xl md:text-3xl font-medium'>Shop by Categories</h1>
+            <h1 className='text-content-neutral-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium'>Shop by Categories</h1>
             <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-3 sm:gap-4">
                 {categories.map((category) => (
                     <Link
@@ -197,7 +197,7 @@ const Categories  = () => {
 
 
         <div className='space-y-4 sm:space-y-6'>
-        <h1 className='text-content-neutral-primary text-xl sm:text-2xl md:text-3xl font-medium'>Top Picks Near You</h1>
+        <h1 className='text-content-neutral-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium'>Top Picks Near You</h1>
             <div className="flex gap-3 sm:gap-5 mb-6 sm:mb-8 overflow-x-auto pb-2 -mx-1 px-1">
             {filters.map((category) => (
                 <button
@@ -227,7 +227,7 @@ const Categories  = () => {
                         </div>
 
                         <div className="py-3 sm:py-4 space-y-1.5 sm:space-y-2">
-                            <h3 className="text-base sm:text-lg font-normal text-content-neutral-primary truncate">
+                            <h3 className="text-sm sm:text-base md:text-lg font-normal text-content-neutral-primary truncate">
                                 {store.name}
                             </h3>
 

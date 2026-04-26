@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
         </div>
         
         <div className="flex-1 min-w-0 space-y-1">
-          <h3 className="text-lg font-normal text-content-neutral-primary truncate">{product.name}</h3>
+          <h3 className="text-base md:text-lg font-normal text-content-neutral-primary truncate">{product.name}</h3>
           <div className="text-sm text-content-positive flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
           <div className="flex items-center mt-1">
             <div className="flex items-center space-x-2">
@@ -68,9 +68,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
         <div className="text-right">
           <div className="flex items-center space-x-2">
             {isDiscounted && (
-             <span className="text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
+             <span className="text-sm md:text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
             )}
-             <span className="text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
+             <span className="text-base md:text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
           </div>
         </div>
       </div>

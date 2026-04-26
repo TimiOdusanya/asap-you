@@ -152,7 +152,7 @@ export function CustomerOtpVerifyForm({
     >
       <div>
         <h3
-          className="text-center text-xl font-semibold sm:text-3xl"
+          className="text-center text-lg font-semibold sm:text-2xl md:text-3xl"
           style={authBrandStyle}
         >
           Verify your email
@@ -192,7 +192,7 @@ export function CustomerOtpVerifyForm({
                 onPaste={handlePaste}
                 disabled={isVerifying}
                 className={cn(
-                  "flex size-12 shrink-0 rounded-xl border-2 bg-[var(--surface-subtle)] text-center text-lg font-semibold tabular-nums text-content-neutral-primary shadow-sm outline-none transition-[border-color,box-shadow] sm:size-14 sm:text-2xl md:size-16 md:text-3xl",
+                  "flex size-12 shrink-0 rounded-xl border-2 bg-[var(--surface-subtle)] text-center text-base font-semibold tabular-nums text-content-neutral-primary shadow-sm outline-none transition-[border-color,box-shadow] sm:size-14 sm:text-xl md:size-16 md:text-2xl lg:text-3xl",
                   "border-border-muted focus:border-surface-brand focus:ring-2 focus:ring-surface-brand/35",
                   hasErrorStyle && "border-destructive"
                 )}

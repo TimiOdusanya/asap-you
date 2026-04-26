@@ -129,7 +129,7 @@ const VendorSidebar = ({ mobileOpen = false, onClose }: VendorSidebarProps) => {
 
   return (
     <>
-      <aside className="hidden lg:flex w-[220px] shrink-0 flex-col min-h-screen">
+      <aside className="hidden h-full w-[220px] shrink-0 flex-col overflow-y-auto lg:flex">
         <SidebarContent />
       </aside>
 

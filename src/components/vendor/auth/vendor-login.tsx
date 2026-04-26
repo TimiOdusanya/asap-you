@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { vendorLogin } from "@/services/vendor/vendor.api";
 import { getApiErrorMessage, toastApiSuccessMessage } from "@/lib/toast-api";
+import { postLoginPathForRole } from "@/lib/auth-redirect";
 import VendorAuthBg from "./vendor-auth-bg";
 
 const inputWithIcon =
@@ -37,7 +38,11 @@ const VendorLogin = () => {
     onSuccess: (res) => {
       toastApiSuccessMessage(res.message);
       setSession(res.data.token, res.data.user);
-      router.push("/vendor/dashboard");
+      const path = postLoginPathForRole(res.data.user.role);
+      if (path !== "/vendor/dashboard") {
+        toast.info("Signed in with a different account type. Taking you to the right place.");
+      }
+      router.push(path);
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err));

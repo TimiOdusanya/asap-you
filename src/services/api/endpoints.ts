@@ -10,6 +10,11 @@ export const VENDOR_ENDPOINTS = {
   LOGIN: "/v1/auth/login",
 } as const;
 
+export const RIDER_ENDPOINTS = {
+  REGISTER: "/v1/auth/register-rider",
+  LOGIN: "/v1/auth/login",
+} as const;
+
 /** If the backend uses a versioned path (e.g. /v1/address), change only this value. */
 export const ADDRESS_ENDPOINTS = {
   LIST: "/v1/address",

@@ -21,6 +21,7 @@ import {
   getApiErrorMessage,
   toastApiSuccessMessage,
 } from "@/lib/toast-api";
+import { postLoginPathForRole } from "@/lib/auth-redirect";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -57,7 +58,7 @@ export function CustomerAuthDialog() {
     mutationFn: (body: { email: string; password: string }) => login(body),
     onSuccess: (res, variables) => {
       toastApiSuccessMessage(res.message);
-      const needsOtp = res.data.otpVerified === false;
+      const needsOtp = res.data.user.otpVerified === false;
       setSession(res.data.token, res.data.user);
       if (needsOtp) {
         pendingAfterRegisterRef.current = {
@@ -69,7 +70,7 @@ export function CustomerAuthDialog() {
         return;
       }
       close();
-      router.push("/store");
+      router.push(postLoginPathForRole(res.data.user.role));
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err));
@@ -102,8 +103,10 @@ export function CustomerAuthDialog() {
       if (payload?.token && payload?.user) {
         setSession(payload.token, payload.user);
         pendingAfterRegisterRef.current = null;
-        router.push("/store");
-        openLocation();
+        router.push(postLoginPathForRole(payload.user.role));
+        if (payload.user.role === "customer") {
+          openLocation();
+        }
         return;
       }
 
@@ -115,8 +118,10 @@ export function CustomerAuthDialog() {
           });
           setSession(logged.data.token, logged.data.user);
           pendingAfterRegisterRef.current = null;
-          router.push("/store");
-          openLocation();
+          router.push(postLoginPathForRole(logged.data.user.role));
+          if (logged.data.user.role === "customer") {
+            openLocation();
+          }
         } catch (e) {
           toast.error(getApiErrorMessage(e));
           pendingAfterRegisterRef.current = null;
@@ -298,7 +303,8 @@ export function CustomerAuthDialog() {
             <CustomerLocationForm
               onDone={() => {
                 close();
-                router.push("/store");
+                const u = useAuthStore.getState().user;
+                router.push(u ? postLoginPathForRole(u.role) : "/store");
               }}
             />
           ) : null}

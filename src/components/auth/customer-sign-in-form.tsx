@@ -51,7 +51,7 @@ export function CustomerSignInForm({
     >
       <div>
         <h3
-          className="text-center text-xl font-semibold sm:text-3xl"
+          className="text-center text-lg font-semibold sm:text-2xl md:text-3xl"
           style={authBrandStyle}
         >
           Sign in to Asap You

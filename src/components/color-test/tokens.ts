@@ -255,7 +255,7 @@ export const USAGE_PATTERNS: UsagePattern[] = [
   {
     title: "Outline / secondary",
     description: "Green outline for location-style actions (see auth flows).",
-    exampleClass: "border-[#4CAF50] text-[#4CAF50]",
+    exampleClass: "border-surface-brand text-surface-brand",
     children: "button-outline",
   },
   {

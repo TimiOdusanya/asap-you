@@ -80,6 +80,8 @@
   --surface-brand-soft: #d7fed8;
   --surface-brand-tint: #f9fed9;
   --surface-forest: #193a1b;
+  /* Feature cards on vendor “From Your Storefront…” section */
+  --surface-forest-card: #112712;
   --surface-forest-deep: #0f2310;
 
   /* Borders & dividers */
@@ -247,6 +249,7 @@
   --color-surface-brand-soft: var(--surface-brand-soft);
   --color-surface-brand-tint: var(--surface-brand-tint);
   --color-surface-forest: var(--surface-forest);
+  --color-surface-forest-card: var(--surface-forest-card);
   --color-surface-forest-deep: var(--surface-forest-deep);
 
   --color-border-subtle: var(--border-subtle);

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -19,16 +20,29 @@ const roles = {
   rider: { label: "Rider", path: "/rider" },
 } as const;
 
-type RoleKey = keyof typeof roles;
+export type RoleKey = keyof typeof roles;
+export type NavLink = { label: string; href: string };
 
-const navLinks = [
+const defaultNavLinks = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Pricing", href: "#pricing" },
   { label: "Services", href: "#services" },
   { label: "Blog", href: "#blog" },
 ];
 
-export function RoleSwitcher({ current }: { current: RoleKey }) {
+export type NavbarVariant = "default" | "inverted";
+
+interface RoleSwitcherProps {
+  current: RoleKey;
+  navLinks?: { label: string; href: string }[];
+  variant?: NavbarVariant;
+}
+
+export function RoleSwitcher({
+  current,
+  navLinks = defaultNavLinks,
+  variant = "default",
+}: RoleSwitcherProps) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -47,52 +61,88 @@ export function RoleSwitcher({ current }: { current: RoleKey }) {
     router.push(roles[key].path);
   };
 
+  const isInverted = variant === "inverted";
+  const linkClass = cn(
+    "font-normal leading-[100%] whitespace-nowrap transition-colors",
+    "text-sm sm:text-base lg:text-lg xl:text-xl",
+    isInverted
+      ? "text-content-on-dark-section hover:text-white"
+      : "text-content-neutral-secondary"
+  );
+  const selectTriggerClass = cn(
+    "w-[130px] min-h-11 flex-shrink-0 rounded-3xl border px-4 py-5 sm:py-6",
+    "font-normal text-sm sm:text-base leading-[100%]",
+    isInverted
+      ? "border-white/40 bg-white/5 text-content-on-dark-section data-[state=open]:ring-white/20"
+      : "border border-primary text-content-neutral-secondary"
+  );
+  const menuButtonClass = cn(
+    "inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors",
+    isInverted
+      ? "border-white/50 text-content-on-dark-section hover:bg-white/10"
+      : "border border-primary text-content-neutral-primary"
+  );
+  const logoClass =
+    "h-9 w-auto cursor-pointer sm:h-11 lg:h-[62px]";
+
   return (
-    <div className="flex justify-between items-center max-w-[90%] lg:max-w-[85%] mx-auto pt-4 sm:pt-6">
-      <Link href="/" className="cursor-pointer">
-        <Image
-          src="/images/logo.svg"
-          alt="logo"
-          height={62}
-          width={90}
-          className="h-9 w-auto sm:h-11 lg:h-[62px] cursor-pointer"
-        />
-      </Link>
+    <>
+      <div className="w-full">
+        <div
+          className={cn(
+            "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8",
+            "pt-4 sm:pt-5 lg:pt-6 pb-3 sm:pb-4"
+          )}
+        >
+          <div className="flex min-h-12 items-center justify-between gap-3 sm:min-h-14 sm:gap-4">
+            <Link href="/" className="shrink-0 self-center">
+              <Image
+                src="/images/logo.svg"
+                alt="Rushly"
+                height={62}
+                width={90}
+                className={logoClass}
+              />
+            </Link>
 
-      <div className="hidden gap-[27px] lg:flex">
-        {navLinks.map((link) => (
-          <Link
-            key={link.label}
-            href={link.href}
-            className="text-content-neutral-secondary font-normal text-xl leading-[100%]"
-          >
-            {link.label}
-          </Link>
-        ))}
+            <nav
+              className="hidden min-w-0 flex-1 items-center justify-center gap-6 px-2 lg:flex xl:gap-10 2xl:gap-12"
+              aria-label="Page sections"
+            >
+              {navLinks.map((link) => (
+                <Link key={link.label} href={link.href} className={linkClass}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-3">
+              <div className="hidden lg:block">
+                <Select value={current} onValueChange={handleRoleChange}>
+                  <SelectTrigger className={selectTriggerClass}>
+                    <SelectValue placeholder="Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="customer">Customer</SelectItem>
+                    <SelectItem value="vendor">Vendor</SelectItem>
+                    <SelectItem value="rider">Rider</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <button
+                type="button"
+                aria-label="Open menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(true)}
+                className={cn("lg:hidden", menuButtonClass)}
+              >
+                <Menu className="size-5" aria-hidden />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="hidden lg:block">
-        <Select value={current} onValueChange={handleRoleChange}>
-          <SelectTrigger className="w-[130px] rounded-3xl py-6 px-4 border border-primary text-content-neutral-secondary font-normal text-base leading-[100%]">
-            <SelectValue placeholder="Role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="customer">Customer</SelectItem>
-            <SelectItem value="vendor">Vendor</SelectItem>
-            <SelectItem value="rider">Rider</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <button
-        type="button"
-        aria-label="Open menu"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(true)}
-        className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary text-content-neutral-primary"
-      >
-        <Menu className="size-5" aria-hidden />
-      </button>
 
       {menuOpen ? (
         <div
@@ -109,7 +159,7 @@ export function RoleSwitcher({ current }: { current: RoleKey }) {
             <div className="flex items-center justify-between">
               <Image
                 src="/images/logo.svg"
-                alt="logo"
+                alt="Rushly"
                 height={40}
                 width={60}
                 className="h-9 w-auto"
@@ -142,7 +192,7 @@ export function RoleSwitcher({ current }: { current: RoleKey }) {
                 Switch role
               </span>
               <Select value={current} onValueChange={handleRoleChange}>
-                <SelectTrigger className="w-full rounded-2xl py-5 px-4 border border-primary text-content-neutral-secondary font-normal text-base leading-[100%]">
+                <SelectTrigger className="w-full rounded-2xl border border-primary py-5 px-4 text-base font-normal text-content-neutral-secondary leading-[100%]">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -155,6 +205,6 @@ export function RoleSwitcher({ current }: { current: RoleKey }) {
           </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }

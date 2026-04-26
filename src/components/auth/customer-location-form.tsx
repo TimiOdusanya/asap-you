@@ -211,8 +211,7 @@ export function CustomerLocationForm({
           <Button
             type="button"
             variant="outline"
-            className="h-12 w-full rounded-full border-[#4CAF50] text-[#4CAF50] hover:bg-[#4CAF50]/10 mt-2"
-            style={{ color: "#4CAF50", borderColor: "#4CAF50" }}
+            className="mt-2 h-12 w-full rounded-full border-surface-brand text-surface-brand hover:bg-surface-brand/10"
             onClick={handleUseCurrentLocation}
             disabled={geoLoading || saveMutation.isPending}
           >

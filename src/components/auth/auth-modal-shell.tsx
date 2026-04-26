@@ -6,8 +6,6 @@ import { DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { X } from "@phosphor-icons/react";
 
-const BRAND = "#4CAF50";
-
 const shellPadding = "p-6 sm:p-8";
 
 export function AuthModalShell({
@@ -32,7 +30,7 @@ export function AuthModalShell({
   const promoPanel = (
     <div
       className="relative hidden md:flex min-h-[200px] flex-1 flex-col md:min-h-[520px] md:max-w-[45%]"
-      style={{ backgroundColor: "#0f2310" }}
+      style={{ backgroundColor: "var(--surface-forest-deep)" }}
     >
       <Image
         src="/images/auth/auth-bg.svg"
@@ -103,5 +101,5 @@ export function AuthModalShell({
   );
 }
 
-export const authBrandStyle = { color: BRAND } as const;
-export const authBrandBg = { backgroundColor: BRAND } as const;
+export const authBrandStyle = { color: "var(--surface-brand)" } as const;
+export const authBrandBg = { backgroundColor: "var(--surface-brand)" } as const;

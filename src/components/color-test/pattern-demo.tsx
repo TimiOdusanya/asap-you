@@ -16,8 +16,7 @@ export function PatternDemo({ pattern }: { pattern: UsagePattern }) {
         <Button
           type="button"
           variant="outline"
-          className="h-12 rounded-full border-[#4CAF50] text-[#4CAF50] hover:bg-[#4CAF50]/10"
-          style={{ color: "#4CAF50", borderColor: "#4CAF50" }}
+          className="h-12 rounded-full border-surface-brand text-surface-brand hover:bg-surface-brand/10"
         >
           Use current location
         </Button>

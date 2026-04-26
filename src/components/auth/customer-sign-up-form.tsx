@@ -22,10 +22,10 @@ import {
 } from "@/lib/validation/auth-schemas";
 
 const inputFieldClass =
-  "h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] pl-11";
+  "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] pl-11 text-sm sm:text-base";
 const inputPasswordFieldClass = `${inputFieldClass} pr-11`;
 const inputFieldClassPlain =
-  "h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4";
+  "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4 text-sm sm:text-base";
 const errorRingClass =
   "ring-1 ring-destructive/50 focus-visible:ring-destructive/50";
 
@@ -62,11 +62,11 @@ export function CustomerSignUpForm({
     <form
       noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className="flex min-h-0 w-full flex-1 flex-col justify-center gap-4 p-6"
+      className="flex min-h-0 w-full flex-1 flex-col justify-center gap-3 p-4 sm:p-6"
     >
       <div>
         <h3
-          className="text-center text-xl font-semibold sm:text-3xl"
+          className="text-center text-lg font-semibold sm:text-2xl"
           style={authBrandStyle}
         >
           Create an Account
@@ -98,9 +98,9 @@ export function CustomerSignUpForm({
       </div>
 
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="su-fn" className="text-gray-500">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="su-fn" className="text-gray-500 text-xs sm:text-sm">
             First name
           </Label>
           <Input
@@ -117,8 +117,8 @@ export function CustomerSignUpForm({
           />
           <FieldError message={errors.firstName?.message} id="su-fn-error" />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="su-ln" className="text-gray-500">
+        <div className="space-y-1">
+          <Label htmlFor="su-ln" className="text-gray-500 text-xs sm:text-sm">
             Last name
           </Label>
           <Input
@@ -137,8 +137,8 @@ export function CustomerSignUpForm({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="su-email" className="text-gray-500">
+      <div className="space-y-1">
+        <Label htmlFor="su-email" className="text-gray-500 text-xs sm:text-sm">
           Email
         </Label>
         <div className="relative">
@@ -157,8 +157,8 @@ export function CustomerSignUpForm({
         <FieldError message={errors.email?.message} id="su-email-error" />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="su-phone" className="text-gray-500">
+      <div className="space-y-1">
+        <Label htmlFor="su-phone" className="text-gray-500 text-xs sm:text-sm">
           Phone number
         </Label>
         <div className="relative">
@@ -177,8 +177,8 @@ export function CustomerSignUpForm({
         <FieldError message={errors.phone?.message} id="su-phone-error" />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="su-pw" className="text-gray-500">
+      <div className="space-y-1">
+        <Label htmlFor="su-pw" className="text-gray-500 text-xs sm:text-sm">
           Password
         </Label>
         <div className="relative">
@@ -213,8 +213,8 @@ export function CustomerSignUpForm({
         <FieldError message={errors.password?.message} id="su-pw-error" />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="su-pw2" className="text-gray-500">
+      <div className="space-y-1">
+        <Label htmlFor="su-pw2" className="text-gray-500 text-xs sm:text-sm">
           Confirm password
         </Label>
         <div className="relative">
@@ -258,11 +258,11 @@ export function CustomerSignUpForm({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-4 pt-2">
+      <div className="flex flex-col items-center gap-3 pt-1">
         <Button
           type="submit"
           disabled={isPending}
-          className="h-12 w-[104px] max-w-[200px] rounded-full text-content-on-brand"
+          className="h-10 sm:h-12 w-[104px] max-w-[200px] rounded-full text-content-on-brand text-sm sm:text-base"
           style={authBrandBg}
         >
           {isPending ? (

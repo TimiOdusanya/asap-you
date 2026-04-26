@@ -227,6 +227,7 @@ export function CustomerAuthDialog() {
       </Button>
     ) : null;
 
+
   const dialogTitle =
     view === "location"
       ? "Delivery location"
@@ -254,6 +255,7 @@ export function CustomerAuthDialog() {
           leftTitle={leftCopy.title}
           leftSubtitle={leftCopy.subtitle}
           leftFooter={leftFooter}
+
           showCloseButton={view !== "verifyOtp"}
         >
           {view === "signIn" ? (

@@ -1,14 +1,5 @@
-import React from "react";
+import RiderPage from "@/components/landing-page/rider/rider-page";
 
 export default function RiderLandingPage() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-canvas px-6">
-      <h1 className="text-2xl font-semibold text-content-neutral-primary">
-        Rider
-      </h1>
-      <p className="mt-2 text-center text-content-neutral-secondary">
-        Rider experience will connect here when APIs are ready.
-      </p>
-    </div>
-  );
+  return <RiderPage />;
 }

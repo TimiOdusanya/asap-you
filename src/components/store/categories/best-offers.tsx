@@ -46,7 +46,7 @@ const CountdownCell = ({
     >
       <span
         className={`
-          text-xl sm:text-2xl lg:text-3xl font-bold
+          text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold
           transition-all duration-200
           ${isAnimating ? 'text-surface-brand-tint' : 'text-primary-foreground'}
         `}
@@ -121,16 +121,16 @@ const BestOffers = () => {
         <div className="flex flex-col lg:flex-row lg:justify-around lg:items-center gap-12 lg:gap-10">
           <div className="flex flex-col gap-8 sm:gap-10 justify-center items-center">
             <div className="flex flex-col gap-3 sm:gap-4 justify-center items-center text-center">
-              <h1 className="text-primary text-lg sm:text-xl font-normal">
+              <h1 className="text-primary text-base sm:text-lg md:text-xl font-normal">
                 Deals of The Day
               </h1>
-              <h2 className="text-content-on-brand text-3xl sm:text-4xl lg:text-[40px] font-semibold max-w-[400px] leading-[110%]">
+              <h2 className="text-content-on-brand text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-semibold max-w-[400px] leading-[110%]">
                 Grab The Best Offer This Week
               </h2>
             </div>
 
             <div className="flex flex-col gap-4 justify-center items-center">
-              <span className="text-content-on-brand text-lg sm:text-xl lg:text-2xl font-normal text-center">
+              <span className="text-content-on-brand text-base sm:text-lg md:text-xl lg:text-2xl font-normal text-center">
                 Hurry up! Offers end in:
               </span>
               <div className="flex gap-3 sm:gap-5 lg:gap-6">
@@ -206,10 +206,10 @@ const BestOffers = () => {
                 </div>
 
                 <div className="flex flex-col justify-center items-center gap-1 sm:gap-2 text-center">
-                  <h3 className="text-base sm:text-lg font-medium text-content-neutral-muted group-hover:text-content-neutral-tertiary transition-colors duration-300">
+                  <h3 className="text-sm sm:text-base md:text-lg font-medium text-content-neutral-muted group-hover:text-content-neutral-tertiary transition-colors duration-300">
                     {item.title}
                   </h3>
-                  <h3 className="text-content-neutral-primary text-lg sm:text-xl font-semibold group-hover:text-content-neutral-tertiary transition-colors duration-300">
+                  <h3 className="text-content-neutral-primary text-base sm:text-lg md:text-xl font-semibold group-hover:text-content-neutral-tertiary transition-colors duration-300">
                     {item.subtitle}
                   </h3>
                 </div>
@@ -218,7 +218,7 @@ const BestOffers = () => {
                   <span className="text-content-neutral-muted text-sm font-normal line-through opacity-70">
                     {item.oldPrice}
                   </span>
-                  <span className="text-content-negative-strong text-base sm:text-lg font-bold bg-red-500/10 px-2 py-1 rounded-md">
+                  <span className="text-content-negative-strong text-sm sm:text-base md:text-lg font-bold bg-red-500/10 px-2 py-1 rounded-md">
                     {item.newPrice}
                   </span>
                 </div>

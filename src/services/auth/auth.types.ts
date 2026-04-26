@@ -26,6 +26,7 @@ export interface AuthUser {
   preferences: UserPreferences;
   emailVerified: boolean;
   phoneVerified: boolean;
+  otpVerified?: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

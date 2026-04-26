@@ -2,21 +2,14 @@
 
 import React, { useState } from "react";
 import { ListIcon } from "@phosphor-icons/react";
-import VendorSidebar from "@/components/vendor/dashboard/vendor-sidebar";
+import RiderSidebar from "@/components/rider/dashboard/rider-sidebar";
 
-export default function VendorDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RiderDashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
-      <VendorSidebar
-        mobileOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <RiderSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <header className="flex shrink-0 items-center gap-3 border-b border-border-muted bg-white px-4 py-3 lg:hidden">
@@ -29,7 +22,6 @@ export default function VendorDashboardLayout({
           </button>
           <span className="text-base font-semibold text-content-neutral-primary">Dashboard</span>
         </header>
-
         <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>

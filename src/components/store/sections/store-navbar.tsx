@@ -6,6 +6,7 @@ import Link from "next/link";
 import { MapPin, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ADDRESS_LIST_QUERY_KEY,
   listAddresses,
@@ -32,11 +33,9 @@ const StoreNavbar = () => {
 
   const defaultFromApi = pickDefaultAddress(data ?? []);
   const displayAddress = selectedAddress ?? defaultFromApi;
-  const labelText = isLoading
-    ? "Loading…"
-    : displayAddress
-      ? formatAddressDisplay(displayAddress)
-      : "Add new address";
+  const labelText = displayAddress
+    ? formatAddressDisplay(displayAddress)
+    : "Add new address";
 
   React.useEffect(() => {
     if (!menuOpen) return;
@@ -66,32 +65,47 @@ const StoreNavbar = () => {
             />
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 lg:gap-10 min-w-0">
+          <div className="hidden md:flex items-center gap-6 lg:gap-12 min-w-0">
             <button
               type="button"
               onClick={openLocation}
               className="flex max-w-[220px] min-w-0 items-center gap-2 rounded-md border-none bg-transparent py-6 px-4 text-left text-base font-normal leading-[100%] text-content-neutral-primary cursor-pointer"
             >
               <MapPin className="size-5 shrink-0 text-content-link" aria-hidden />
-              <span className="truncate">{labelText}</span>
+              {isLoading ? (
+                <Skeleton className="h-4 w-[140px] rounded-md" />
+              ) : (
+                <span className="truncate">{labelText}</span>
+              )}
             </button>
-            <Input
-              type="text"
-              placeholder="Search Asap you"
-              className="w-[220px] lg:w-[300px] rounded-sm py-6 px-4 border-none bg-surface-input-dim text-content-on-brand font-normal text-base leading-[100%] placeholder:text-white/75"
-            />
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-content-neutral-muted"
+                aria-hidden
+              />
+              <Input
+                type="text"
+                placeholder="Search Asap you"
+                className="w-[220px] lg:w-[300px] rounded-sm border-none bg-surface-subtle py-6 pl-10 pr-4 text-base font-normal leading-[100%] text-content-neutral-muted placeholder:text-content-neutral-muted"
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
-            <div className="hidden md:flex justify-center items-center bg-primary rounded-full h-13 w-13">
-              <UserRound className="text-primary-foreground" size={24} />
-            </div>
-            <div className="flex justify-center items-center bg-primary rounded-full h-10 w-10 md:h-13 md:w-13">
-              <ShoppingCart
-                className="text-primary-foreground size-5 md:size-6"
-                aria-hidden
-              />
-            </div>
+            <Link
+              href="/store/profile"
+              className="hidden md:inline-flex size-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90"
+              aria-label="Your profile"
+            >
+              <UserRound size={24} aria-hidden />
+            </Link>
+            <Link
+              href="/store/cart"
+              className="inline-flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 md:size-[52px]"
+              aria-label="Shopping cart"
+            >
+              <ShoppingCart className="size-5 md:size-6" aria-hidden />
+            </Link>
             <button
               type="button"
               aria-label="Open menu"
@@ -111,20 +125,24 @@ const StoreNavbar = () => {
             className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-border-muted bg-transparent py-3 px-3 text-left text-sm font-normal leading-tight text-content-neutral-primary"
           >
             <MapPin className="size-4 shrink-0 text-content-link" aria-hidden />
-            <span className="truncate">{labelText}</span>
+            {isLoading ? (
+              <Skeleton className="h-3 w-[120px] rounded-md" />
+            ) : (
+              <span className="truncate">{labelText}</span>
+            )}
           </button>
         </div>
 
         <div className="mt-2 md:hidden">
           <div className="relative">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-white/80"
+              className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-content-neutral-muted"
               aria-hidden
             />
             <Input
               type="text"
               placeholder="Search Asap you"
-              className="w-full rounded-sm py-5 pl-9 pr-4 border-none bg-surface-input-dim text-content-on-brand font-normal text-sm leading-[100%] placeholder:text-white/75"
+              className="w-full rounded-sm border-none bg-surface-input-dim py-5 pl-9 pr-4 text-sm font-normal leading-[100%] text-content-neutral-muted placeholder:text-content-neutral-muted"
             />
           </div>
         </div>
@@ -177,20 +195,22 @@ const StoreNavbar = () => {
             </button>
 
             <nav className="flex flex-col gap-1">
-              <button
-                type="button"
+              <Link
+                href="/store/profile"
+                onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-content-neutral-primary hover:bg-surface-muted"
               >
                 <UserRound className="size-5" aria-hidden />
                 Account
-              </button>
-              <button
-                type="button"
+              </Link>
+              <Link
+                href="/store/cart"
+                onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-content-neutral-primary hover:bg-surface-muted"
               >
                 <ShoppingCart className="size-5" aria-hidden />
                 Cart
-              </button>
+              </Link>
             </nav>
           </div>
         </div>

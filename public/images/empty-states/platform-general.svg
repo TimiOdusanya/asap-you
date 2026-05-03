@@ -1,0 +1,31 @@
+<svg width="700" height="400" viewBox="0 0 700 400" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="es-plat-bg" x1="0" y1="0" x2="700" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#f9fafb"/>
+      <stop offset="1" stop-color="#f9fed9"/>
+    </linearGradient>
+    <radialGradient id="es-plat-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(350 200) rotate(90) scale(200 160)">
+      <stop stop-color="#d7fed8" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#f9fed9" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="700" height="400" fill="url(#es-plat-bg)"/>
+  <circle cx="350" cy="200" r="160" fill="url(#es-plat-glow)"/>
+  <rect x="178" y="148" width="120" height="96" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="2" opacity="0.95"/>
+  <rect x="290" y="128" width="120" height="116" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+  <rect x="402" y="156" width="120" height="88" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="2" opacity="0.95"/>
+  <rect x="308" y="156" width="84" height="6" rx="3" fill="#f0f0f0"/>
+  <rect x="308" y="170" width="64" height="6" rx="3" fill="#f0f0f0"/>
+  <rect x="308" y="184" width="72" height="6" rx="3" fill="#f0f0f0"/>
+  <circle cx="350" cy="200" r="52" fill="#ffffff" stroke="#d7fed8" stroke-width="3"/>
+  <circle cx="350" cy="200" r="44" stroke="#4caf50" stroke-width="2" stroke-dasharray="10 8" fill="none" opacity="0.55"/>
+  <path d="M334 200 L346 212 L374 184" stroke="#4caf50" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
+  <circle cx="350" cy="200" r="6" fill="#4caf50" fill-opacity="0.25"/>
+  <path d="M178 196 L148 200 L178 204" stroke="#d2d4c7" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M522 196 L552 200 L522 204" stroke="#d2d4c7" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="130" cy="120" r="5" fill="#4caf50" fill-opacity="0.18"/>
+  <circle cx="570" cy="268" r="7" fill="#4caf50" fill-opacity="0.14"/>
+  <circle cx="600" cy="112" r="4" fill="#e2725b" fill-opacity="0.25"/>
+</svg>

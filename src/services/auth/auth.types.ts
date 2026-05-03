@@ -1,4 +1,4 @@
-export type UserRole = "customer" | "vendor" | "rider";
+export type UserRole = "customer" | "vendor" | "rider" | "admin";
 
 export interface UserProfile {
   firstName: string;

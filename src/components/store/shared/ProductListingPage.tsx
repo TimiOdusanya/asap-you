@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {  List, Filter, LayoutGrid, X, ArrowDown } from 'lucide-react'
 import FilterSidebar from './FilterSidebar'
@@ -8,23 +8,38 @@ import ProductCard from './ProductCard'
 import { Product } from './ProductCard'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { EmptyState, type EmptyStateAction } from '@/components/ui/empty-state'
+import { ProductGridSkeleton } from '@/components/store/skeletons/product-grid-skeleton'
+import { EMPTY_STATE_ILLUSTRATION } from '@/lib/empty-state-illustrations'
 
 interface ProductListingPageProps {
   category: string
   products: Product[]
   breadcrumbs: string[]
+  isLoading?: boolean
+  emptyState?: {
+    title: string
+    description: string
+    action?: EmptyStateAction
+  }
 }
 
 const ProductListingPage: React.FC<ProductListingPageProps> = ({ 
   category, 
   products, 
-  breadcrumbs 
+  breadcrumbs,
+  isLoading = false,
+  emptyState,
 }) => {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [sortBy, setSortBy] = useState('default')
   const [filteredProducts, setFilteredProducts] = useState(products)
+
+  useEffect(() => {
+    setFilteredProducts(products)
+  }, [products])
 
   const handleProductClick = (product: Product) => {
     router.push(`/store/${category.toLowerCase()}/${product.id}`)
@@ -142,38 +157,52 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
               </div>
             )}
 
-            {/* Active Filters */}
-            <div className="flex flex-col gap-2 mb-4">
-              {/* Row 1: label + clear all */}
+            {!isLoading && filteredProducts.length > 0 ? (
+            <div className="mb-4 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-content-neutral-secondary">Active Filter</span>
                 <Button
                   variant="link"
-                  className="text-xs sm:text-sm text-content-negative underline hover:text-content-warning p-0 h-auto"
+                  className="h-auto p-0 text-xs text-content-negative underline hover:text-content-warning sm:text-sm"
                 >
                   Clear all
                 </Button>
               </div>
-              {/* Row 2: chips */}
               <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
+                <span className="inline-flex cursor-pointer items-center rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground sm:text-sm">
                   Dailys <X className="ml-1" size={14}/>
                 </span>
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
+                <span className="inline-flex cursor-pointer items-center rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground sm:text-sm">
                   Dairy & Eggs <X className="ml-1" size={14}/>
                 </span>
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-primary text-primary-foreground cursor-pointer">
+                <span className="inline-flex cursor-pointer items-center rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground sm:text-sm">
                   New Arrivals <X className="ml-1" size={14}/>
                 </span>
               </div>
             </div>
+            ) : null}
 
-            {/* Products Grid/List */}
-            <div className={
-              viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-                : 'space-y-4'
-            }>
+            {isLoading ? (
+            <ProductGridSkeleton viewMode={viewMode} />
+            ) : filteredProducts.length === 0 ? (
+            <EmptyState
+              illustrationSrc={EMPTY_STATE_ILLUSTRATION.store}
+              illustrationAlt=""
+              title={emptyState?.title ?? "No products found"}
+              description={
+                emptyState?.description ??
+                "Try a different search or check back later for new arrivals."
+              }
+              action={emptyState?.action ?? { label: "Back to store", href: "/store" }}
+            />
+            ) : (
+            <div
+              className={
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'space-y-4'
+              }
+            >
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -183,13 +212,15 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
                 />
               ))}
             </div>
+            )}
 
-            {/* Load More Button */}
-            <div className="flex justify-center mt-8 ">
+            {!isLoading && filteredProducts.length > 0 ? (
+            <div className="mt-8 flex justify-center">
               <Button className="flex items-center gap-2 px-4">
-                Load More Products <ArrowDown className="w-4 h-4" />
+                Load More Products <ArrowDown className="h-4 w-4" />
               </Button>
             </div>
+            ) : null}
           </div>
         </div>
       </div>

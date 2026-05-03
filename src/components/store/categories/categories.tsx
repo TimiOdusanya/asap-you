@@ -1,59 +1,30 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Clock } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { ShopByCategoriesSection } from '@/components/store/categories/shop-by-categories-section'
+import { buildVendorCategoryTiles } from '@/lib/vendor-category-tiles'
+import {
+  VENDOR_CATEGORIES_QUERY_KEY,
+  fetchVendorCategories,
+} from '@/services/store/vendor-categories.api'
 
 const Categories  = () => {
     const [activeCategory, setActiveCategory] = useState('All Stores')
 
-    const categories = [
-        {
-            id: 1,
-            name: "Restaurant",
-            image: "/images/store/restaurant.svg",
-            url: "/store/bakery"
-        },
-        {
-            id: 2,
-            name: "Supermarket",
-            image: "/images/store/supermarket.svg",
-            url: "/store/supermarkets"
-        },
-        
-        {
-            id: 3,
-            name: "Gas Filling",
-            image: "/images/store/gas-filling.svg",
-            url: "/store/frozen"
-        },
-        {
-            id: 4,
-            name: "Drinks",
-            image: "/images/store/drinks.svg",
-            url: "/store/baby-items"
-        },
-        {
-            id: 5,
-            name: "Pharmacy",
-            image: "/images/store/pharmacy.svg",
-            url: "/store/personal-care"
-        },
-        {
-            id: 6,
-            name: "Packages",
-            image: "/images/store/drink2.svg",
-            url: "/categories/organic"
-        },
-        {
-            id: 7,
-            name: "More",
-            image: "/images/store/pharmacy2.svg",
-            url: "/categories/drinks"
-        },
-        
-    ]
+    const { data: categorySlugs = [], isPending, isError, refetch } = useQuery({
+      queryKey: VENDOR_CATEGORIES_QUERY_KEY,
+      queryFn: fetchVendorCategories,
+      select: (res) =>
+        res.success && Array.isArray(res.data) ? res.data : [],
+    })
+
+    const categoryTiles = useMemo(
+      () => buildVendorCategoryTiles(categorySlugs),
+      [categorySlugs]
+    )
 
   const filters = [
     'All Stores',
@@ -171,33 +142,16 @@ const Categories  = () => {
 
   return (
     <div className="max-w-[90%] mx-auto py-8 sm:py-10 space-y-12 sm:space-y-16 lg:space-y-20">
-        <div className="flex flex-col space-y-4 sm:space-y-6">
-            <h1 className='text-content-neutral-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium'>Shop by Categories</h1>
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-3 sm:gap-4">
-                {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={category.url}
-                      className="cursor-pointer flex flex-col items-center gap-2"
-                    >
-                      <Image
-                        src={category.image}
-                        alt={category.name}
-                        width={100}
-                        height={100}
-                        className="w-full h-auto max-w-[100px]"
-                      />
-                      <span className="text-xs sm:text-sm text-content-neutral-primary text-center sm:hidden">
-                        {category.name}
-                      </span>
-                    </Link>
-                ))}
-            </div>
-        </div>
+        <ShopByCategoriesSection
+          isLoading={isPending}
+          isError={isError}
+          onRetry={() => void refetch()}
+          categories={categoryTiles}
+        />
 
 
         <div className='space-y-4 sm:space-y-6'>
-        <h1 className='text-content-neutral-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium'>Top Picks Near You</h1>
+        <h1 className='text-content-neutral-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium'>All Stores Near You</h1>
             <div className="flex gap-3 sm:gap-5 mb-6 sm:mb-8 overflow-x-auto pb-2 -mx-1 px-1">
             {filters.map((category) => (
                 <button

@@ -8,6 +8,8 @@ export function postLoginPathForRole(role: UserRole): string {
       return "/rider/dashboard";
     case "customer":
       return "/store";
+    case "admin":
+      return "/admin/dashboard";
     default: {
       const _exhaustive: never = role;
       return _exhaustive;

@@ -1,0 +1,29 @@
+<svg width="700" height="400" viewBox="0 0 700 400" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="es-cart-bg" x1="0" y1="0" x2="700" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="0.5" stop-color="#f9fafb"/>
+      <stop offset="1" stop-color="#f9fed9"/>
+    </linearGradient>
+    <linearGradient id="es-cart-metal" x1="240" y1="120" x2="480" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f0f0f0"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="400" fill="url(#es-cart-bg)"/>
+  <circle cx="350" cy="96" r="48" fill="#d7fed8" fill-opacity="0.5"/>
+  <circle cx="350" cy="96" r="32" fill="#4caf50" fill-opacity="0.12"/>
+  <path d="M258 168 L278 168 L292 248 L408 248 L428 168 L448 168" stroke="#d2d4c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M292 248 L286 278 L414 278 L408 248" fill="url(#es-cart-metal)" stroke="#e5e7eb" stroke-width="2"/>
+  <path d="M286 278 L280 298 L420 298 L414 278" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+  <circle cx="312" cy="308" r="14" fill="#f5f2f2" stroke="#d2d4c7" stroke-width="2"/>
+  <circle cx="388" cy="308" r="14" fill="#f5f2f2" stroke="#d2d4c7" stroke-width="2"/>
+  <rect x="302" y="188" width="96" height="52" rx="6" stroke="#4caf50" stroke-width="2" stroke-dasharray="8 6" fill="#f9fed9" fill-opacity="0.6"/>
+  <path d="M318 168 L332 120 L368 120 L382 168" stroke="#9e9e9e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M350 52 L350 88" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+  <circle cx="350" cy="44" r="6" fill="#4caf50" fill-opacity="0.35"/>
+  <path d="M520 140 L540 120 L560 140" stroke="#88ca8a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <path d="M140 200 L160 180 L180 200" stroke="#88ca8a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <rect x="330" y="208" width="40" height="3" rx="1.5" fill="#4caf50" fill-opacity="0.35"/>
+  <rect x="330" y="218" width="28" height="3" rx="1.5" fill="#4caf50" fill-opacity="0.22"/>
+</svg>

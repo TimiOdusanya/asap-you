@@ -8,6 +8,7 @@ export const AUTH_ENDPOINTS = {
 export const VENDOR_ENDPOINTS = {
   REGISTER: "/v1/auth/register-vendor",
   LOGIN: "/v1/auth/login",
+  CATEGORIES: "/v1/vendor/categories",
 } as const;
 
 export const RIDER_ENDPOINTS = {
@@ -19,4 +20,12 @@ export const RIDER_ENDPOINTS = {
 export const ADDRESS_ENDPOINTS = {
   LIST: "/v1/address",
   CREATE: "/v1/address",
+} as const;
+
+export const CATEGORY_ENDPOINTS = {
+  LIST: "/v1/category",
+} as const;
+
+export const PRODUCT_ENDPOINTS = {
+  ALL: "/v1/product/all",
 } as const;

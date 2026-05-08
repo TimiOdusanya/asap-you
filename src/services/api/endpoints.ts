@@ -9,6 +9,8 @@ export const VENDOR_ENDPOINTS = {
   REGISTER: "/v1/auth/register-vendor",
   LOGIN: "/v1/auth/login",
   CATEGORIES: "/v1/vendor/categories",
+  /** GET ?page=&limit=&categories=slug (omit categories for all stores) */
+  LIST: "/v1/vendor",
 } as const;
 
 export const RIDER_ENDPOINTS = {
@@ -28,4 +30,21 @@ export const CATEGORY_ENDPOINTS = {
 
 export const PRODUCT_ENDPOINTS = {
   ALL: "/v1/product/all",
+  /** GET ?similarLimit= */
+  byId: (productId: string) =>
+    `/v1/product/${encodeURIComponent(productId)}`,
+} as const;
+
+export const CART_ENDPOINTS = {
+  GET: "/v1/cart",
+  ADD: "/v1/cart/add",
+  item: (productId: string) =>
+    `/v1/cart/item/${encodeURIComponent(productId)}`,
+  CLEAR: "/v1/cart/clear",
+} as const;
+
+export const WISHLIST_ENDPOINTS = {
+  LIST: "/v1/wishlist",
+  item: (productId: string) =>
+    `/v1/wishlist/${encodeURIComponent(productId)}`,
 } as const;

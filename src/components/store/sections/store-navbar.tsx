@@ -11,8 +11,11 @@ import {
   ADDRESS_LIST_QUERY_KEY,
   listAddresses,
 } from "@/services/address/address.api";
+import { CART_QUERY_KEY, fetchCart } from "@/services/store/cart.api";
+import { useAuthStore } from "@/stores/auth-store";
 import { useCustomerAuthUiStore } from "@/stores/customer-auth-ui-store";
 import { useCustomerDeliveryAddressStore } from "@/stores/customer-delivery-address-store";
+import { useAuthHydrated } from "@/hooks/use-auth-hydrated";
 import {
   formatAddressDisplay,
   pickDefaultAddress,
@@ -24,11 +27,21 @@ const StoreNavbar = () => {
     (s) => s.selectedAddress
   );
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const authHydrated = useAuthHydrated();
+  const token = useAuthStore((s) => s.token);
 
   const { data, isLoading } = useQuery({
     queryKey: ADDRESS_LIST_QUERY_KEY,
     queryFn: listAddresses,
     select: (res) => res.data,
+  });
+
+  const { data: cartItemCount = 0 } = useQuery({
+    queryKey: CART_QUERY_KEY,
+    queryFn: fetchCart,
+    select: (res) =>
+      res.success && res.data ? Math.max(0, res.data.itemCount) : 0,
+    enabled: authHydrated && Boolean(token),
   });
 
   const defaultFromApi = pickDefaultAddress(data ?? []);
@@ -101,10 +114,19 @@ const StoreNavbar = () => {
             </Link>
             <Link
               href="/store/cart"
-              className="inline-flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 md:size-[52px]"
-              aria-label="Shopping cart"
+              className="relative inline-flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 md:size-[52px]"
+              aria-label={
+                cartItemCount > 0
+                  ? `Shopping cart, ${cartItemCount} items`
+                  : "Shopping cart"
+              }
             >
               <ShoppingCart className="size-5 md:size-6" aria-hidden />
+              {cartItemCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-content-warning px-1 text-[10px] font-semibold leading-none text-content-neutral-primary md:text-xs">
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                </span>
+              ) : null}
             </Link>
             <button
               type="button"
@@ -210,6 +232,11 @@ const StoreNavbar = () => {
               >
                 <ShoppingCart className="size-5" aria-hidden />
                 Cart
+                {cartItemCount > 0 ? (
+                  <span className="ml-auto rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                  </span>
+                ) : null}
               </Link>
             </nav>
           </div>

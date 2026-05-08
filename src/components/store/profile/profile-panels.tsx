@@ -1,10 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { AuthUser } from "@/services/auth/auth.types";
 
-export function ProfileAccountPanel() {
+export function ProfileAccountPanel({ user }: { user: AuthUser }) {
+  const { firstName, lastName } = user.profile;
+  const { language, currency } = user.preferences;
+
   return (
     <div className="rounded-2xl border border-border-muted bg-surface-canvas p-6 shadow-sm sm:p-8">
       <h2 className="font-[family-name:var(--font-manrope)] text-lg font-semibold text-content-neutral-primary">
@@ -13,21 +15,35 @@ export function ProfileAccountPanel() {
       <p className="mt-1 text-sm text-content-neutral-secondary">
         Update how we reach you and deliver your orders.
       </p>
+      <p className="mt-2 text-xs text-content-neutral-muted">
+        Language {language.toUpperCase()} · Currency {currency}
+      </p>
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="pf-first">First name</Label>
-          <Input id="pf-first" defaultValue="Amaka" className="rounded-xl" />
+          <Input
+            id="pf-first"
+            key={`first-${user._id}`}
+            defaultValue={firstName}
+            className="rounded-xl"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="pf-last">Last name</Label>
-          <Input id="pf-last" defaultValue="Okafor" className="rounded-xl" />
+          <Input
+            id="pf-last"
+            key={`last-${user._id}`}
+            defaultValue={lastName}
+            className="rounded-xl"
+          />
         </div>
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="pf-email">Email</Label>
           <Input
             id="pf-email"
             type="email"
-            defaultValue="amaka.okafor@email.com"
+            key={`email-${user._id}`}
+            defaultValue={user.email}
             className="rounded-xl"
           />
         </div>
@@ -36,7 +52,8 @@ export function ProfileAccountPanel() {
           <Input
             id="pf-phone"
             type="tel"
-            defaultValue="+234 803 000 0000"
+            key={`phone-${user._id}`}
+            defaultValue={user.phone}
             className="rounded-xl"
           />
         </div>
@@ -187,36 +204,4 @@ export function ProfileReviewsPanel() {
   );
 }
 
-export function ProfileWishlistsPanel() {
-  const items = [
-    { name: "Cold-pressed juice pack", price: "₦3,200", src: "/images/landing/vendor/vendor-hero-4.png" },
-    { name: "Dark chocolate bar", price: "₦1,850", src: "/images/landing/vendor/vendor-hero-1.png" },
-    { name: "Basil plant pot", price: "₦4,400", src: "/images/landing/vendor/vendor-hero-3.png" },
-  ];
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((p) => (
-        <div
-          key={p.name}
-          className="overflow-hidden rounded-2xl border border-border-muted bg-surface-canvas shadow-sm"
-        >
-          <div className="relative aspect-[4/3] bg-surface-muted">
-            <Image src={p.src} alt="" fill className="object-cover" sizes="200px" />
-          </div>
-          <div className="p-4">
-            <p className="font-medium text-content-neutral-primary">{p.name}</p>
-            <p className="mt-1 text-sm font-semibold text-primary">{p.price}</p>
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="mt-3 w-full rounded-full border-border-muted"
-            >
-              <Link href="/store">View in store</Link>
-            </Button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+export { ProfileWishlistsPanel } from "./profile-wishlists-panel";

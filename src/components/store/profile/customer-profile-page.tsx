@@ -2,14 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  Heart,
-  Inbox,
-  Package,
-  Star,
-  UserRound,
-} from "lucide-react";
+import { Heart, Inbox, Package, Star, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthHydrated } from "@/hooks/use-auth-hydrated";
+import { useAuthStore } from "@/stores/auth-store";
 import { cn } from "@/lib/utils";
 import {
   ProfileAccountPanel,
@@ -18,6 +14,7 @@ import {
   ProfileReviewsPanel,
   ProfileWishlistsPanel,
 } from "@/components/store/profile/profile-panels";
+import { CustomerProfileSkeleton } from "@/components/store/profile/customer-profile-skeleton";
 
 const TABS = [
   { id: "account" as const, label: "Account", icon: UserRound },
@@ -29,8 +26,35 @@ const TABS = [
 
 export type ProfileTabId = (typeof TABS)[number]["id"];
 
+function displayNameFromUser(
+  firstName: string | undefined,
+  lastName: string | undefined,
+  email: string
+) {
+  const n = [firstName?.trim(), lastName?.trim()].filter(Boolean).join(" ");
+  return n || email.split("@")[0] || "Account";
+}
+
+function initialFromUser(firstName: string | undefined, email: string) {
+  const c = firstName?.trim()?.charAt(0) || email.charAt(0);
+  return c ? c.toUpperCase() : "?";
+}
+
 export function CustomerProfilePage() {
   const [tab, setTab] = React.useState<ProfileTabId>("account");
+  const hydrated = useAuthHydrated();
+  const user = useAuthStore((s) => s.user);
+
+  if (!hydrated || !user) {
+    return <CustomerProfileSkeleton />;
+  }
+
+  const displayName = displayNameFromUser(
+    user.profile?.firstName,
+    user.profile?.lastName,
+    user.email
+  );
+  const initial = initialFromUser(user.profile?.firstName, user.email);
 
   return (
     <div className="min-h-[60vh] bg-surface-subtle pb-16 pt-6 sm:pt-10">
@@ -45,15 +69,18 @@ export function CustomerProfilePage() {
 
         <header className="mb-8 flex flex-col gap-6 border-b border-border-muted pb-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm sm:size-20">
-              <UserRound className="size-9 sm:size-10" strokeWidth={1.5} aria-hidden />
+            <div
+              className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-semibold text-primary-foreground shadow-sm sm:size-20 sm:text-xl"
+              aria-hidden
+            >
+              {initial}
             </div>
             <div>
-              <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-tight text-content-neutral-primary sm:text-3xl">
-                Amaka Okafor
+              <h1 className="font-[family-name:var(--font-manrope)] text-xl font-semibold tracking-tight text-content-neutral-primary sm:text-3xl">
+                {displayName}
               </h1>
               <p className="mt-1 text-sm text-content-neutral-secondary sm:text-base">
-                amaka.okafor@email.com
+                {user.email}
               </p>
             </div>
           </div>
@@ -65,7 +92,10 @@ export function CustomerProfilePage() {
         <div
           role="tablist"
           aria-label="Profile sections"
-          className="-mx-1 mb-8 flex gap-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible"
+          className={cn(
+            "-mx-1 mb-8 flex gap-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible",
+            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          )}
         >
           {TABS.map(({ id, label, icon: Icon }) => {
             const selected = tab === id;
@@ -98,7 +128,7 @@ export function CustomerProfilePage() {
           aria-labelledby={`tab-${tab}`}
           className="transition-opacity duration-200"
         >
-          {tab === "account" ? <ProfileAccountPanel /> : null}
+          {tab === "account" ? <ProfileAccountPanel user={user} /> : null}
           {tab === "orders" ? <ProfileOrdersPanel /> : null}
           {tab === "inbox" ? <ProfileInboxPanel /> : null}
           {tab === "reviews" ? <ProfileReviewsPanel /> : null}

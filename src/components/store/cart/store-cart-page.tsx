@@ -1,16 +1,28 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Minus, Plus, Trash2, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ProductMedia } from "@/components/store/shared/store-supermarket-product-detail-parts";
+import { StoreCartPageSkeleton } from "@/components/store/skeletons/store-cart-page-skeleton";
+import { EMPTY_STATE_ILLUSTRATION } from "@/lib/empty-state-illustrations";
+import { useAuthHydrated } from "@/hooks/use-auth-hydrated";
+import { useAuthStore } from "@/stores/auth-store";
+import { useCustomerAuthUiStore } from "@/stores/customer-auth-ui-store";
 import {
-  MOCK_CART_LINES,
-  MOCK_DELIVERY_FEE,
-  MOCK_SERVICE_FEE,
-  type MockCartLine,
-} from "@/lib/mock-store-cart";
+  CART_QUERY_KEY,
+  fetchCart,
+  removeCartItem,
+  updateCartItem,
+} from "@/services/store/cart.api";
+import {
+  STORE_DELIVERY_FEE,
+  STORE_SERVICE_FEE,
+} from "@/lib/store-checkout-fees";
 import { cn } from "@/lib/utils";
 
 function formatMoney(n: number) {
@@ -18,20 +30,49 @@ function formatMoney(n: number) {
 }
 
 export function StoreCartPage() {
-  const [lines, setLines] = React.useState<MockCartLine[]>(MOCK_CART_LINES);
+  const queryClient = useQueryClient();
+  const hydrated = useAuthHydrated();
+  const token = useAuthStore((s) => s.token);
+  const openSignIn = useCustomerAuthUiStore((s) => s.openSignIn);
+  const authed = Boolean(hydrated && token);
 
-  const subtotal = lines.reduce((s, l) => s + l.unitPrice * l.qty, 0);
-  const total = subtotal + MOCK_DELIVERY_FEE + MOCK_SERVICE_FEE;
+  const { data: cartRes, isPending, isError, refetch } = useQuery({
+    queryKey: CART_QUERY_KEY,
+    queryFn: fetchCart,
+    enabled: authed,
+  });
 
-  const setQty = (id: string, qty: number) => {
+  const items = cartRes?.success && cartRes.data ? cartRes.data.items : [];
+  const subtotalFromApi = cartRes?.data?.subtotal;
+  const subtotal =
+    subtotalFromApi ??
+    items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const total = subtotal + STORE_DELIVERY_FEE + STORE_SERVICE_FEE;
+
+  const invalidate = () =>
+    void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+
+  const updateMut = useMutation({
+    mutationFn: ({ productId, quantity }: { productId: string; quantity: number }) =>
+      updateCartItem(productId, { quantity }),
+    onSuccess: () => {
+      invalidate();
+    },
+    onError: () => toast.error("Could not update quantity"),
+  });
+
+  const removeMut = useMutation({
+    mutationFn: (productId: string) => removeCartItem(productId),
+    onSuccess: (res) => {
+      invalidate();
+      toast.success(res.message ?? "Removed from cart");
+    },
+    onError: () => toast.error("Could not remove item"),
+  });
+
+  const setQty = (productId: string, qty: number) => {
     if (qty < 1) return;
-    setLines((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, qty } : l))
-    );
-  };
-
-  const removeLine = (id: string) => {
-    setLines((prev) => prev.filter((l) => l.id !== id));
+    updateMut.mutate({ productId, quantity: qty });
   };
 
   return (
@@ -51,12 +92,14 @@ export function StoreCartPage() {
               Your cart
             </h1>
             <p className="mt-1 max-w-xl text-sm text-content-neutral-secondary sm:text-base">
-              {lines.length === 0
-                ? "Add items from the store to see them here."
-                : `${lines.length} item${lines.length === 1 ? "" : "s"} from your favourite vendors.`}
+              {!authed
+                ? "Sign in to view and manage your cart."
+                : items.length === 0
+                  ? "Add items from the store to see them here."
+                  : `${items.length} line${items.length === 1 ? "" : "s"} · ${cartRes?.data?.itemCount ?? items.reduce((n, i) => n + i.quantity, 0)} items`}
             </p>
           </div>
-          {lines.length > 0 ? (
+          {authed && items.length > 0 ? (
             <Button
               asChild
               variant="outline"
@@ -66,46 +109,71 @@ export function StoreCartPage() {
             </Button>
           ) : null}
         </div>
-
-        {lines.length === 0 ? (
-          <div className="rounded-3xl border border-border-muted bg-surface-canvas px-6 py-16 text-center shadow-sm">
-            <p className="text-content-neutral-secondary">
-              Your cart is empty. Start browsing the store.
-            </p>
-            <Button asChild className="mt-6 rounded-full">
-              <Link href="/store">Browse store</Link>
-            </Button>
-          </div>
+                                                
+        {!hydrated ? (
+          <StoreCartPageSkeleton />
+        ) : !authed ? (
+          <EmptyState
+            className="mx-auto w-full max-w-lg"
+            illustrationSrc={EMPTY_STATE_ILLUSTRATION.platform}
+            illustrationAlt=""
+            title="Sign in to view your cart"
+            description="We will load your basket from your account when you are signed in."
+            action={{ label: "Sign in", onClick: openSignIn }}
+          />
+        ) : isPending ? (
+          <StoreCartPageSkeleton />
+        ) : isError ? (
+          <EmptyState
+            className="mx-auto w-full max-w-lg"
+            illustrationSrc={EMPTY_STATE_ILLUSTRATION.platform}
+            illustrationAlt=""
+            title="Could not load your cart"
+            description="Check your connection and try again."
+            action={{ label: "Try again", onClick: () => void refetch() }}
+          />
+        ) : items.length === 0 ? (
+          <EmptyState
+            className="mx-auto w-full max-w-lg"
+            illustrationSrc={EMPTY_STATE_ILLUSTRATION.cart}
+            illustrationAlt=""
+            title="Your cart is empty"
+            description="Start browsing the store."
+            action={{ label: "Browse store", href: "/store" }}
+          />
         ) : (
           <div className="grid gap-8 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
             <ul className="flex flex-col gap-4">
-              {lines.map((line) => (
+              {items.map((line) => (
                 <li
-                  key={line.id}
+                  key={line.productId}
                   className="flex gap-4 rounded-2xl border border-border-muted bg-surface-canvas p-4 shadow-sm sm:gap-5 sm:p-5"
                 >
-                  <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-surface-muted sm:size-28">
-                    <Image
-                      src={line.imageSrc}
-                      alt=""
+                  <Link
+                    href={`/store/supermarket/${line.productId}`}
+                    className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-surface-muted sm:size-28"
+                  >
+                    <ProductMedia
+                      src={
+                        line.image?.trim() ||
+                        "/images/landing/vendor/vendor-hero-1.png"
+                      }
+                      alt={line.name}
                       fill
-                      className="object-cover"
                       sizes="112px"
+                      className="object-cover"
                     />
-                  </div>
+                  </Link>
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 sm:flex-row">
                     <div className="min-w-0">
-                      <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                        {line.storeName}
-                      </p>
-                      <h2 className="mt-0.5 font-medium text-content-neutral-primary">
+                      <Link
+                        href={`/store/supermarket/${line.productId}`}
+                        className="mt-0.5 block font-medium text-content-neutral-primary hover:underline"
+                      >
                         {line.name}
-                      </h2>
-                      <p className="mt-0.5 text-sm text-content-neutral-muted">
-                        {line.variant}
-                      </p>
+                      </Link>
                       <p className="mt-2 text-sm font-semibold text-content-neutral-primary">
-                        {formatMoney(line.unitPrice)} each
+                        {formatMoney(line.price)} each
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
@@ -115,31 +183,34 @@ export function StoreCartPage() {
                           aria-label="Decrease quantity"
                           className={cn(
                             "inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted",
-                            line.qty <= 1 && "pointer-events-none opacity-40"
+                            line.quantity <= 1 && "pointer-events-none opacity-40"
                           )}
-                          onClick={() => setQty(line.id, line.qty - 1)}
+                          disabled={updateMut.isPending}
+                          onClick={() => setQty(line.productId, line.quantity - 1)}
                         >
                           <Minus className="size-4" aria-hidden />
                         </button>
                         <span className="min-w-8 text-center text-sm font-medium tabular-nums">
-                          {line.qty}
+                          {line.quantity}
                         </span>
                         <button
                           type="button"
                           aria-label="Increase quantity"
                           className="inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted"
-                          onClick={() => setQty(line.id, line.qty + 1)}
+                          disabled={updateMut.isPending}
+                          onClick={() => setQty(line.productId, line.quantity + 1)}
                         >
                           <Plus className="size-4" aria-hidden />
                         </button>
                       </div>
                       <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end">
                         <p className="text-base font-semibold text-content-neutral-primary">
-                          {formatMoney(line.unitPrice * line.qty)}
+                          {formatMoney(line.price * line.quantity)}
                         </p>
                         <button
                           type="button"
-                          onClick={() => removeLine(line.id)}
+                          disabled={removeMut.isPending}
+                          onClick={() => removeMut.mutate(line.productId)}
                           className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium text-content-negative transition-colors hover:bg-surface-muted"
                         >
                           <Trash2 className="size-3.5" aria-hidden />
@@ -163,7 +234,7 @@ export function StoreCartPage() {
                       Delivery estimate
                     </p>
                     <p className="mt-0.5 text-xs leading-relaxed text-content-neutral-secondary">
-                      Standard delivery time is dependent on your location and the vendor&apos;s delivery time.
+                      Standard delivery time depends on your location and the vendor&apos;s schedule.
                     </p>
                   </div>
                 </div>
@@ -178,13 +249,13 @@ export function StoreCartPage() {
                   <div className="flex justify-between text-content-neutral-secondary">
                     <dt>Delivery</dt>
                     <dd className="font-medium text-content-neutral-primary">
-                      {formatMoney(MOCK_DELIVERY_FEE)}
+                      {formatMoney(STORE_DELIVERY_FEE)}
                     </dd>
                   </div>
                   <div className="flex justify-between text-content-neutral-secondary">
                     <dt>Service fee</dt>
                     <dd className="font-medium text-content-neutral-primary">
-                      {formatMoney(MOCK_SERVICE_FEE)}
+                      {formatMoney(STORE_SERVICE_FEE)}
                     </dd>
                   </div>
                   <div className="border-t border-border-muted pt-3">
@@ -195,8 +266,8 @@ export function StoreCartPage() {
                   </div>
                 </dl>
 
-                <Button className="mt-6 w-full rounded-full py-6 text-base">
-                  Proceed to checkout
+                <Button asChild className="mt-6 w-full rounded-full py-6 text-base">
+                  <Link href="/store/checkout">Proceed to checkout</Link>
                 </Button>
                 <p className="mt-3 text-center text-xs text-content-neutral-muted">
                   Secure checkout · You can review everything before you pay

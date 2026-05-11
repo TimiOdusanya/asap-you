@@ -9,7 +9,7 @@ import { Product } from './ProductCard'
 import { Button } from '@/components/ui/button'
 
 interface ProductDetail {
-  id: number
+  id: string
   name: string
   description: string
   rating: number

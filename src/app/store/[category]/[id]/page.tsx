@@ -13,22 +13,13 @@ interface ProductDetailPageProps {
 
 const ProductDetail = ({ params }: ProductDetailPageProps) => {
   const resolvedParams = React.use(params)
-  const productId = parseInt(resolvedParams.id)
+  const productId = resolvedParams.id
   const category = resolvedParams.category
 
   try {
     const product = getProductDetail(productId, category)
     const similarProducts = getSimilarProducts(category, productId)
     const breadcrumbs = getBreadcrumbs(category, product.name)
-    
-    // Debug logging
-    console.log('Product Detail Debug:', {
-      productId,
-      category,
-      product: product.name,
-      similarProductsCount: similarProducts.length,
-      similarProducts: similarProducts.map(p => ({ id: p.id, name: p.name, category: p.category }))
-    })
 
     return (
       <ProductDetailPage

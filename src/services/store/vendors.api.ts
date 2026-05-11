@@ -1,6 +1,6 @@
 import { apiClient } from "@/services/api/http";
 import { VENDOR_ENDPOINTS } from "@/services/api/endpoints";
-import type { VendorListResponse } from "@/types/store-api";
+import type { VendorListItem, VendorListResponse } from "@/types/store-api";
 
 export const VENDORS_PAGE_LIMIT = 10;
 
@@ -39,3 +39,26 @@ export async function fetchVendorsPage(params: {
   );
   return data;
 }
+
+export function vendorsAllInCategoryQueryKey(categorySlug: string) {
+  return ["vendors", "list", "all-pages", categorySlug] as const;
+}
+
+export async function fetchAllVendorsInCategory(
+  categorySlug: string,
+  maxPages = 25
+): Promise<VendorListItem[]> {
+  const out: VendorListItem[] = [];
+  for (let page = 1; page <= maxPages; page++) {
+    const res = await fetchVendorsPage({
+      page,
+      limit: 50,
+      category: categorySlug,
+    });
+    if (!res.success || !Array.isArray(res.data)) break;
+    out.push(...res.data);
+    if (!res.pagination || page >= res.pagination.totalPages) break;
+  }
+  return out;
+}
+

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import {  List, Filter, LayoutGrid, X, ArrowDown } from 'lucide-react'
 import FilterSidebar from './FilterSidebar'
@@ -22,32 +22,62 @@ interface ProductListingPageProps {
     description: string
     action?: EmptyStateAction
   }
+  /** When set, hides the placeholder “active filter” chips (API-driven listings). */
+  hideStubActiveFilters?: boolean
+  /** Controlled sort value (API `sort` param). Requires `onSortChange`. */
+  sortValue?: string
+  onSortChange?: (value: string) => void
+  sortOptions?: { value: string; label: string }[]
+  hasNextPage?: boolean
+  isFetchingNextPage?: boolean
+  onLoadMore?: () => void
+  /** Route segment for product detail, e.g. `supermarket` → `/store/supermarket/:id */
+  productPathSegment?: string
+  /** Replaces the default filter sidebar (desktop + mobile drawer). */
+  filterSidebar?: ReactNode
 }
 
-const ProductListingPage: React.FC<ProductListingPageProps> = ({ 
-  category, 
-  products, 
+const ProductListingPage: React.FC<ProductListingPageProps> = ({
+  category,
+  products,
   breadcrumbs,
   isLoading = false,
   emptyState,
+  hideStubActiveFilters = false,
+  sortValue: sortValueControlled,
+  onSortChange,
+  sortOptions: sortOptionsProp,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  onLoadMore,
+  productPathSegment,
+  filterSidebar,
 }) => {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
-  const [sortBy, setSortBy] = useState('default')
+  const [sortByLocal, setSortByLocal] = useState("default")
   const [filteredProducts, setFilteredProducts] = useState(products)
+
+  const sortControlled = Boolean(onSortChange && sortValueControlled !== undefined)
+  const sortBy = sortControlled ? sortValueControlled! : sortByLocal
+  const setSortBy = sortControlled
+    ? (v: string) => {
+        onSortChange?.(v)
+      }
+    : setSortByLocal
 
   useEffect(() => {
     setFilteredProducts(products)
   }, [products])
 
+  const pathSegment = productPathSegment ?? category.toLowerCase()
+
   const handleProductClick = (product: Product) => {
-    router.push(`/store/${category.toLowerCase()}/${product.id}`)
+    router.push(`/store/${pathSegment}/${product.id}`)
   }
 
   const handleFilterChange = (_filters: Record<string, unknown>) => {
-    // Apply filters logic here
-    // For now, just show all products
     setFilteredProducts(products)
   }
 
@@ -55,12 +85,12 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
     setFilteredProducts(products)
   }
 
-  const sortOptions = [
-    { value: 'default', label: 'Default' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-    { value: 'rating', label: 'Rating' },
-    { value: 'newest', label: 'Newest' }
+  const sortOptions = sortOptionsProp ?? [
+    { value: "default", label: "Default" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "price-high", label: "Price: High to Low" },
+    { value: "rating", label: "Rating" },
+    { value: "newest", label: "Newest" },
   ]
 
   return (
@@ -70,11 +100,13 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
         <div className="flex">
           {/* Filter Sidebar - Desktop */}
           <div className="hidden lg:block">
-            <FilterSidebar
-              category={category}
-              onFilterChange={handleFilterChange}
-              onClearAll={handleClearAll}
-            />
+            {filterSidebar ?? (
+              <FilterSidebar
+                category={category}
+                onFilterChange={handleFilterChange}
+                onClearAll={handleClearAll}
+              />
+            )}
           </div>
 
           {/* Main Content */}
@@ -149,15 +181,17 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
             {/* Mobile Filter Sidebar */}
             {showFilters && (
               <div className="lg:hidden mb-6">
-                <FilterSidebar
-                  category={category}
-                  onFilterChange={handleFilterChange}
-                  onClearAll={handleClearAll}
-                />
+                {filterSidebar ?? (
+                  <FilterSidebar
+                    category={category}
+                    onFilterChange={handleFilterChange}
+                    onClearAll={handleClearAll}
+                  />
+                )}
               </div>
             )}
 
-            {!isLoading && filteredProducts.length > 0 ? (
+            {!hideStubActiveFilters && !isLoading && filteredProducts.length > 0 ? (
             <div className="mb-4 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-content-neutral-secondary">Active Filter</span>
@@ -214,10 +248,18 @@ const ProductListingPage: React.FC<ProductListingPageProps> = ({
             </div>
             )}
 
-            {!isLoading && filteredProducts.length > 0 ? (
+            {!isLoading &&
+            filteredProducts.length > 0 &&
+            (onLoadMore == null ? true : hasNextPage) ? (
             <div className="mt-8 flex justify-center">
-              <Button className="flex items-center gap-2 px-4">
-                Load More Products <ArrowDown className="h-4 w-4" />
+              <Button
+                type="button"
+                className="flex items-center gap-2 px-4"
+                disabled={onLoadMore ? isFetchingNextPage || !hasNextPage : false}
+                onClick={() => void onLoadMore?.()}
+              >
+                {isFetchingNextPage ? "Loading…" : "Load more products"}{" "}
+                <ArrowDown className="h-4 w-4" />
               </Button>
             </div>
             ) : null}

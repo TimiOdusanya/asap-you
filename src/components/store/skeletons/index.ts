@@ -6,3 +6,4 @@ export { StoreVendorGridSkeleton } from "./store-vendor-grid-skeleton";
 export { StoreCartPageSkeleton } from "./store-cart-page-skeleton";
 export { StoreCheckoutPageSkeleton } from "./store-checkout-page-skeleton";
 export { StoreWishlistGridSkeleton } from "./store-wishlist-grid-skeleton";
+export { StoreVendorPageSkeleton } from "./store-vendor-page-skeleton";

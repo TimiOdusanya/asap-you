@@ -2,12 +2,11 @@
 
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { Star, Store } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { FaStoreAlt } from 'react-icons/fa'
 
 export interface Product {
-  id: number
+  id: string
   name: string
   store: string
   rating: number
@@ -25,7 +24,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductClick }) => {
-  const isDiscounted = product.discount && product.originalPrice
+  const showStrikePrice = Boolean(product.originalPrice)
+  const showDiscountBadge = Boolean(product.discount && showStrikePrice)
 
   if (viewMode === 'list') {
     return (
@@ -38,13 +38,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
             src={product.image}
             alt={product.name}
             fill
+            unoptimized={
+              product.image.startsWith("http://") ||
+              product.image.startsWith("https://")
+            }
             className="object-cover rounded-lg"
           />
-          {isDiscounted && (
+          {showDiscountBadge ? (
             <div className="absolute top-1 right-1 bg-content-warning text-content-neutral-primary text-xs px-2 py-1 rounded">
               {product.discount}
             </div>
-          )}
+          ) : null}
         </div>
         
         <div className="flex-1 min-w-0 space-y-1">
@@ -67,9 +71,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
         
         <div className="text-right">
           <div className="flex items-center space-x-2">
-            {isDiscounted && (
+            {showStrikePrice ? (
              <span className="text-sm md:text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
-            )}
+            ) : null}
              <span className="text-base md:text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
           </div>
         </div>
@@ -84,11 +88,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
     >
       <div className="relative p-2 sm:p-4">
         {/* Discount Badge */}
-        {isDiscounted && (
+        {showDiscountBadge ? (
           <div className="absolute top-2 right-2 bg-content-warning text-xs px-2 py-1 rounded z-10 text-content-neutral-primary">
             {product.discount}
           </div>
-        )}
+        ) : null}
         
         {/* Product Image */}
         <div className="relative w-full h-36 sm:h-48 mb-3">
@@ -96,6 +100,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
             src={product.image}
             alt={product.name}
             fill
+            unoptimized={
+              product.image.startsWith("http://") ||
+              product.image.startsWith("https://")
+            }
             className="object-cover rounded-lg"
           />
         </div>
@@ -122,9 +130,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
 
           {/* Price */}
           <div className="flex items-center gap-1 sm:space-x-2">
-            {isDiscounted && (
+            {showStrikePrice ? (
               <span className="text-xs sm:text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>
-            )}
+            ) : null}
             <span className="text-sm sm:text-lg font-normal text-content-neutral-secondary">{product.currentPrice}</span>
           </div>
         </div>

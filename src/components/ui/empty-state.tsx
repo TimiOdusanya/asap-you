@@ -106,7 +106,7 @@ export function EmptyState({
           "mt-2 text-content-neutral-secondary",
           isSm
             ? "max-w-xs text-xs leading-relaxed"
-            : "max-w-sm text-sm leading-relaxed sm:max-w-md sm:text-base"
+            : "max-w-sm text-sm leading-relaxed sm:max-w-md sm:text-sm"
         )}
       >
         {description}

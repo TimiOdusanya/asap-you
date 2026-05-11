@@ -19,6 +19,7 @@ import {
   removeCartItem,
   updateCartItem,
 } from "@/services/store/cart.api";
+import type { CartGetResponse } from "@/types/store-api";
 import {
   STORE_DELIVERY_FEE,
   STORE_SERVICE_FEE,
@@ -55,10 +56,59 @@ export function StoreCartPage() {
   const updateMut = useMutation({
     mutationFn: ({ productId, quantity }: { productId: string; quantity: number }) =>
       updateCartItem(productId, { quantity }),
-    onSuccess: () => {
-      invalidate();
+
+    onMutate: async ({ productId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
+      const previous = queryClient.getQueryData<CartGetResponse>(CART_QUERY_KEY);
+      queryClient.setQueryData<CartGetResponse>(CART_QUERY_KEY, (old) => {
+        if (!old?.success || !old.data) return old;
+        const newItems = old.data.items.map((item) =>
+          item.productId === productId ? { ...item, quantity } : item
+        );
+        const itemCount = newItems.reduce((n, i) => n + i.quantity, 0);
+        const subtotal = newItems.reduce((s, i) => s + i.price * i.quantity, 0);
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            items: newItems,
+            itemCount,
+            subtotal,
+          },
+        };
+      });
+      return { previous };
     },
-    onError: () => toast.error("Could not update quantity"),
+
+    onError: (_err, _variables, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previous);
+      }
+      toast.error("Could not update quantity");
+    },
+
+    onSuccess: (res, _variables, context) => {
+      if (res.success && res.data?.items) {
+        queryClient.setQueryData<CartGetResponse>(CART_QUERY_KEY, (old) => {
+          if (!old?.success || !old.data) return old;
+          const items = res.data.items;
+          const itemCount = items.reduce((n, i) => n + i.quantity, 0);
+          const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              items,
+              itemCount,
+              subtotal,
+            },
+          };
+        });
+      } else if (context?.previous) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previous);
+        toast.error(res.message ?? "Could not update quantity");
+      }
+    },
   });
 
   const removeMut = useMutation({
@@ -144,83 +194,87 @@ export function StoreCartPage() {
         ) : (
           <div className="grid gap-8 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
             <ul className="flex flex-col gap-4">
-              {items.map((line) => (
-                <li
-                  key={line.productId}
-                  className="flex gap-4 rounded-2xl border border-border-muted bg-surface-canvas p-4 shadow-sm sm:gap-5 sm:p-5"
-                >
-                  <Link
-                    href={`/store/supermarket/${line.productId}`}
-                    className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-surface-muted sm:size-28"
+              {items.map((line) => {
+                const lineUpdating =
+                  updateMut.isPending && updateMut.variables?.productId === line.productId;
+                return (
+                  <li
+                    key={line.productId}
+                    className="flex gap-4 rounded-2xl border border-border-muted bg-surface-canvas p-4 shadow-sm sm:gap-5 sm:p-5"
                   >
-                    <ProductMedia
-                      src={
-                        line.image?.trim() ||
-                        "/images/landing/vendor/vendor-hero-1.png"
-                      }
-                      alt={line.name}
-                      fill
-                      sizes="112px"
-                      className="object-cover"
-                    />
-                  </Link>
-                  <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 sm:flex-row">
-                    <div className="min-w-0">
-                      <Link
-                        href={`/store/supermarket/${line.productId}`}
-                        className="mt-0.5 block font-medium text-content-neutral-primary hover:underline"
-                      >
-                        {line.name}
-                      </Link>
-                      <p className="mt-2 text-sm font-semibold text-content-neutral-primary">
-                        {formatMoney(line.price)} each
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
-                      <div className="inline-flex items-center rounded-full border border-border-muted bg-surface-subtle p-1">
-                        <button
-                          type="button"
-                          aria-label="Decrease quantity"
-                          className={cn(
-                            "inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted",
-                            line.quantity <= 1 && "pointer-events-none opacity-40"
-                          )}
-                          disabled={updateMut.isPending}
-                          onClick={() => setQty(line.productId, line.quantity - 1)}
+                    <Link
+                      href={`/store/supermarket/${line.productId}`}
+                      className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-surface-muted sm:size-28"
+                    >
+                      <ProductMedia
+                        src={
+                          line.image?.trim() ||
+                          "/images/landing/vendor/vendor-hero-1.png"
+                        }
+                        alt={line.name}
+                        fill
+                        sizes="112px"
+                        className="object-cover"
+                      />
+                    </Link>
+                    <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 sm:flex-row">
+                      <div className="min-w-0">
+                        <Link
+                          href={`/store/supermarket/${line.productId}`}
+                          className="mt-0.5 block font-medium text-content-neutral-primary hover:underline"
                         >
-                          <Minus className="size-4" aria-hidden />
-                        </button>
-                        <span className="min-w-8 text-center text-sm font-medium tabular-nums">
-                          {line.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          aria-label="Increase quantity"
-                          className="inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted"
-                          disabled={updateMut.isPending}
-                          onClick={() => setQty(line.productId, line.quantity + 1)}
-                        >
-                          <Plus className="size-4" aria-hidden />
-                        </button>
-                      </div>
-                      <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end">
-                        <p className="text-base font-semibold text-content-neutral-primary">
-                          {formatMoney(line.price * line.quantity)}
+                          {line.name}
+                        </Link>
+                        <p className="mt-2 text-sm font-semibold text-content-neutral-primary">
+                          {formatMoney(line.price)} each
                         </p>
-                        <button
-                          type="button"
-                          disabled={removeMut.isPending}
-                          onClick={() => removeMut.mutate(line.productId)}
-                          className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium text-content-negative transition-colors hover:bg-surface-muted"
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                          Remove
-                        </button>
+                      </div>
+                      <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
+                        <div className="inline-flex items-center rounded-full border border-border-muted bg-surface-subtle p-1">
+                          <button
+                            type="button"
+                            aria-label="Decrease quantity"
+                            className={cn(
+                              "inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted",
+                              line.quantity <= 1 && "pointer-events-none opacity-40"
+                            )}
+                            disabled={lineUpdating}
+                            onClick={() => setQty(line.productId, line.quantity - 1)}
+                          >
+                            <Minus className="size-4" aria-hidden />
+                          </button>
+                          <span className="min-w-8 text-center text-sm font-medium tabular-nums">
+                            {line.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            aria-label="Increase quantity"
+                            className="inline-flex size-9 items-center justify-center rounded-full text-content-neutral-primary transition-colors hover:bg-surface-muted"
+                            disabled={lineUpdating}
+                            onClick={() => setQty(line.productId, line.quantity + 1)}
+                          >
+                            <Plus className="size-4" aria-hidden />
+                          </button>
+                        </div>
+                        <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end">
+                          <p className="text-base font-semibold text-content-neutral-primary">
+                            {formatMoney(line.price * line.quantity)}
+                          </p>
+                          <button
+                            type="button"
+                            disabled={removeMut.isPending}
+                            onClick={() => removeMut.mutate(line.productId)}
+                            className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium text-content-negative transition-colors hover:bg-surface-muted cursor-pointer"
+                          >
+                            <Trash2 className="size-3.5" aria-hidden />
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
 
             <aside className="lg:sticky lg:top-24">

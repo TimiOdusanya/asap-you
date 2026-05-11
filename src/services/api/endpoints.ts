@@ -11,6 +11,10 @@ export const VENDOR_ENDPOINTS = {
   CATEGORIES: "/v1/vendor/categories",
   /** GET ?page=&limit=&categories=slug (omit categories for all stores) */
   LIST: "/v1/vendor",
+  byId: (vendorId: string) =>
+    `/v1/vendor/${encodeURIComponent(vendorId)}`,
+  storefront: (vendorId: string) =>
+    `/v1/vendor/${encodeURIComponent(vendorId)}/storefront`,
 } as const;
 
 export const RIDER_ENDPOINTS = {

@@ -58,6 +58,48 @@ export interface ProductListResponse {
   };
 }
 
+/** GET /v1/product/all — list item may include pricing/discount fields from the catalog. */
+export interface ProductCatalogDiscountDto {
+  isActive: boolean;
+  type: string;
+  value: number;
+  startsAt: string | null;
+  endsAt: string | null;
+}
+
+export type ProductCatalogItemDto = ProductDto & {
+  discount?: ProductCatalogDiscountDto | null;
+  discountAmount?: number;
+  finalPrice?: number;
+  effectivePrice?: number;
+  stats?: {
+    averageRating: number;
+    totalReviews: number;
+  };
+};
+
+export interface ProductCatalogListResponse {
+  success: boolean;
+  data: ProductCatalogItemDto[];
+  pagination: ProductListResponse["pagination"];
+}
+
+/** Query params for GET /v1/product/all — names match the API contract. */
+export interface ProductCatalogQuery {
+  page: number;
+  limit: number;
+  status?: string;
+  vendorId?: string;
+  vendorCategories?: string;
+  discountOnly?: boolean;
+  minRating?: number;
+  priceMin?: number;
+  priceMax?: number;
+  sort?: string;
+  search?: string;
+  categoryIds?: string;
+}
+
 export interface ProductDetailStatsDto {
   averageRating: number;
   totalReviews: number;
@@ -148,6 +190,66 @@ export interface VendorListResponse {
     total: number;
     totalPages: number;
   };
+}
+
+/** GET /v1/vendor/:vendorId/storefront */
+export interface VendorStorefrontTodayHoursDto {
+  label: string;
+  isClosed: boolean;
+}
+
+export interface VendorStorefrontVendorDto {
+  id: string;
+  businessName: string;
+  description: string;
+  logo: string;
+  category: string;
+  categoryLabel: string;
+  isOpen: boolean;
+  todayHours: VendorStorefrontTodayHoursDto;
+  addressFormatted: string;
+  deliveryRadiusKm: number;
+  minOrderAmount: number;
+  averageRating: number;
+  totalReviews: number;
+}
+
+export interface VendorStorefrontMenuCategoryDto {
+  id: string;
+  name: string;
+  iconUrl: string;
+  productCount: number;
+}
+
+export interface VendorStorefrontProductDto {
+  _id: string;
+  name: string;
+  description: string;
+  images: string[];
+  price: number;
+  finalPrice: number;
+  discountAmount: number;
+  priceFrom: number;
+  showFromPrefix: boolean;
+  maxOrderable: number;
+}
+
+export interface VendorStorefrontDataDto {
+  vendor: VendorStorefrontVendorDto;
+  menuCategories: VendorStorefrontMenuCategoryDto[];
+  selectedCategoryId: string;
+  products: VendorStorefrontProductDto[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface VendorStorefrontResponse {
+  success: boolean;
+  data: VendorStorefrontDataDto;
 }
 
 /** Cart line — property names match API. */

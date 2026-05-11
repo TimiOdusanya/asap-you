@@ -155,7 +155,7 @@ export function StoreVendorsSection() {
             {vendors.map((vendor) => (
               <Link
                 key={vendor._id}
-                href={`/store/supermarkets?store=${encodeURIComponent(vendor._id)}`}
+                href={`/store/vendor/${encodeURIComponent(vendor._id)}`}
                 className="group block rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl sm:h-48 sm:aspect-auto">

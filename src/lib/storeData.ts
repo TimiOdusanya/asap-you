@@ -1,5 +1,5 @@
 export interface Product {
-  id: number
+  id: string
   name: string
   store: string
   rating: number
@@ -11,7 +11,7 @@ export interface Product {
 }
 
 export interface ProductDetail {
-  id: number
+  id: string
   name: string
   description: string
   rating: number
@@ -35,7 +35,7 @@ export const getProductsByCategory = (category: string): Product[] => {
   const baseProducts: Product[] = [
     // Supermarket Products
     {
-      id: 1,
+      id: '1',
       name: 'Bell Peppers',
       store: 'Dailys Supermarket',
       rating: 4.5,
@@ -46,7 +46,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Fresh Produce'
     },
     {
-      id: 2,
+      id: '2',
       name: 'Fresh Milk',
       store: 'Fresh Mart',
       rating: 4.2,
@@ -55,7 +55,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Dairy'
     },
     {
-      id: 3,
+      id: '3',
       name: 'Bread Loaf',
       store: 'Bakery Corner',
       rating: 4.7,
@@ -64,7 +64,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Bakery'
     },
     {
-      id: 4,
+      id: '4',
       name: 'Cooking Oil',
       store: 'Kitchen Essentials',
       rating: 4.3,
@@ -75,7 +75,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Pantry'
     },
     {
-      id: 5,
+      id: '5',
       name: 'Rice Bag',
       store: 'Grain Store',
       rating: 4.6,
@@ -84,7 +84,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Grains'
     },
     {
-      id: 6,
+      id: '6',
       name: 'Toilet Paper',
       store: 'Home Essentials',
       rating: 4.1,
@@ -95,7 +95,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Household'
     },
     {
-      id: 7,
+      id: '7',
       name: 'Apples',
       store: 'Fruit Market',
       rating: 4.4,
@@ -104,7 +104,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Fruits'
     },
     {
-      id: 8,
+      id: '8',
       name: 'Chicken Breast',
       store: 'Meat Shop',
       rating: 4.8,
@@ -113,7 +113,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Meat'
     },
     {
-      id: 9,
+      id: '9',
       name: 'Pampers',
       store: 'Dailys Supermarket',
       rating: 4.5,
@@ -124,7 +124,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Baby Care'
     },
     {
-      id: 10,
+      id: '10',
       name: 'Energy Drink',
       store: 'Beverage Store',
       rating: 4.0,
@@ -134,7 +134,7 @@ export const getProductsByCategory = (category: string): Product[] => {
     },
     // Restaurant Products
     {
-      id: 11,
+      id: '11',
       name: 'Pizza Margherita',
       store: 'Mama Mia Restaurant',
       rating: 4.6,
@@ -143,7 +143,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Restaurant'
     },
     {
-      id: 12,
+      id: '12',
       name: 'Chicken Burger',
       store: 'Burger Palace',
       rating: 4.4,
@@ -152,7 +152,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Restaurant'
     },
     {
-      id: 13,
+      id: '13',
       name: 'Jollof Rice',
       store: 'Nigerian Kitchen',
       rating: 4.8,
@@ -161,7 +161,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Restaurant'
     },
     {
-      id: 14,
+      id: '14',
       name: 'Fried Chicken',
       store: 'KFC Nigeria',
       rating: 4.3,
@@ -171,7 +171,7 @@ export const getProductsByCategory = (category: string): Product[] => {
     },
     // Drinks Products
     {
-      id: 15,
+      id: '15',
       name: 'Coca Cola',
       store: 'Beverage Store',
       rating: 4.2,
@@ -180,7 +180,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Beverages'
     },
     {
-      id: 16,
+      id: '16',
       name: 'Orange Juice',
       store: 'Fresh Drinks',
       rating: 4.5,
@@ -189,7 +189,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Beverages'
     },
     {
-      id: 17,
+      id: '17',
       name: 'Water Bottle',
       store: 'Aqua Store',
       rating: 4.0,
@@ -199,7 +199,7 @@ export const getProductsByCategory = (category: string): Product[] => {
     },
     // Pharmacy Products
     {
-      id: 18,
+      id: '18',
       name: 'Pain Relief Tablets',
       store: 'Health Plus Pharmacy',
       rating: 4.3,
@@ -208,7 +208,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Pharmacy'
     },
     {
-      id: 19,
+      id: '19',
       name: 'Vitamin C',
       store: 'MediCare Pharmacy',
       rating: 4.6,
@@ -217,7 +217,7 @@ export const getProductsByCategory = (category: string): Product[] => {
       category: 'Pharmacy'
     },
     {
-      id: 20,
+      id: '20',
       name: 'Cough Syrup',
       store: 'Wellness Pharmacy',
       rating: 4.1,
@@ -239,20 +239,20 @@ export const getProductsByCategory = (category: string): Product[] => {
   )
 }
 
-export const getProductDetail = (id: number, category?: string): ProductDetail => {
+export const getProductDetail = (id: string, category?: string): ProductDetail => {
   // If category is provided, search in that category first
   let product = null
   if (category) {
-    product = getProductsByCategory(category).find(p => p.id === id)
+    product = getProductsByCategory(category).find((p) => p.id === id)
   }
-  
+
   // If not found in specific category, search in all products
   if (!product) {
     const allProducts = [
-      ...getProductsByCategory('supermarkets'),
-      ...getProductsByCategory('restaurant'),
-      ...getProductsByCategory('beverages'),
-      ...getProductsByCategory('pharmacy')
+      ...getProductsByCategory("supermarkets"),
+      ...getProductsByCategory("restaurant"),
+      ...getProductsByCategory("beverages"),
+      ...getProductsByCategory("pharmacy"),
     ]
     product = allProducts.find((p: Product) => p.id === id)
   }
@@ -286,23 +286,24 @@ export const getProductDetail = (id: number, category?: string): ProductDetail =
   }
 }
 
-export const getSimilarProducts = (category: string, currentProductId: number): Product[] => {
+export const getSimilarProducts = (category: string, currentProductId: string): Product[] => {
   let allProducts = getProductsByCategory(category)
-  
-  
+
   // If no products found in the specific category, get some from all products
   if (allProducts.length <= 1) {
     // Get all products from all categories
     allProducts = [
-      ...getProductsByCategory('supermarkets'),
-      ...getProductsByCategory('restaurant'),
-      ...getProductsByCategory('beverages'),
-      ...getProductsByCategory('pharmacy')
+      ...getProductsByCategory("supermarkets"),
+      ...getProductsByCategory("restaurant"),
+      ...getProductsByCategory("beverages"),
+      ...getProductsByCategory("pharmacy"),
     ]
   }
-  
+
   // Filter out the current product and get up to 4 similar products
-  const similarProducts = allProducts.filter(product => product.id !== currentProductId).slice(0, 4)
+  const similarProducts = allProducts
+    .filter((product) => product.id !== currentProductId)
+    .slice(0, 4)
   
  
   // If we still don't have enough products, fill with any remaining products

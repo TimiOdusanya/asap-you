@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { ListIcon } from "@phosphor-icons/react";
 import RiderSidebar from "@/components/rider/dashboard/rider-sidebar";
+import { RealtimeSync } from "@/components/shared/realtime-sync";
 
 export default function RiderDashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
+      <RealtimeSync />
       <RiderSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">

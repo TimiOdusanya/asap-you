@@ -3,7 +3,9 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
+import { MapPin, Menu, Search, ShoppingCart, UserRound, X, Bell } from "lucide-react";
+import { StoreReceiptIcon } from "@/components/store/shared/store-receipt-icon";
+import { useUnreadNotificationsCount } from "@/hooks/use-unread-notifications-count";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +22,7 @@ import {
   formatAddressDisplay,
   pickDefaultAddress,
 } from "@/lib/address-display";
+import { useOngoingOrdersCount } from "@/hooks/use-ongoing-orders-count";
 
 const StoreNavbar = () => {
   const openLocation = useCustomerAuthUiStore((s) => s.openLocation);
@@ -43,6 +46,12 @@ const StoreNavbar = () => {
       res.success && res.data ? Math.max(0, res.data.itemCount) : 0,
     enabled: authHydrated && Boolean(token),
   });
+
+  const ongoingOrdersCount = useOngoingOrdersCount();
+  const unreadNotificationsCount = useUnreadNotificationsCount();
+
+  const navIconClass =
+    "relative inline-flex size-10 items-center justify-center rounded-full border border-primary/20 bg-surface-canvas text-primary transition-colors hover:bg-primary/5 md:size-[52px]";
 
   const defaultFromApi = pickDefaultAddress(data ?? []);
   const displayAddress = selectedAddress ?? defaultFromApi;
@@ -111,6 +120,38 @@ const StoreNavbar = () => {
               aria-label="Your profile"
             >
               <UserRound size={24} aria-hidden />
+            </Link>
+            <Link
+              href="/store/orders"
+              className={navIconClass}
+              aria-label={
+                ongoingOrdersCount > 0
+                  ? `My orders, ${ongoingOrdersCount} ongoing`
+                  : "My orders"
+              }
+            >
+              <StoreReceiptIcon className="text-primary" size={22} />
+              {ongoingOrdersCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground md:text-xs">
+                  {ongoingOrdersCount > 99 ? "99+" : ongoingOrdersCount}
+                </span>
+              ) : null}
+            </Link>
+            <Link
+              href="/store/notifications"
+              className={navIconClass}
+              aria-label={
+                unreadNotificationsCount > 0
+                  ? `Notifications, ${unreadNotificationsCount} unread`
+                  : "Notifications"
+              }
+            >
+              <Bell className="size-5 md:size-6" aria-hidden />
+              {unreadNotificationsCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-content-warning px-1 text-[10px] font-semibold leading-none text-content-neutral-primary md:text-xs">
+                  {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                </span>
+              ) : null}
             </Link>
             <Link
               href="/store/cart"
@@ -224,6 +265,32 @@ const StoreNavbar = () => {
               >
                 <UserRound className="size-5" aria-hidden />
                 Account
+              </Link>
+              <Link
+                href="/store/orders"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-content-neutral-primary hover:bg-surface-muted"
+              >
+                <StoreReceiptIcon size={20} />
+                My orders
+                {ongoingOrdersCount > 0 ? (
+                  <span className="ml-auto rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
+                    {ongoingOrdersCount > 99 ? "99+" : ongoingOrdersCount}
+                  </span>
+                ) : null}
+              </Link>
+              <Link
+                href="/store/notifications"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-content-neutral-primary hover:bg-surface-muted"
+              >
+                <Bell className="size-5" aria-hidden />
+                Notifications
+                {unreadNotificationsCount > 0 ? (
+                  <span className="ml-auto rounded-full bg-content-warning/20 px-2 py-0.5 text-xs font-semibold text-content-neutral-primary">
+                    {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                  </span>
+                ) : null}
               </Link>
               <Link
                 href="/store/cart"

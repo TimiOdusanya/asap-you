@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { ListIcon } from "@phosphor-icons/react";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import { AdminRouteGuard } from "@/components/auth/admin-route-guard";
+import { RealtimeSync } from "@/components/shared/realtime-sync";
 
 export default function AdminConsoleLayout({
   children,
@@ -14,6 +15,7 @@ export default function AdminConsoleLayout({
 
   return (
     <AdminRouteGuard>
+      <RealtimeSync />
       <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
         <AdminSidebar
           mobileOpen={sidebarOpen}

@@ -30,6 +30,10 @@ import {
   vendorStorefrontInfiniteQueryKey,
 } from "@/services/store/vendor-storefront.api";
 import type { CartGetResponse, CartItemDto, ProductDto } from "@/types/store-api";
+import { getMaxPurchasableQuantity } from "@/lib/product-availability";
+import { Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { VendorCategoryIcon } from "@/lib/vendor-category-icons";
 import { cn } from "@/lib/utils";
 
 const STOREFRONT_PAGE_LIMIT = 20;
@@ -43,13 +47,33 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
   const authed = Boolean(hydrated && token);
   const openSignIn = useCustomerAuthUiStore((s) => s.openSignIn);
   const categoryFromUrl = searchParams.get("categoryId")?.trim() || null;
+  const searchFromUrl = searchParams.get("search")?.trim() || "";
   const [pickedCategoryId, setPickedCategoryId] = React.useState<string | null>(null);
+  const [searchInput, setSearchInput] = React.useState(searchFromUrl);
+  const [debouncedSearch, setDebouncedSearch] = React.useState(searchFromUrl);
 
   React.useEffect(() => {
     if (categoryFromUrl) setPickedCategoryId(null);
   }, [categoryFromUrl]);
 
-  const categoryForQuery = categoryFromUrl ?? pickedCategoryId ?? undefined;
+  React.useEffect(() => {
+    const t = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), 300);
+    return () => window.clearTimeout(t);
+  }, [searchInput]);
+
+  React.useEffect(() => {
+    const p = new URLSearchParams(searchParams.toString());
+    if (debouncedSearch) p.set("search", debouncedSearch);
+    else p.delete("search");
+    const next = p.toString();
+    const current = searchParams.toString();
+    if (next !== current) {
+      router.replace(`/store/vendor/${vendorId}${next ? `?${next}` : ""}`, { scroll: false });
+    }
+  }, [debouncedSearch, vendorId, router, searchParams]);
+
+  const categoryForQuery = debouncedSearch ? undefined : (categoryFromUrl ?? pickedCategoryId ?? undefined);
+  const searchForQuery = debouncedSearch || undefined;
 
   const {
     data: storefrontPages,
@@ -60,11 +84,12 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: vendorStorefrontInfiniteQueryKey(vendorId, categoryForQuery),
+    queryKey: vendorStorefrontInfiniteQueryKey(vendorId, categoryForQuery, searchForQuery),
     queryFn: async ({ pageParam }) => {
       const res = await fetchVendorStorefront({
         vendorId,
         categoryId: categoryForQuery,
+        search: searchForQuery,
         page: pageParam as number,
         limit: STOREFRONT_PAGE_LIMIT,
       });
@@ -338,10 +363,7 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
     const line = cartByProduct.get(productId);
     const product = productsFlat.find((p) => p._id === productId);
     if (!line || !product) return;
-    const max =
-      !product.inventory.trackQuantity || product.inventory.allowOutOfStockPurchase
-        ? 99
-        : Math.max(1, product.inventory.quantity);
+    const max = getMaxPurchasableQuantity(product);
     if (line.quantity >= max) return;
     updateMut.mutate({ productId, quantity: line.quantity + 1 });
   };
@@ -372,7 +394,7 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
         />
 
         <section className="mt-10 sm:mt-12" aria-labelledby="vendor-menu-heading">
-          <div className="mb-5 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2
                 id="vendor-menu-heading"
@@ -381,11 +403,37 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
                 Menu
               </h2>
               <p className="mt-1 max-w-xl text-sm text-content-neutral-secondary sm:text-base">
-                Choose a category, then add items to your cart. Prices are before fees at checkout.
+                {debouncedSearch
+                  ? `Showing results for “${debouncedSearch}” across this store.`
+                  : "Choose a category, then add items to your cart. Prices are before fees at checkout."}
               </p>
+            </div>
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-content-neutral-muted"
+                aria-hidden
+              />
+              <Input
+                type="search"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search all products…"
+                className="h-11 rounded-full border-border-muted bg-surface-canvas pl-10 pr-10 shadow-sm"
+              />
+              {searchInput ? (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-content-neutral-muted hover:bg-surface-muted"
+                  onClick={() => setSearchInput("")}
+                >
+                  <X className="size-4" />
+                </button>
+              ) : null}
             </div>
           </div>
 
+          {!debouncedSearch ? (
           <div
             role="tablist"
             aria-label="Menu categories"
@@ -413,7 +461,9 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
                         : "text-content-neutral-secondary hover:bg-surface-muted/50 hover:text-content-neutral-primary"
                     )}
                   >
-                    <span className="mr-1">{cat.iconUrl}</span>
+                    <span className="mr-1.5 inline-flex align-middle">
+                      <VendorCategoryIcon iconKey={cat.iconUrl} className="size-4" />
+                    </span>
                     <span>{cat.name}</span>
                     <span
                       className={cn(
@@ -429,6 +479,7 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
               })
             )}
           </div>
+          ) : null}
 
           <div role="tabpanel">
             {productsFlat.length === 0 ? (
@@ -436,8 +487,12 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
                 className="mx-auto w-full max-w-md bg-transparent sm:max-w-lg"
                 illustrationSrc={EMPTY_STATE_ILLUSTRATION.platform}
                 illustrationAlt=""
-                title="Nothing in this category yet"
-                description="Try another category above or check back later."
+                title={debouncedSearch ? "No matching products" : "Nothing in this category yet"}
+                description={
+                  debouncedSearch
+                    ? "Try a different search term or browse categories."
+                    : "Try another category above or check back later."
+                }
               />
             ) : (
               <>
@@ -486,7 +541,7 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
               <Link href="/store/cart">View cart · {cartItemCount}</Link>
             </Button>
             <Button asChild className="rounded-full px-8 shadow-md">
-              <Link href="/store/checkout">Proceed to checkout</Link>
+              <Link href={`/store/checkout?vendorId=${encodeURIComponent(vendorId)}`}>Proceed to checkout</Link>
             </Button>
           </div>
         ) : null}
@@ -507,7 +562,7 @@ export function StoreVendorStorefront({ vendorId }: { vendorId: string }) {
               <Link href="/store/cart">Cart</Link>
             </Button>
             <Button asChild size="sm" className="shrink-0 rounded-full shadow-sm">
-              <Link href="/store/checkout">Checkout</Link>
+              <Link href={`/store/checkout?vendorId=${encodeURIComponent(vendorId)}`}>Checkout</Link>
             </Button>
           </div>
         </div>

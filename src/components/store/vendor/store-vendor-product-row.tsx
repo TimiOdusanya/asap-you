@@ -9,6 +9,10 @@ import {
   formatStoreMoney,
 } from "@/components/store/shared/store-supermarket-product-detail-parts";
 import type { CartItemDto, ProductDto } from "@/types/store-api";
+import {
+  getMaxPurchasableQuantity,
+  isProductOutOfStock,
+} from "@/lib/product-availability";
 import { cn } from "@/lib/utils";
 
 interface StoreVendorProductRowProps {
@@ -35,14 +39,13 @@ export function StoreVendorProductRow({
   onDecrement,
 }: StoreVendorProductRowProps) {
   const img = product.images[0]?.trim() || PRODUCT_IMAGE_PLACEHOLDER;
-  const maxQty =
-    !product.inventory.trackQuantity || product.inventory.allowOutOfStockPurchase
-      ? 99
-      : Math.max(1, product.inventory.quantity);
+  const outOfStock = isProductOutOfStock(product);
+  const maxQty = getMaxPurchasableQuantity(product);
   const qty = line?.quantity ?? 0;
   const inCart = qty > 0;
 
   const handleAdd = () => {
+    if (outOfStock) return;
     if (!authed) {
       onRequireAuth();
       return;
@@ -51,7 +54,12 @@ export function StoreVendorProductRow({
   };
 
   return (
-    <article className="group flex gap-3 py-4 sm:gap-4 sm:py-5 rounded-lg border border-border-muted sm:px-4">
+    <article
+      className={cn(
+        "group flex gap-3 py-4 sm:gap-4 sm:py-5 rounded-lg border border-border-muted sm:px-4",
+        outOfStock && "opacity-75 bg-surface-subtle/40"
+      )}
+    >
       <Link
         href={`/store/supermarket/${product._id}`}
         className="relative size-[4.5rem] shrink-0 overflow-hidden rounded-xl bg-surface-muted ring-1 ring-border-muted/60 sm:size-24"
@@ -61,8 +69,16 @@ export function StoreVendorProductRow({
           alt={product.name}
           fill
           sizes="96px"
-          className="object-cover transition-transform duration-200 group-hover:scale-[1.04]"
+          className={cn(
+            "object-cover transition-transform duration-200 group-hover:scale-[1.04]",
+            outOfStock && "grayscale"
+          )}
         />
+        {outOfStock ? (
+          <span className="absolute inset-x-0 bottom-0 bg-content-negative/90 py-1 text-center text-[10px] font-semibold uppercase tracking-wide text-white">
+            Out of stock
+          </span>
+        ) : null}
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-start sm:gap-6">
@@ -78,6 +94,11 @@ export function StoreVendorProductRow({
               {product.description}
             </p>
           ) : null}
+          {outOfStock ? (
+            <p className="mt-1.5 text-xs font-medium text-content-negative">
+              Currently unavailable — check back later
+            </p>
+          ) : null}
           <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span className="text-xs font-medium uppercase tracking-wide text-content-neutral-muted">
               From
@@ -89,7 +110,17 @@ export function StoreVendorProductRow({
         </div>
 
         <div className="mt-3 flex shrink-0 flex-col items-stretch gap-1.5 sm:mt-0 sm:items-end sm:justify-center">
-          {!inCart ? (
+          {outOfStock ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="w-full cursor-not-allowed rounded-full border-border-muted text-content-neutral-muted sm:w-auto sm:px-5"
+              disabled
+            >
+              Out of stock
+            </Button>
+          ) : !inCart ? (
             <Button
               type="button"
               size="sm"
@@ -147,7 +178,7 @@ export function StoreVendorProductRow({
                   qty >= maxQty && "text-content-warning"
                 )}
               >
-                {qty >= maxQty ? "Max in cart" : `Up to ${maxQty}`}
+                {qty >= maxQty ? "Max in cart" : maxQty > 0 ? `Up to ${maxQty}` : "Out of stock"}
               </p>
             </div>
           )}

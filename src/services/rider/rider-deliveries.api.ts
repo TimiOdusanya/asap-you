@@ -3,20 +3,34 @@ import { RIDER_DELIVERY_ENDPOINTS } from "@/services/api/endpoints";
 import type {
   OrderDetailResponse,
   OrderListResponse,
+  OrderTrackResponse,
   RiderActiveDeliveryResponse,
 } from "@/types/order";
 
-export const riderDeliveriesQueryKey = (status?: string) =>
-  ["rider", "deliveries", status ?? "all"] as const;
+export const riderProfileQueryKey = ["rider", "profile"] as const;
+
+export const riderDeliveriesQueryKey = (page: number, limit: number, status?: string) =>
+  ["rider", "deliveries", page, limit, status ?? "all"] as const;
 
 export const riderActiveDeliveryQueryKey = ["rider", "deliveries", "active"] as const;
 
 export const riderDeliveryDetailQueryKey = (orderId: string) =>
   ["rider", "deliveries", "detail", orderId] as const;
 
+export interface RiderUserRef {
+  _id: string;
+  email: string;
+  phone: string;
+  profile?: {
+    firstName?: string;
+    lastName?: string;
+    avatar?: string;
+  };
+}
+
 export interface RiderProfileData {
   _id: string;
-  userId: string;
+  userId: RiderUserRef | string;
   vehicleType: string;
   license: string;
   status: string;
@@ -25,10 +39,24 @@ export interface RiderProfileData {
     completedDeliveries: number;
     averageRating: number;
     totalEarnings: number;
+    onlineHours?: number;
+  };
+  bankAccount?: {
+    accountNumber: string;
+    bankName: string;
+    bankCode?: string;
+    accountHolderName: string;
+    isVerified?: boolean;
+  };
+  settings?: {
+    autoAcceptOrders: boolean;
+    maxDeliveryDistance: number;
   };
   location?: {
     coordinates: { lat: number; lng: number };
     lastUpdated: string;
+    heading?: number;
+    speed?: number;
   };
 }
 
@@ -85,6 +113,13 @@ export async function fetchActiveDelivery(): Promise<RiderActiveDeliveryResponse
 export async function fetchRiderOrderById(orderId: string): Promise<OrderDetailResponse> {
   const { data } = await apiClient.get<OrderDetailResponse>(
     RIDER_DELIVERY_ENDPOINTS.byId(orderId)
+  );
+  return data;
+}
+
+export async function fetchRiderTrack(orderId: string): Promise<OrderTrackResponse> {
+  const { data } = await apiClient.get<OrderTrackResponse>(
+    RIDER_DELIVERY_ENDPOINTS.track(orderId)
   );
   return data;
 }

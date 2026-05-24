@@ -17,6 +17,11 @@ import {
   vendorProductsQueryKey,
 } from "@/services/vendor/vendor-products.api";
 import { fetchStoreCategories, STORE_CATEGORIES_QUERY_KEY } from "@/services/store/categories.api";
+import {
+  fetchVendorProductCategories,
+  vendorProductCategoriesQueryKey,
+} from "@/services/vendor/vendor-product-categories.api";
+import { FormSelectField } from "@/components/vendor/shared/form-select-field";
 
 const inputCls =
   "h-10 rounded-lg border border-border-muted bg-surface-subtle text-sm px-3";
@@ -42,6 +47,11 @@ export function VendorProductEdit({ productId }: { productId: string }) {
     queryFn: fetchStoreCategories,
   });
 
+  const { data: vendorCategoriesRes } = useQuery({
+    queryKey: vendorProductCategoriesQueryKey,
+    queryFn: fetchVendorProductCategories,
+  });
+
   const product = data?.data;
 
   const [name, setName] = useState("");
@@ -51,6 +61,7 @@ export function VendorProductEdit({ productId }: { productId: string }) {
   const [lowStockAlert, setLowStockAlert] = useState("5");
   const [status, setStatus] = useState<"active" | "inactive" | "out_of_stock">("active");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [vendorCategoryId, setVendorCategoryId] = useState("");
   const [trackQuantity, setTrackQuantity] = useState(true);
 
   useEffect(() => {
@@ -62,6 +73,9 @@ export function VendorProductEdit({ productId }: { productId: string }) {
     setLowStockAlert(String(product.inventory.lowStockAlert));
     setStatus(product.status as "active" | "inactive" | "out_of_stock");
     setCategoryIds(product.categoryIds ?? []);
+    setVendorCategoryId(
+      typeof product.vendorCategoryId === "string" ? product.vendorCategoryId : ""
+    );
     setTrackQuantity(product.inventory.trackQuantity);
   }, [product]);
 
@@ -75,6 +89,7 @@ export function VendorProductEdit({ productId }: { productId: string }) {
         lowStockAlert: Number(lowStockAlert),
         status,
         categoryIds,
+        vendorCategoryId: vendorCategoryId || undefined,
         trackQuantity,
       }),
     onSuccess: (res) => {
@@ -101,12 +116,10 @@ export function VendorProductEdit({ productId }: { productId: string }) {
   });
 
   const categories = categoriesRes?.data ?? [];
+  const vendorCategories = vendorCategoriesRes?.data ?? [];
+  const asapuCategoryId = categoryIds[0] ?? "";
 
-  const toggleCategory = (id: string) => {
-    setCategoryIds((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-    );
-  };
+  const setAsapuCategory = (id: string) => setCategoryIds(id ? [id] : []);
 
   if (isPending) return <ProductEditSkeleton />;
 
@@ -178,39 +191,36 @@ export function VendorProductEdit({ productId }: { productId: string }) {
               <Label>Low stock alert at</Label>
               <Input type="number" min={0} className={inputCls} value={lowStockAlert} onChange={(e) => setLowStockAlert(e.target.value)} />
             </div>
-            <div className="space-y-1.5">
-              <Label>Status</Label>
-              <select
-                className="w-full h-10 rounded-lg border border-border-muted bg-surface-subtle text-sm px-3"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as typeof status)}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="out_of_stock">Out of stock</option>
-              </select>
-            </div>
+            <FormSelectField
+              id="edit-status"
+              label="Status"
+              value={status}
+              onValueChange={(v) => setStatus(v as typeof status)}
+              options={[
+                { value: "active", label: "Active" },
+                { value: "inactive", label: "Inactive" },
+                { value: "out_of_stock", label: "Out of stock" },
+              ]}
+            />
           </div>
 
-          <div className="space-y-2">
-            <Label>Categories</Label>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat._id}
-                  type="button"
-                  onClick={() => toggleCategory(cat._id)}
-                  className={`rounded-full px-3 py-1 text-xs border transition-colors ${
-                    categoryIds.includes(cat._id)
-                      ? "bg-surface-brand text-white border-surface-brand"
-                      : "bg-white text-content-neutral-secondary border-border-muted"
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          </div>
+          <FormSelectField
+            id="edit-asapu-category"
+            label="ASAPU product category"
+            value={asapuCategoryId}
+            onValueChange={setAsapuCategory}
+            options={categories.map((c) => ({ value: c._id, label: c.name }))}
+            placeholder="Select ASAPU category"
+          />
+
+          <FormSelectField
+            id="edit-vendor-category"
+            label="Vendor product category"
+            value={vendorCategoryId}
+            onValueChange={setVendorCategoryId}
+            options={vendorCategories.map((c) => ({ value: c.id, label: c.name }))}
+            placeholder="Select your category"
+          />
 
           <label className="flex items-center gap-2 text-sm text-content-neutral-secondary">
             <input
@@ -226,7 +236,7 @@ export function VendorProductEdit({ productId }: { productId: string }) {
             <Button
               className="rounded-full bg-surface-brand hover:bg-surface-brand/90 px-8"
               onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending || categoryIds.length === 0}
+              disabled={saveMutation.isPending || categoryIds.length === 0 || !vendorCategoryId}
             >
               {saveMutation.isPending ? "Saving…" : "Save changes"}
             </Button>

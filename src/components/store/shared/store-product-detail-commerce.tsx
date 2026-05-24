@@ -41,15 +41,19 @@ function useWishlistContains(productId: string, enabled: boolean) {
 
 interface StoreProductDetailCommerceProps {
   productId: string;
+  vendorId?: string;
   quantity: number;
   maxQty: number;
+  outOfStock?: boolean;
   onQuantityDelta: (delta: number) => void;
 }
 
 export function StoreProductDetailCommerce({
   productId,
+  vendorId,
   quantity,
   maxQty,
+  outOfStock = false,
   onQuantityDelta,
 }: StoreProductDetailCommerceProps) {
   const router = useRouter();
@@ -81,13 +85,14 @@ export function StoreProductDetailCommerce({
     void queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY_ROOT });
 
   const addCartMut = useMutation({
-    mutationFn: () =>
-      addToCart({ productId, quantity, variantId: null }),
+    mutationFn: () => addToCart({ productId, quantity, variantId: null }),
     onSuccess: (res) => {
       invalidateCart();
       toast.success(res.message ?? "Added to cart");
     },
-    onError: () => toast.error("Could not add to cart"),
+    onError: (err: { response?: { data?: { message?: string } } }) => {
+      toast.error(err.response?.data?.message ?? "Could not add to cart");
+    },
   });
 
   const removeCartMut = useMutation({
@@ -124,6 +129,7 @@ export function StoreProductDetailCommerce({
   };
 
   const handleAddOrRemoveCart = () => {
+    if (outOfStock) return;
     if (!authed) return requireAuth();
     if (inCart) {
       removeCartMut.mutate();
@@ -133,6 +139,7 @@ export function StoreProductDetailCommerce({
   };
 
   const handleBuyNow = async () => {
+    if (outOfStock) return;
     if (!authed) return requireAuth();
     try {
       const cart = await fetchCart();
@@ -144,7 +151,12 @@ export function StoreProductDetailCommerce({
       }
       invalidateCart();
       toast.success("Continue to checkout");
-      router.push("/store/checkout");
+      const checkoutVendorId = vendorId?.trim();
+      router.push(
+        checkoutVendorId
+          ? `/store/checkout?vendorId=${encodeURIComponent(checkoutVendorId)}`
+          : "/store/checkout"
+      );
     } catch {
       toast.error("Could not start checkout");
     }
@@ -161,6 +173,34 @@ export function StoreProductDetailCommerce({
 
   const cartBusy = addCartMut.isPending || removeCartMut.isPending;
   const wishBusy = addWishMut.isPending || removeWishMut.isPending;
+
+  const wishlistButton = (
+    <div className="pt-3">
+      <button
+        type="button"
+        disabled={wishBusy}
+        onClick={handleWishlistToggle}
+        className="text-sm font-medium text-content-link underline decoration-content-link/40 underline-offset-4 hover:decoration-content-link disabled:opacity-50"
+      >
+        {inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+      </button>
+    </div>
+  );
+
+  if (outOfStock) {
+    return (
+      <>
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+          <p className="text-sm font-semibold text-content-negative">Out of stock</p>
+          <p className="mt-1 text-sm text-content-neutral-secondary">
+            This item is currently unavailable. You cannot add it to your cart or place an order
+            right now.
+          </p>
+        </div>
+        {wishlistButton}
+      </>
+    );
+  }
 
   return (
     <>
@@ -184,7 +224,7 @@ export function StoreProductDetailCommerce({
             size="icon"
             type="button"
             onClick={() => onQuantityDelta(1)}
-            disabled={quantity >= maxQty}
+            disabled={quantity >= maxQty || maxQty <= 0}
             className="rounded-l-none"
           >
             <Plus className="h-4 w-4" />
@@ -198,6 +238,7 @@ export function StoreProductDetailCommerce({
         <Button
           type="button"
           className="w-full min-w-[160px] max-w-[188px] sm:w-[188px]"
+          disabled={maxQty <= 0}
           onClick={() => void handleBuyNow()}
         >
           Buy now
@@ -209,23 +250,14 @@ export function StoreProductDetailCommerce({
             "w-full min-w-[160px] max-w-[188px] border sm:w-[188px]",
             !inCart && "border-content-neutral-primary"
           )}
-          disabled={cartBusy}
+          disabled={cartBusy || maxQty <= 0}
           onClick={handleAddOrRemoveCart}
         >
           {inCart ? "Remove from cart" : "Add to cart"}
         </Button>
       </div>
 
-      <div className="pt-3">
-        <button
-          type="button"
-          disabled={wishBusy}
-          onClick={handleWishlistToggle}
-          className="text-sm font-medium text-content-link underline decoration-content-link/40 underline-offset-4 hover:decoration-content-link disabled:opacity-50"
-        >
-          {inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-        </button>
-      </div>
+      {wishlistButton}
     </>
   );
 }

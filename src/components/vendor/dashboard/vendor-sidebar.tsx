@@ -10,6 +10,7 @@ import {
   XIcon,
   ShoppingBagIcon,
   ListChecksIcon,
+  TagIcon,
 } from "@phosphor-icons/react";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -30,6 +31,11 @@ const navItems: NavItem[] = [
     href: "/vendor/dashboard/orders",
     label: "Orders",
     PhosphorIcon: ListChecksIcon,
+  },
+  {
+    href: "/vendor/dashboard/add-categories",
+    label: "Add Vendor Category",
+    PhosphorIcon: TagIcon,
   },
   {
     href: "/vendor/dashboard/add-product",
@@ -87,7 +93,9 @@ const VendorSidebar = ({ mobileOpen = false, onClose }: VendorSidebarProps) => {
 
       <nav className="flex-1 px-3 py-2 flex flex-col gap-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/vendor/dashboard" && pathname.startsWith(`${item.href}/`));
           return (
             <Link
               key={item.href}

@@ -3,6 +3,8 @@ export const AUTH_ENDPOINTS = {
   REGISTER: "/v1/auth/register",
   OTP_VERIFY: "/v1/auth/otp/verify",
   OTP_SEND: "/v1/auth/otp/send",
+  ME: "/v1/auth/me",
+  PROFILE: "/v1/auth/profile",
 } as const;
 
 export const VENDOR_ENDPOINTS = {
@@ -10,6 +12,8 @@ export const VENDOR_ENDPOINTS = {
   LOGIN: "/v1/auth/login",
   CATEGORIES: "/v1/vendor/categories",
   ME: "/v1/vendor/me",
+  /** GET/POST vendor-owned store menu categories */
+  MY_PRODUCT_CATEGORIES: "/v1/vendor/me/product-categories",
   /** GET ?page=&limit=&categories=slug (omit categories for all stores) */
   LIST: "/v1/vendor",
   byId: (vendorId: string) =>

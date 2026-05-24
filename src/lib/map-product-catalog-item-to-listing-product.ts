@@ -3,6 +3,7 @@ import {
   formatStoreMoney,
   PRODUCT_IMAGE_PLACEHOLDER,
 } from "@/components/store/shared/store-supermarket-product-detail-parts";
+import { isProductOutOfStock } from "@/lib/product-availability";
 import type { ProductCatalogItemDto } from "@/types/store-api";
 
 function discountBadge(p: ProductCatalogItemDto): string | undefined {
@@ -40,5 +41,6 @@ export function mapProductCatalogItemToListingProduct(
     discount,
     image: img,
     category: tag ?? "Groceries",
+    outOfStock: isProductOutOfStock(p),
   };
 }

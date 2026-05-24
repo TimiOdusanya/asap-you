@@ -1,4 +1,5 @@
 import type { CartItemDto } from "@/types/store-api";
+import { normalizeVendorId } from "@/lib/normalize-vendor-id";
 
 export interface CartVendorGroup {
   vendorId: string;
@@ -12,7 +13,8 @@ export function groupCartItemsByVendor(items: CartItemDto[]): CartVendorGroup[] 
   const map = new Map<string, CartItemDto[]>();
 
   for (const item of items) {
-    const id = item.vendorId;
+    const id = normalizeVendorId(item.vendorId);
+    if (!id) continue;
     if (!map.has(id)) {
       map.set(id, []);
       order.push(id);

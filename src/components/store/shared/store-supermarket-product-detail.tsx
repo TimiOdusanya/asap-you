@@ -18,8 +18,12 @@ import {
   fetchProductDetail,
   productDetailQueryKey,
 } from "@/services/store/product-detail.api";
-import { cn } from "@/lib/utils";
+import {
+  getMaxPurchasableQuantity,
+  isProductOutOfStock,
+} from "@/lib/product-availability";
 import { EMPTY_STATE_ILLUSTRATION } from "@/lib/empty-state-illustrations";
+import { cn } from "@/lib/utils";
 
 export function StoreSupermarketProductDetail({ productId }: { productId: string }) {
   const [quantity, setQuantity] = useState(1);
@@ -43,13 +47,11 @@ export function StoreSupermarketProductDetail({ productId }: { productId: string
         ? [PRODUCT_IMAGE_PLACEHOLDER]
         : [];
 
+  const outOfStock = useMemo(() => (product ? isProductOutOfStock(product) : false), [product]);
+
   const maxQty = useMemo(() => {
-    if (!product) return 1;
-    const { inventory } = product;
-    if (!inventory.trackQuantity || inventory.allowOutOfStockPurchase) {
-      return 99;
-    }
-    return Math.max(1, inventory.quantity);
+    if (!product) return 0;
+    return getMaxPurchasableQuantity(product);
   }, [product]);
 
   useEffect(() => {
@@ -121,8 +123,13 @@ export function StoreSupermarketProductDetail({ productId }: { productId: string
                     alt={product.name}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
+                    className={cn("object-cover", outOfStock && "grayscale")}
                   />
+                  {outOfStock ? (
+                    <span className="absolute left-3 top-3 rounded-md bg-content-negative px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                      Out of stock
+                    </span>
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap gap-4">
                   {displayImages.map((image, index) => (
@@ -199,7 +206,11 @@ export function StoreSupermarketProductDetail({ productId }: { productId: string
                   ) : null}
                 </div>
 
-                {product.inventory.trackQuantity ? (
+                {outOfStock ? (
+                  <p className="text-base font-medium text-content-negative">
+                    This item is currently out of stock and cannot be ordered.
+                  </p>
+                ) : product.inventory.trackQuantity ? (
                   <p className="text-base font-light text-content-neutral-tertiary">
                     {product.inventory.quantity <= product.inventory.lowStockAlert ? (
                       <>
@@ -217,8 +228,10 @@ export function StoreSupermarketProductDetail({ productId }: { productId: string
 
                 <StoreProductDetailCommerce
                   productId={product._id}
+                  vendorId={product.vendorId}
                   quantity={quantity}
                   maxQty={maxQty}
+                  outOfStock={outOfStock}
                   onQuantityDelta={handleQuantityChange}
                 />
 

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { StoreCheckoutPageSkeleton } from "@/components/store/skeletons/store-checkout-page-skeleton";
 import { EMPTY_STATE_ILLUSTRATION } from "@/lib/empty-state-illustrations";
 import { groupCartItemsByVendor } from "@/lib/group-cart-items-by-vendor";
+import { normalizeVendorId } from "@/lib/normalize-vendor-id";
 import { computeStoreOrderTotals } from "@/lib/store-checkout-fees";
 import { useAuthHydrated } from "@/hooks/use-auth-hydrated";
 import { useAuthStore } from "@/stores/auth-store";
@@ -49,23 +50,34 @@ export function StoreCheckoutPage() {
   });
 
   const allItems = React.useMemo(
-    () => (cartRes?.success && cartRes.data ? cartRes.data.items : []),
+    () => (cartRes?.success && cartRes.data ? cartRes.data.items ?? [] : []),
     [cartRes]
   );
   const vendorGroups = React.useMemo(() => groupCartItemsByVendor(allItems), [allItems]);
 
   const activeVendorId = React.useMemo(() => {
-    if (vendorIdParam && vendorGroups.some((g) => g.vendorId === vendorIdParam)) {
-      return vendorIdParam;
+    const param = vendorIdParam ? normalizeVendorId(vendorIdParam) : null;
+    if (param && vendorGroups.some((g) => g.vendorId === param)) {
+      return param;
     }
     if (vendorGroups.length === 1) return vendorGroups[0].vendorId;
     return null;
   }, [vendorIdParam, vendorGroups]);
 
-  const storeItems = React.useMemo(
-    () => allItems.filter((i) => i.vendorId === activeVendorId),
-    [allItems, activeVendorId]
-  );
+  const storeItems = React.useMemo(() => {
+    if (!activeVendorId) return [];
+    return allItems.filter(
+      (item) => normalizeVendorId(item.vendorId) === activeVendorId
+    );
+  }, [allItems, activeVendorId]);
+
+  React.useEffect(() => {
+    if (cartPending || !token || vendorGroups.length !== 1) return;
+    const onlyVendorId = vendorGroups[0]?.vendorId;
+    if (!onlyVendorId) return;
+    if (vendorIdParam && normalizeVendorId(vendorIdParam) === onlyVendorId) return;
+    router.replace(`/store/checkout?vendorId=${encodeURIComponent(onlyVendorId)}`);
+  }, [cartPending, token, vendorGroups, vendorIdParam, router]);
 
   const { data: vendor, isPending: vendorPending } = useQuery({
     queryKey: vendorDetailQueryKey(activeVendorId ?? ""),
@@ -176,18 +188,21 @@ export function StoreCheckoutPage() {
     );
   }
 
-  if (!activeVendorId || storeItems.length === 0) {
+  const needsStorePicker =
+    vendorGroups.length > 1 && !activeVendorId && allItems.length > 0;
+
+  if (needsStorePicker) {
     return (
       <div className="min-h-[50vh] bg-surface-subtle px-4 py-10 sm:px-6">
         <div className="mx-auto max-w-lg">
-          <EmptyState
-            illustrationSrc={EMPTY_STATE_ILLUSTRATION.platform}
-            illustrationAlt=""
-            title="Choose a store to checkout"
-            description="Your cart has items from multiple stores. Pick which store you want to pay for first."
-            action={{ label: "Back to cart", href: "/store/cart" }}
-          />
-          <ul className="mt-6 space-y-2">
+          <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-content-neutral-primary">
+            Choose a store to checkout
+          </h1>
+          <p className="mt-2 text-sm text-content-neutral-secondary">
+            Your cart has items from {vendorGroups.length} stores. Pick which store you want to pay
+            for first — each store checks out separately.
+          </p>
+          <ul className="mt-8 space-y-3">
             {vendorGroups.map((g) => (
               <li key={g.vendorId}>
                 <Button
@@ -198,8 +213,7 @@ export function StoreCheckoutPage() {
                   <Link href={`/store/checkout?vendorId=${encodeURIComponent(g.vendorId)}`}>
                     <span className="font-medium">Checkout store</span>
                     <span className="text-content-neutral-muted">
-                      {g.itemCount} item{g.itemCount === 1 ? "" : "s"} ·{" "}
-                      {g.items[0]?.name}
+                      {g.itemCount} item{g.itemCount === 1 ? "" : "s"} · {g.items[0]?.name}
                       {g.items.length > 1 ? ` +${g.items.length - 1} more` : ""}
                     </span>
                   </Link>
@@ -207,7 +221,25 @@ export function StoreCheckoutPage() {
               </li>
             ))}
           </ul>
+          <Button asChild variant="ghost" className="mt-6 w-full rounded-full">
+            <Link href="/store/cart">Back to cart</Link>
+          </Button>
         </div>
+      </div>
+    );
+  }
+
+  if (!activeVendorId || storeItems.length === 0) {
+    return (
+      <div className="min-h-[50vh] bg-surface-subtle px-4 py-10 sm:px-6">
+        <EmptyState
+          className="mx-auto w-full max-w-lg"
+          illustrationSrc={EMPTY_STATE_ILLUSTRATION.cart}
+          illustrationAlt=""
+          title="Nothing to checkout"
+          description="We couldn't match your cart to a store. Go back to your cart and try again."
+          action={{ label: "Back to cart", href: "/store/cart" }}
+        />
       </div>
     );
   }

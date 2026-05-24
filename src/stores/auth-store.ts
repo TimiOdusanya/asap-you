@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { AuthUser } from "@/services/auth/auth.types";
 import { tokenStorage } from "@/lib/token-storage";
+import { disconnectSocket } from "@/hooks/use-socket";
 
 interface AuthState {
   token: string | null;
@@ -20,6 +21,7 @@ export const useAuthStore = create<AuthState>()(
         set({ token, user });
       },
       clearSession: () => {
+        disconnectSocket();
         tokenStorage.remove();
         set({ token: null, user: null });
       },

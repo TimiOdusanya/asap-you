@@ -2,22 +2,46 @@
 
 import React, { useMemo, useState } from "react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AdminPageShell } from "@/components/admin/admin-page-shell";
 import { AdminBadge } from "@/components/admin/admin-badge";
 import { AdminTable, AdminTd, AdminTh } from "@/components/admin/admin-table";
-import { mockOrders } from "@/components/admin/mock-admin-data";
+import { fetchVendorOrders, vendorOrdersQueryKey } from "@/services/vendor/vendor-orders.api";
+import type { OrderDto, OrderStatus } from "@/types/order";
+
+function statusVariant(status: OrderStatus): "success" | "danger" | "warning" | "neutral" {
+  if (status === "delivered") return "success";
+  if (status === "cancelled" || status === "failed") return "danger";
+  if (status === "pending") return "warning";
+  return "neutral";
+}
 
 export default function AdminOrdersPage() {
   const [q, setQ] = useState("");
+
+  const { data, isPending } = useQuery({
+    queryKey: vendorOrdersQueryKey(),
+    queryFn: () => fetchVendorOrders(1, 100),
+    refetchInterval: 30_000,
+  });
+
+  const allOrders: OrderDto[] = data?.data ?? [];
+
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    if (!needle) return mockOrders;
-    return mockOrders.filter((o) =>
-      [o.id, o.customerName, o.vendorName, o.status].some((x) => x.toLowerCase().includes(needle))
+    if (!needle) return allOrders;
+    return allOrders.filter((o) =>
+      [
+        o.orderId,
+        o.customerName,
+        o.status,
+        typeof o.vendorId === "object" ? o.vendorId.businessName : "",
+      ].some((x) => x.toLowerCase().includes(needle))
     );
-  }, [q]);
+  }, [q, allOrders]);
 
   return (
     <AdminPageShell title="Orders" subtitle="Track marketplace order flow and exceptions.">
@@ -31,49 +55,73 @@ export default function AdminOrdersPage() {
             className="h-10 rounded-lg border-border-muted bg-white pl-9 text-sm"
           />
         </div>
-        <AdminBadge variant="neutral">{rows.length} total</AdminBadge>
+        <AdminBadge variant="neutral">{isPending ? "…" : rows.length} total</AdminBadge>
       </div>
 
-      {rows.length === 0 ? (
+      {isPending ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="size-8 animate-spin text-primary" />
+        </div>
+      ) : rows.length === 0 ? (
         <EmptyState
           title="No orders found"
-          description="Once endpoints are connected, this page will show live orders with filters, pagination, and detail drill-down."
+          description={q ? "No orders match your search." : "Orders placed by customers will appear here."}
         />
       ) : (
         <AdminTable>
           <thead>
             <tr className="border-b border-border-muted">
-              <AdminTh>Order</AdminTh>
+              <AdminTh>Order ID</AdminTh>
               <AdminTh>Customer</AdminTh>
               <AdminTh>Vendor</AdminTh>
               <AdminTh>Status</AdminTh>
+              <AdminTh>Payment</AdminTh>
               <AdminTh>Total</AdminTh>
               <AdminTh>Date</AdminTh>
             </tr>
           </thead>
           <tbody>
-            {rows.map((o) => (
-              <tr key={o.id} className="border-b border-border-muted/50 hover:bg-surface-subtle">
-                <AdminTd className="text-content-neutral-primary">{o.id}</AdminTd>
-                <AdminTd>{o.customerName}</AdminTd>
-                <AdminTd>{o.vendorName}</AdminTd>
-                <AdminTd>
-                  <AdminBadge
-                    variant={
-                      o.status === "delivered"
-                        ? "success"
-                        : o.status === "cancelled"
-                          ? "danger"
-                          : "warning"
-                    }
-                  >
-                    {o.status.replaceAll("_", " ")}
-                  </AdminBadge>
-                </AdminTd>
-                <AdminTd className="text-content-neutral-primary">₦{o.total.toLocaleString()}</AdminTd>
-                <AdminTd>{o.createdAt}</AdminTd>
-              </tr>
-            ))}
+            {rows.map((o) => {
+              const vendorName =
+                typeof o.vendorId === "object" ? o.vendorId.businessName : String(o.vendorId);
+              return (
+                <tr key={o._id} className="border-b border-border-muted/50 hover:bg-surface-subtle">
+                  <AdminTd className="font-mono text-xs text-content-neutral-primary">
+                    #{o.orderId}
+                  </AdminTd>
+                  <AdminTd>{o.customerName}</AdminTd>
+                  <AdminTd>{vendorName || "—"}</AdminTd>
+                  <AdminTd>
+                    <AdminBadge variant={statusVariant(o.status)}>
+                      {o.status.replaceAll("_", " ")}
+                    </AdminBadge>
+                  </AdminTd>
+                  <AdminTd>
+                    <AdminBadge
+                      variant={
+                        o.payment.status === "completed"
+                          ? "success"
+                          : o.payment.status === "failed" || o.payment.status === "refunded"
+                            ? "danger"
+                            : "warning"
+                      }
+                    >
+                      {o.payment.status}
+                    </AdminBadge>
+                  </AdminTd>
+                  <AdminTd className="text-content-neutral-primary">
+                    ₦{o.pricing.total.toLocaleString()}
+                  </AdminTd>
+                  <AdminTd>
+                    {new Date(o.createdAt).toLocaleDateString("en-NG", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </AdminTd>
+                </tr>
+              );
+            })}
           </tbody>
         </AdminTable>
       )}

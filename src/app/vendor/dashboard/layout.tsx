@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ListIcon } from "@phosphor-icons/react";
 import VendorSidebar from "@/components/vendor/dashboard/vendor-sidebar";
+import { RealtimeSync } from "@/components/shared/realtime-sync";
 
 export default function VendorDashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function VendorDashboardLayout({
 
   return (
     <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
+      <RealtimeSync />
       <VendorSidebar
         mobileOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

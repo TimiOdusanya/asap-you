@@ -9,6 +9,7 @@ import {
   SignOutIcon,
   XIcon,
   ShoppingBagIcon,
+  ListChecksIcon,
 } from "@phosphor-icons/react";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -24,6 +25,11 @@ const navItems: NavItem[] = [
     href: "/vendor/dashboard",
     label: "Dashboard",
     svgIcon: "/icons/vendor/icon-dashboard.svg",
+  },
+  {
+    href: "/vendor/dashboard/orders",
+    label: "Orders",
+    PhosphorIcon: ListChecksIcon,
   },
   {
     href: "/vendor/dashboard/add-product",

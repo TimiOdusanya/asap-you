@@ -4,6 +4,10 @@ import type {
   VendorStorefrontProductDto,
   VendorStorefrontVendorDto,
 } from "@/types/store-api";
+import {
+  getMaxPurchasableQuantity,
+  isProductOutOfStock,
+} from "@/lib/product-availability";
 
 export function vendorStorefrontVendorToListItem(
   v: VendorStorefrontVendorDto
@@ -41,7 +45,22 @@ export function storefrontProductToProductDto(
 ): ProductDto {
   const listPrice = p.price > 0 ? p.price : p.finalPrice;
   const sellPrice = p.finalPrice > 0 ? p.finalPrice : p.price;
-  const max = Math.max(1, p.maxOrderable);
+
+  const inventory = {
+    quantity: p.inventory?.quantity ?? p.maxOrderable ?? 0,
+    trackQuantity: p.inventory?.trackQuantity ?? p.maxOrderable !== null,
+    allowOutOfStockPurchase: p.inventory?.allowOutOfStockPurchase ?? false,
+    lowStockAlert: 0,
+  };
+
+  const productShape = {
+    status: p.status ?? "active",
+    inventory,
+  };
+
+  const outOfStock = isProductOutOfStock(productShape);
+  const maxQty = getMaxPurchasableQuantity(productShape);
+
   return {
     _id: p._id,
     vendorId,
@@ -54,15 +73,13 @@ export function storefrontProductToProductDto(
     cost: 0,
     images: Array.isArray(p.images) ? p.images : [],
     inventory: {
-      quantity: max,
-      trackQuantity: true,
-      allowOutOfStockPurchase: false,
-      lowStockAlert: 0,
+      ...inventory,
+      quantity: outOfStock ? 0 : maxQty,
     },
     variants: null,
     attributes: {},
     tags: [],
-    status: "active",
+    status: outOfStock ? "out_of_stock" : (p.status ?? "active"),
     isActive: true,
     createdAt: "",
     updatedAt: "",

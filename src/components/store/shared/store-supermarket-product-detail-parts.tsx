@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Store } from "lucide-react";
 import type { SimilarProductItemDto } from "@/types/store-api";
+import { isProductOutOfStock } from "@/lib/product-availability";
 import { cn } from "@/lib/utils";
 
 export const PRODUCT_IMAGE_PLACEHOLDER = "/images/landing/vendor/vendor-hero-1.png";
@@ -58,14 +59,22 @@ export function SimilarSupermarketProductCard({ item }: { item: SimilarProductIt
   const showCompare = item.comparePrice > item.finalPrice;
   const rating = item.stats?.averageRating ?? 0;
   const reviewCount = item.stats?.totalReviews ?? 0;
+  const outOfStock = isProductOutOfStock(item);
 
   return (
     <Link
       href={href}
-      className="rounded-lg transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-surface-brand-muted"
+      className={cn(
+        "rounded-lg transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-surface-brand-muted",
+        outOfStock && "opacity-80"
+      )}
     >
       <div className="relative p-2 sm:p-4">
-        {badge ? (
+        {outOfStock ? (
+          <div className="absolute left-2 top-2 z-10 rounded bg-content-negative px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+            Out of stock
+          </div>
+        ) : badge ? (
           <div className="absolute right-2 top-2 z-10 rounded bg-content-warning px-2 py-1 text-xs text-content-neutral-primary">
             {badge}
           </div>
@@ -76,7 +85,7 @@ export function SimilarSupermarketProductCard({ item }: { item: SimilarProductIt
             alt={item.name}
             fill
             sizes="(max-width: 640px) 50vw, 25vw"
-            className="rounded-lg object-cover"
+            className={cn("rounded-lg object-cover", outOfStock && "grayscale")}
           />
         </div>
         <div className="space-y-2">

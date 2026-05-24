@@ -6,7 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Package, ChevronRight, Loader2 } from "lucide-react";
 import { CheckCircleIcon, XCircleIcon, GlobeIcon } from "@phosphor-icons/react";
 import RiderStatCard from "./rider-stat-card";
-import { fetchRiderDeliveries, fetchRiderProfile, riderDeliveriesQueryKey } from "@/services/rider/rider-deliveries.api";
+import RiderPagination from "./rider-pagination";
+import {
+  fetchRiderDeliveries,
+  fetchRiderProfile,
+  riderDeliveriesQueryKey,
+  riderProfileQueryKey,
+} from "@/services/rider/rider-deliveries.api";
+import { isActiveDeliveryStatus } from "@/lib/rider-order-utils";
 import type { OrderDto, OrderStatus } from "@/types/order";
 import { cn } from "@/lib/utils";
 
@@ -23,19 +30,28 @@ const FILTER_OPTIONS = [
   { label: "Cancelled", value: "cancelled" },
 ];
 
+const PAGE_SIZE = 10;
+
+function orderDetailHref(order: OrderDto): string {
+  if (isActiveDeliveryStatus(order.status)) {
+    return "/rider/dashboard/active-deliveries";
+  }
+  return `/rider/dashboard/order-history/${encodeURIComponent(order.orderId)}`;
+}
+
 const RiderOrderHistory = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
 
   const { data: profileRes } = useQuery({
-    queryKey: ["rider", "profile"],
+    queryKey: riderProfileQueryKey,
     queryFn: fetchRiderProfile,
   });
   const stats = profileRes?.data?.stats;
 
   const { data, isPending } = useQuery({
-    queryKey: riderDeliveriesQueryKey(statusFilter || undefined),
-    queryFn: () => fetchRiderDeliveries(page, 10, statusFilter || undefined),
+    queryKey: riderDeliveriesQueryKey(page, PAGE_SIZE, statusFilter || undefined),
+    queryFn: () => fetchRiderDeliveries(page, PAGE_SIZE, statusFilter || undefined),
   });
 
   const orders: OrderDto[] = data?.data ?? [];
@@ -45,7 +61,6 @@ const RiderOrderHistory = () => {
     <div className="p-4 sm:p-6 flex flex-col gap-6">
       <h1 className="text-xl sm:text-2xl font-semibold text-content-neutral-primary">Order History</h1>
 
-      {/* Stats */}
       <div className="bg-white rounded-xl border border-border-muted p-4 sm:p-5">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <RiderStatCard label="Total Deliveries" value={stats?.totalDeliveries ?? 0} iconBg="bg-blue-50"
@@ -57,7 +72,6 @@ const RiderOrderHistory = () => {
         </div>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-2">
         {FILTER_OPTIONS.map((opt) => (
           <button
@@ -76,7 +90,6 @@ const RiderOrderHistory = () => {
         ))}
       </div>
 
-      {/* List */}
       <div className="bg-white rounded-xl border border-border-muted overflow-hidden">
         {isPending ? (
           <div className="flex justify-center py-12">
@@ -88,65 +101,45 @@ const RiderOrderHistory = () => {
             <p className="text-sm text-content-neutral-muted">No deliveries found</p>
           </div>
         ) : (
-          <ul className="divide-y divide-border-muted">
-            {orders.map((order) => {
-              const firstItem = order.items[0];
-              return (
-                <li key={order._id}>
-                  <Link
-                    href={`/rider/dashboard/active-deliveries`}
-                    className="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-subtle"
-                  >
-                    <div className="flex size-9 items-center justify-center rounded-full bg-surface-muted shrink-0">
-                      <Package className="size-4 text-content-neutral-muted" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-content-neutral-primary truncate">
-                        #{order.orderId}
-                      </p>
-                      <p className="text-xs text-content-neutral-muted truncate">
-                        {firstItem?.name ?? "Order"} · {order.customerName}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span
-                        className={cn(
-                          "rounded-full px-2 py-0.5 text-[11px] font-medium capitalize",
-                          STATUS_COLOR[order.status] ?? "bg-surface-muted text-content-neutral-secondary"
-                        )}
-                      >
-                        {order.status.replace(/_/g, " ")}
-                      </span>
-                      <ChevronRight className="size-4 text-content-neutral-muted" />
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border-muted px-4 py-3">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="text-sm text-content-neutral-secondary disabled:opacity-40 hover:text-content-neutral-primary"
-            >
-              ← Previous
-            </button>
-            <span className="text-xs text-content-neutral-muted">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="text-sm text-content-neutral-secondary disabled:opacity-40 hover:text-content-neutral-primary"
-            >
-              Next →
-            </button>
-          </div>
+          <>
+            <ul className="divide-y divide-border-muted">
+              {orders.map((order) => {
+                const firstItem = order.items[0];
+                return (
+                  <li key={order._id}>
+                    <Link
+                      href={orderDetailHref(order)}
+                      className="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-subtle"
+                    >
+                      <div className="flex size-9 items-center justify-center rounded-full bg-surface-muted shrink-0">
+                        <Package className="size-4 text-content-neutral-muted" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-content-neutral-primary truncate">
+                          #{order.orderId}
+                        </p>
+                        <p className="text-xs text-content-neutral-muted truncate">
+                          {firstItem?.name ?? "Order"} · {order.customerName}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-[11px] font-medium capitalize",
+                            STATUS_COLOR[order.status] ?? "bg-surface-muted text-content-neutral-secondary"
+                          )}
+                        >
+                          {order.status.replace(/_/g, " ")}
+                        </span>
+                        <ChevronRight className="size-4 text-content-neutral-muted" />
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <RiderPagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )}
       </div>
     </div>

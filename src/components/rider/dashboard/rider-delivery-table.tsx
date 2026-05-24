@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 export interface Delivery {
   orderId: string;
@@ -22,6 +23,7 @@ interface Props {
   showDate?: boolean;
   showDropOff?: boolean;
   showActions?: boolean;
+  getViewHref?: (orderId: string) => string;
 }
 
 const priorityColor: Record<string, string> = {
@@ -31,19 +33,35 @@ const priorityColor: Record<string, string> = {
 };
 
 const statusColor: Record<string, string> = {
-  "In Progress": "text-surface-brand font-medium",
-  Delivered: "text-[#2b7be8] font-medium",
-  Cancelled: "text-[#e83a3a] font-medium",
+  "in progress": "text-surface-brand font-medium",
+  delivered: "text-[#2b7be8] font-medium",
+  cancelled: "text-[#e83a3a] font-medium",
 };
 
-const RiderDeliveryTable = ({ deliveries, showStatus, showEarnings, showDate, showDropOff = true, showActions }: Props) => {
+const RiderDeliveryTable = ({
+  deliveries,
+  showStatus,
+  showEarnings,
+  showDate,
+  showDropOff = true,
+  showActions,
+  getViewHref,
+}: Props) => {
+  if (deliveries.length === 0) {
+    return (
+      <p className="px-4 py-10 text-center text-sm text-content-neutral-muted">
+        No deliveries to show
+      </p>
+    );
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm min-w-[640px]">
         <thead>
           <tr className="border-b border-border-muted">
             <th className="text-left px-3 py-3 font-medium text-content-neutral-muted w-8">
-              <input type="checkbox" className="rounded" />
+              <input type="checkbox" className="rounded" aria-label="Select all" />
             </th>
             <th className="text-left px-3 py-3 font-medium text-content-neutral-muted">Order Id</th>
             <th className="text-left px-3 py-3 font-medium text-content-neutral-muted">Customer</th>
@@ -63,9 +81,9 @@ const RiderDeliveryTable = ({ deliveries, showStatus, showEarnings, showDate, sh
           </tr>
         </thead>
         <tbody>
-          {deliveries.map((d, i) => (
-            <tr key={i} className="border-b border-border-muted/50 hover:bg-surface-subtle transition-colors">
-              <td className="px-3 py-3"><input type="checkbox" className="rounded" /></td>
+          {deliveries.map((d) => (
+            <tr key={d.orderId} className="border-b border-border-muted/50 hover:bg-surface-subtle transition-colors">
+              <td className="px-3 py-3"><input type="checkbox" className="rounded" aria-label={`Select ${d.orderId}`} /></td>
               <td className="px-3 py-3 text-content-neutral-primary">{d.orderId}</td>
               <td className="px-3 py-3 text-content-neutral-secondary">{d.customer}</td>
               <td className="px-3 py-3 text-content-neutral-secondary max-w-[120px] truncate">{d.address}</td>
@@ -75,14 +93,26 @@ const RiderDeliveryTable = ({ deliveries, showStatus, showEarnings, showDate, sh
               <td className="px-3 py-3 text-content-neutral-secondary">{d.items}</td>
               {showDate && <td className="px-3 py-3 text-content-neutral-secondary">{d.date}</td>}
               {showStatus && (
-                <td className={`px-3 py-3 ${statusColor[d.status ?? ""] ?? "text-content-neutral-secondary"}`}>{d.status}</td>
+                <td className={`px-3 py-3 capitalize ${statusColor[d.status?.toLowerCase() ?? ""] ?? "text-content-neutral-secondary"}`}>
+                  {d.status}
+                </td>
               )}
               <td className="px-3 py-3 text-content-neutral-secondary">{d.eta}</td>
-              {showEarnings && <td className="px-3 py-3 text-right text-content-neutral-primary">{d.earnings?.toLocaleString()}</td>}
+              {showEarnings && (
+                <td className="px-3 py-3 text-right text-content-neutral-primary">
+                  {d.earnings != null ? `₦${d.earnings.toLocaleString("en-NG")}` : "—"}
+                </td>
+              )}
               <td className={`px-3 py-3 ${priorityColor[d.priority] ?? ""}`}>{d.priority}</td>
               {showActions && (
                 <td className="px-3 py-3">
-                  <button className="text-surface-brand hover:underline text-sm cursor-pointer">View</button>
+                  {getViewHref ? (
+                    <Link href={getViewHref(d.orderId)} className="text-surface-brand hover:underline text-sm">
+                      View
+                    </Link>
+                  ) : (
+                    <span className="text-sm text-content-neutral-muted">—</span>
+                  )}
                 </td>
               )}
             </tr>

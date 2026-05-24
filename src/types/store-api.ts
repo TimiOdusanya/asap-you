@@ -27,6 +27,7 @@ export interface ProductDto {
   name: string;
   description: string;
   categoryIds: string[];
+  vendorCategoryId?: string;
   subcategory: string | null;
   price: number;
   comparePrice: number;
@@ -218,6 +219,7 @@ export interface VendorStorefrontMenuCategoryDto {
   id: string;
   name: string;
   iconUrl: string;
+  sortOrder?: number;
   productCount: number;
 }
 
@@ -231,7 +233,13 @@ export interface VendorStorefrontProductDto {
   discountAmount: number;
   priceFrom: number;
   showFromPrefix: boolean;
-  maxOrderable: number;
+  maxOrderable: number | null;
+  status?: string;
+  inventory?: {
+    quantity: number;
+    trackQuantity: boolean;
+    allowOutOfStockPurchase: boolean;
+  } | null;
 }
 
 export interface VendorStorefrontDataDto {

@@ -8,6 +8,10 @@ import { useAuthStore } from "@/stores/auth-store";
 import { NOTIFICATIONS_QUERY_KEY } from "@/services/notifications/notifications.api";
 import { myOrdersQueryKey } from "@/services/store/orders.api";
 import { vendorOrdersQueryKey } from "@/services/vendor/vendor-orders.api";
+import {
+  riderActiveDeliveryQueryKey,
+  riderProfileQueryKey,
+} from "@/services/rider/rider-deliveries.api";
 
 /** Keeps notifications and order lists in sync via WebSocket. Mount once per authenticated shell. */
 export function RealtimeSync() {
@@ -26,6 +30,11 @@ export function RealtimeSync() {
       }
       if (role === "vendor") {
         queryClient.invalidateQueries({ queryKey: vendorOrdersQueryKey() });
+      }
+      if (role === "rider") {
+        queryClient.invalidateQueries({ queryKey: riderProfileQueryKey });
+        queryClient.invalidateQueries({ queryKey: riderActiveDeliveryQueryKey });
+        queryClient.invalidateQueries({ queryKey: ["rider", "deliveries"] });
       }
     }, [enabled, queryClient, role])
   );

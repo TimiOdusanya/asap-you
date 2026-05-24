@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Star } from 'lucide-react'
 import { FaStoreAlt } from 'react-icons/fa'
+import { cn } from '@/lib/utils'
 
 export interface Product {
   id: string
@@ -15,6 +16,7 @@ export interface Product {
   discount?: string
   image: string
   category: string
+  outOfStock?: boolean
 }
 
 interface ProductCardProps {
@@ -25,12 +27,16 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductClick }) => {
   const showStrikePrice = Boolean(product.originalPrice)
-  const showDiscountBadge = Boolean(product.discount && showStrikePrice)
+  const showDiscountBadge = Boolean(product.discount && showStrikePrice && !product.outOfStock)
+  const outOfStock = Boolean(product.outOfStock)
 
   if (viewMode === 'list') {
     return (
       <div 
-        className="flex items-center space-x-4 p-4 bg-surface-canvas rounded-lg border border-border-subtle hover:shadow-md transition-shadow cursor-pointer"
+        className={cn(
+          "flex items-center space-x-4 p-4 bg-surface-canvas rounded-lg border border-border-subtle hover:shadow-md transition-shadow cursor-pointer",
+          outOfStock && "opacity-80"
+        )}
         onClick={() => onProductClick(product)}
       >
         <div className="relative w-20 h-20 flex-shrink-0">
@@ -42,9 +48,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
               product.image.startsWith("http://") ||
               product.image.startsWith("https://")
             }
-            className="object-cover rounded-lg"
+            className={cn("object-cover rounded-lg", outOfStock && "grayscale")}
           />
-          {showDiscountBadge ? (
+          {outOfStock ? (
+            <div className="absolute inset-x-0 bottom-0 rounded-b-lg bg-content-negative/90 py-0.5 text-center text-[9px] font-semibold uppercase text-white">
+              Out of stock
+            </div>
+          ) : showDiscountBadge ? (
             <div className="absolute top-1 right-1 bg-content-warning text-content-neutral-primary text-xs px-2 py-1 rounded">
               {product.discount}
             </div>
@@ -53,6 +63,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
         
         <div className="flex-1 min-w-0 space-y-1">
           <h3 className="text-base md:text-lg font-normal text-content-neutral-primary truncate">{product.name}</h3>
+          {outOfStock ? (
+            <p className="text-xs font-medium text-content-negative">Currently unavailable</p>
+          ) : null}
           <div className="text-sm text-content-positive flex items-center"> <FaStoreAlt className="w-4 h-4" /> <span className="ml-1">{product.store}</span></div>
           <div className="flex items-center mt-1">
             <div className="flex items-center space-x-2">
@@ -83,18 +96,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
 
   return (
     <div 
-      className=" rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+      className={cn("rounded-lg hover:shadow-md transition-shadow cursor-pointer", outOfStock && "opacity-80")}
       onClick={() => onProductClick(product)}
     >
       <div className="relative p-2 sm:p-4">
-        {/* Discount Badge */}
-        {showDiscountBadge ? (
+        {outOfStock ? (
+          <div className="absolute left-2 top-2 z-10 rounded bg-content-negative px-2 py-1 text-[10px] font-semibold uppercase text-white">
+            Out of stock
+          </div>
+        ) : showDiscountBadge ? (
           <div className="absolute top-2 right-2 bg-content-warning text-xs px-2 py-1 rounded z-10 text-content-neutral-primary">
             {product.discount}
           </div>
         ) : null}
         
-        {/* Product Image */}
         <div className="relative w-full h-36 sm:h-48 mb-3">
           <Image
             src={product.image}
@@ -104,16 +119,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
               product.image.startsWith("http://") ||
               product.image.startsWith("https://")
             }
-            className="object-cover rounded-lg"
+            className={cn("object-cover rounded-lg", outOfStock && "grayscale")}
           />
         </div>
         
-        {/* Product Info */}
         <div className="space-y-2">
           <h3 className="text-sm sm:text-lg font-normal text-content-neutral-secondary truncate">{product.name}</h3>
+          {outOfStock ? (
+            <p className="text-xs font-medium text-content-negative">Currently unavailable</p>
+          ) : null}
           <div className="text-xs sm:text-sm text-content-positive flex items-center"> <FaStoreAlt className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="ml-1 truncate">{product.store}</span></div>
 
-          {/* Rating */}
           <div className="flex items-center">
             <div className="flex items-center space-x-1">
               {[...Array(5)].map((_, i) => (
@@ -128,7 +144,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onProductC
             <span className="ml-1 text-xs sm:text-sm text-content-neutral-tertiary">({product.rating})</span>
           </div>
 
-          {/* Price */}
           <div className="flex items-center gap-1 sm:space-x-2">
             {showStrikePrice ? (
               <span className="text-xs sm:text-base text-content-neutral-tertiary line-through">{product.originalPrice}</span>

@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { authBrandBg, authBrandStyle } from "@/components/auth/auth-modal-shell";
 import { CustomerLocationSavedAddresses } from "@/components/auth/customer-location-saved-addresses";
 import { LocationAutocompleteInput } from "@/components/auth/location-autocomplete-input";
+import {
+  ensureAddressDeliverable,
+  ensureDeliveryCoverage,
+} from "@/lib/delivery-coverage-client";
 import { parsePlaceResultToAddress } from "@/lib/parse-google-place";
 import { readBrowserGeolocation } from "@/lib/geolocation";
 import { ensureGoogleMapsLoaded } from "@/lib/load-google-maps";
@@ -162,6 +166,11 @@ export function CustomerLocationForm({
       toast.error("Could not read address details");
       return;
     }
+    const covered = await ensureDeliveryCoverage(
+      body.coordinates.lat,
+      body.coordinates.lng
+    );
+    if (!covered) return;
     saveMutation.mutate(body);
   }, [
     addressText,
@@ -171,7 +180,9 @@ export function CustomerLocationForm({
   ]);
 
   const handleSelectSaved = React.useCallback(
-    (addr: AddressEntity) => {
+    async (addr: AddressEntity) => {
+      const covered = await ensureAddressDeliverable(addr);
+      if (!covered) return;
       setSelectedAddress(addr);
       onDone();
     },

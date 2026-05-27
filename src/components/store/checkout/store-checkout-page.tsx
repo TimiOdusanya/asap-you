@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getApiErrorMessage } from "@/lib/toast-api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,7 +21,9 @@ import { useCustomerAuthUiStore } from "@/stores/customer-auth-ui-store";
 import { CART_QUERY_KEY, fetchCart } from "@/services/store/cart.api";
 import { fetchVendorById, vendorDetailQueryKey } from "@/services/store/vendor-detail.api";
 import { fetchStoreSettings, STORE_SETTINGS_QUERY_KEY } from "@/services/store/settings.api";
+import { ADDRESS_LIST_QUERY_KEY, listAddresses } from "@/services/address/address.api";
 import { checkout } from "@/services/store/orders.api";
+import { ensureAddressDeliverable } from "@/lib/delivery-coverage-client";
 import { savePendingPaymentReference } from "@/lib/pending-payment-reference";
 import type { PaymentMethod } from "@/types/order";
 import {
@@ -42,6 +45,12 @@ export function StoreCheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = React.useState<string | null>(null);
 
   const vendorIdParam = searchParams.get("vendorId")?.trim() || null;
+
+  const { data: addrRes } = useQuery({
+    queryKey: ADDRESS_LIST_QUERY_KEY,
+    queryFn: listAddresses,
+    enabled: Boolean(token),
+  });
 
   const { data: cartRes, isPending: cartPending } = useQuery({
     queryKey: CART_QUERY_KEY,
@@ -135,16 +144,22 @@ export function StoreCheckoutPage() {
       }
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Checkout failed. Please try again.";
-      toast.error(msg);
+      toast.error(getApiErrorMessage(err));
     },
   });
 
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!selectedAddressId) {
       toast.error("Please select a delivery address first.");
       return;
     }
+    const selected = (addrRes?.data ?? []).find((a) => a._id === selectedAddressId);
+    if (!selected) {
+      toast.error("Please select a delivery address first.");
+      return;
+    }
+    const covered = await ensureAddressDeliverable(selected);
+    if (!covered) return;
     checkoutMut.mutate();
   };
 

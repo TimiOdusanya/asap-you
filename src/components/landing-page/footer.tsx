@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import Link from "next/link";
+import { FooterCtaButtons } from "@/components/landing-page/footer-cta-buttons";
+import { FooterLocationCheck } from "@/components/landing-page/footer-location-check";
 
 const footerLinks = [
   "Company",
@@ -26,17 +26,7 @@ const Footer = () => {
           <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-normal leading-[130%] text-content-on-dark-section">
             Enter your location to see if we deliver to you
           </h1>
-          <div className="relative w-full max-w-[515px]">
-            <Input
-              type="email"
-              id="email"
-              placeholder="Type your street, area, or city…"
-              className="bg-surface-elevated px-5 sm:px-6 py-6 sm:py-9 rounded-[40px] w-full pr-[150px] sm:pr-[190px] text-content-neutral-primary placeholder:text-content-neutral-muted text-sm sm:text-base"
-            />
-            <Button className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground text-xs sm:text-base rounded-[40px] px-3 sm:px-6 py-4 sm:py-6 whitespace-nowrap">
-              Current Location
-            </Button>
-          </div>
+          <FooterLocationCheck />
         </div>
 
         <div className="w-full h-px bg-white/15" />
@@ -63,17 +53,7 @@ const Footer = () => {
               <span className="text-content-on-dark-section text-sm sm:text-base font-normal leading-[100%]">+234 812 345 6789</span>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <Button className="bg-primary text-primary-foreground text-sm sm:text-base rounded-[40px] px-4 sm:px-6 py-5 sm:py-6">
-              Get Started
-            </Button>
-            <Button className="bg-surface-forest-deep border border-primary text-primary-foreground text-sm sm:text-base rounded-[40px] px-4 sm:px-6 py-5 sm:py-6">
-              Become a Vendor
-            </Button>
-            <Button className="bg-surface-forest-deep border border-primary text-primary-foreground text-sm sm:text-base rounded-[40px] px-4 sm:px-6 py-5 sm:py-6">
-              Join as Rider
-            </Button>
-          </div>
+          <FooterCtaButtons />
         </div>
 
         <div className="w-full h-px bg-white/15" />

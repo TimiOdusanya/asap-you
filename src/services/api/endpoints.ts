@@ -66,6 +66,10 @@ export const SETTINGS_ENDPOINTS = {
   GET: "/v1/settings",
 } as const;
 
+export const DELIVERY_ENDPOINTS = {
+  CHECK_COVERAGE: "/v1/delivery/check-coverage",
+} as const;
+
 export const ORDER_ENDPOINTS = {
   CHECKOUT: "/v1/order/checkout",
   VERIFY_PAYMENT: "/v1/order/verify-payment",

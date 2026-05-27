@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Wallet, MapPin, Plus, Check } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ProductMedia } from "@/components/store/shared/store-supermarket-product-detail-parts";
 import type { CartItemDto } from "@/types/store-api";
-import { ADDRESS_LIST_QUERY_KEY, listAddresses, createAddress } from "@/services/address/address.api";
+import { ADDRESS_LIST_QUERY_KEY, listAddresses } from "@/services/address/address.api";
 import type { AddressEntity } from "@/services/address/address.types";
+import { StoreCheckoutAddressForm } from "@/components/store/checkout/store-checkout-address-form";
+import { ensureAddressDeliverable } from "@/lib/delivery-coverage-client";
 import { cn } from "@/lib/utils";
 
 export function formatCheckoutMoney(n: number) {
@@ -71,16 +71,8 @@ export function StoreCheckoutDeliveryCard({
   selectedAddressId: string | null;
   onSelectAddress: (id: string) => void;
 }) {
-  const queryClient = useQueryClient();
   const [showNew, setShowNew] = React.useState(false);
-  const [form, setForm] = React.useState({
-    label: "Home",
-    addressLine1: "",
-    city: "",
-    state: "",
-    country: "Nigeria",
-    instructions: "",
-  });
+  const [validatingId, setValidatingId] = React.useState<string | null>(null);
 
   const { data: addrRes, isPending } = useQuery({
     queryKey: ADDRESS_LIST_QUERY_KEY,
@@ -90,31 +82,26 @@ export function StoreCheckoutDeliveryCard({
   const addresses: AddressEntity[] = addrRes?.data ?? [];
 
   React.useEffect(() => {
-    if (addresses.length > 0 && !selectedAddressId) {
-      const def = addresses.find((a) => a.isDefault) ?? addresses[0];
-      onSelectAddress(def._id);
-    }
+    if (addresses.length === 0 || selectedAddressId) return;
+    const def = addresses.find((a) => a.isDefault) ?? addresses[0];
+    let cancelled = false;
+    void ensureAddressDeliverable(def, { silent: true }).then((ok) => {
+      if (!cancelled && ok) onSelectAddress(def._id);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [addresses, selectedAddressId, onSelectAddress]);
 
-  const saveMut = useMutation({
-    mutationFn: () =>
-      createAddress({
-        label: form.label,
-        type: "home",
-        addressLine1: form.addressLine1,
-        city: form.city,
-        state: form.state,
-        country: form.country,
-        coordinates: { lat: 0, lng: 0 },
-        instructions: form.instructions,
-        isDefault: addresses.length === 0,
-      }),
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ADDRESS_LIST_QUERY_KEY });
-      onSelectAddress(res.data._id);
-      setShowNew(false);
+  const handleSelectAddress = React.useCallback(
+    async (addr: AddressEntity) => {
+      setValidatingId(addr._id);
+      const ok = await ensureAddressDeliverable(addr);
+      setValidatingId(null);
+      if (ok) onSelectAddress(addr._id);
     },
-  });
+    [onSelectAddress]
+  );
 
   return (
     <section className="rounded-2xl border border-border-muted bg-surface-canvas p-4 shadow-sm sm:p-6">
@@ -132,9 +119,10 @@ export function StoreCheckoutDeliveryCard({
             <button
               key={addr._id}
               type="button"
-              onClick={() => onSelectAddress(addr._id)}
+              onClick={() => void handleSelectAddress(addr)}
+              disabled={validatingId === addr._id}
               className={cn(
-                "flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors",
+                "flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors disabled:opacity-60",
                 selectedAddressId === addr._id
                   ? "border-primary bg-surface-brand-soft/40"
                   : "border-border-muted hover:bg-surface-muted/60"
@@ -162,68 +150,14 @@ export function StoreCheckoutDeliveryCard({
               <Plus className="size-4" /> Add new address
             </button>
           ) : (
-            <div className="rounded-xl border border-border-muted p-4 space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="addr-line1">Street address</Label>
-                <Input
-                  id="addr-line1"
-                  placeholder="e.g. 14 Broad Street"
-                  className="rounded-xl"
-                  value={form.addressLine1}
-                  onChange={(e) => setForm((f) => ({ ...f, addressLine1: e.target.value }))}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="addr-city">City</Label>
-                  <Input
-                    id="addr-city"
-                    placeholder="Lagos"
-                    className="rounded-xl"
-                    value={form.city}
-                    onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="addr-state">State</Label>
-                  <Input
-                    id="addr-state"
-                    placeholder="Lagos"
-                    className="rounded-xl"
-                    value={form.state}
-                    onChange={(e) => setForm((f) => ({ ...f, state: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="addr-instructions">Delivery instructions (optional)</Label>
-                <Input
-                  id="addr-instructions"
-                  placeholder="Gate code, landmark, etc."
-                  className="rounded-xl"
-                  value={form.instructions}
-                  onChange={(e) => setForm((f) => ({ ...f, instructions: e.target.value }))}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  className="flex-1 rounded-full"
-                  onClick={() => saveMut.mutate()}
-                  disabled={!form.addressLine1 || !form.city || !form.state || saveMut.isPending}
-                >
-                  {saveMut.isPending ? "Saving…" : "Save address"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="rounded-full"
-                  onClick={() => setShowNew(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
+            <StoreCheckoutAddressForm
+              existingCount={addresses.length}
+              onSaved={(id) => {
+                onSelectAddress(id);
+                setShowNew(false);
+              }}
+              onCancel={() => setShowNew(false)}
+            />
           )}
         </div>
       )}

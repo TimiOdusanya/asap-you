@@ -10,11 +10,25 @@ export function LocationAutocompleteInput({
   onChangeValue,
   onPlaceResolved,
   disabled,
+  placeholder = "Enter address",
+  inputClassName,
+  listClassName,
+  countryRestriction = "ng",
+  showMapPin = true,
+  containerClassName,
+  singleLayer = false,
 }: {
   value: string;
   onChangeValue: (v: string) => void;
   onPlaceResolved: (place: google.maps.places.PlaceResult) => void;
   disabled?: boolean;
+  placeholder?: string;
+  inputClassName?: string;
+  listClassName?: string;
+  countryRestriction?: string;
+  showMapPin?: boolean;
+  containerClassName?: string;
+  singleLayer?: boolean;
 }) {
   const [predictions, setPredictions] = React.useState<
     google.maps.places.AutocompletePrediction[]
@@ -66,10 +80,13 @@ export function LocationAutocompleteInput({
       const response = await autocompleteService.getPlacePredictions({
         input,
         sessionToken,
+        componentRestrictions: countryRestriction
+          ? { country: countryRestriction }
+          : undefined,
       });
       setPredictions(response.predictions ?? []);
     },
-    [autocompleteService, sessionToken]
+    [autocompleteService, sessionToken, countryRestriction]
   );
 
   const handleSelect = React.useCallback(
@@ -103,28 +120,40 @@ export function LocationAutocompleteInput({
     [onChangeValue, onPlaceResolved]
   );
 
+  const inputEl = (
+    <>
+      {showMapPin ? (
+        <MapPin className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-content-neutral-muted z-10" />
+      ) : null}
+      <Input
+        value={value}
+        disabled={disabled}
+        onChange={(e) => {
+          const v = e.target.value;
+          onChangeValue(v);
+          setOpen(true);
+          void fetchPredictions(v);
+        }}
+        onFocus={() => setOpen(true)}
+        placeholder={placeholder}
+        className={
+          inputClassName ??
+          `h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] ${showMapPin ? "pl-11" : ""}`
+        }
+        autoComplete="off"
+      />
+    </>
+  );
+
   return (
-    <div ref={containerRef} className="relative w-full">
-      <div className="relative">
-        <MapPin className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-content-neutral-muted" />
-        <Input
-          value={value}
-          disabled={disabled}
-          onChange={(e) => {
-            const v = e.target.value;
-            onChangeValue(v);
-            setOpen(true);
-            void fetchPredictions(v);
-          }}
-          onFocus={() => setOpen(true)}
-          placeholder="Enter address"
-          className="h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] pl-11"
-          autoComplete="off"
-        />
-      </div>
+    <div ref={containerRef} className={containerClassName ?? "relative w-full"}>
+      {singleLayer ? inputEl : <div className="relative">{inputEl}</div>}
       {open && predictions.length > 0 ? (
         <ul
-          className="absolute z-30 mt-2 max-h-60 w-full overflow-auto rounded-xl border border-border-muted bg-white py-1 shadow-lg"
+          className={
+            listClassName ??
+            "absolute z-30 mt-2 max-h-60 w-full overflow-auto rounded-xl border border-border-muted bg-white py-1 shadow-lg"
+          }
           role="listbox"
         >
           {predictions.map((p) => (

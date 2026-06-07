@@ -111,7 +111,16 @@ export const RIDER_DELIVERY_ENDPOINTS = {
 
 export const ADMIN_ENDPOINTS = {
   DASHBOARD: "/v1/admin/dashboard",
-  ORDERS: "/v1/order/vendor/orders",
+  USERS: "/v1/admin/users",
+  userById: (userId: string) => `/v1/admin/users/${encodeURIComponent(userId)}`,
+  RIDERS: "/v1/admin/riders",
+  riderById: (riderId: string) => `/v1/admin/riders/${encodeURIComponent(riderId)}`,
+  VENDORS: "/v1/admin/vendors",
+  vendorById: (vendorId: string) => `/v1/admin/vendors/${encodeURIComponent(vendorId)}`,
+  ORDERS: "/v1/admin/orders",
+  REVIEWS: "/v1/admin/reviews",
+  reviewById: (reviewId: string) => `/v1/admin/reviews/${encodeURIComponent(reviewId)}`,
+  ADMINS: "/v1/admin/admins",
 } as const;
 
 export const NOTIFICATION_ENDPOINTS = {

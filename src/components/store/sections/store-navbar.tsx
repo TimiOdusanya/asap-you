@@ -107,7 +107,7 @@ const StoreNavbar = () => {
               />
               <Input
                 type="text"
-                placeholder="Search Asap you"
+                placeholder="Search Asapu"
                 className="w-[220px] lg:w-[300px] rounded-sm border-none bg-surface-subtle py-6 pl-10 pr-4 text-base font-normal leading-[100%] text-content-neutral-muted placeholder:text-content-neutral-muted"
               />
             </div>
@@ -204,7 +204,7 @@ const StoreNavbar = () => {
             />
             <Input
               type="text"
-              placeholder="Search Asap you"
+              placeholder="Search Asapu"
               className="w-full rounded-sm border-none bg-surface-input-dim py-5 pl-9 pr-4 text-sm font-normal leading-[100%] text-content-neutral-muted placeholder:text-content-neutral-muted"
             />
           </div>

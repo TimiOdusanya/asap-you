@@ -17,7 +17,7 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Asap You",
+  title: "Asapu",
   description: "Fast delivery from your favorite stores",
 };
 

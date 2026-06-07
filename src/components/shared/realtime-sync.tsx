@@ -42,7 +42,7 @@ export function RealtimeSync() {
   useAdminOrdersSocket(
     React.useCallback(() => {
       if (!enabled || role !== "admin") return;
-      queryClient.invalidateQueries({ queryKey: vendorOrdersQueryKey() });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     }, [enabled, queryClient, role]),
     enabled && role === "admin"
   );

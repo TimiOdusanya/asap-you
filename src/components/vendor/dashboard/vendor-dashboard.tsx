@@ -229,7 +229,7 @@ const VendorDashboard = () => {
         {products.length === 0 ? (
           <EmptyState
             title="No products yet"
-            description="Add your first product to start selling on Asap You."
+            description="Add your first product to start selling on Asapu."
             action={{
               label: "Add product",
               href: "/vendor/dashboard/add-product",

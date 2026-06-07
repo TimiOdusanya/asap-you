@@ -182,7 +182,7 @@ export function StoreVendorStoreHeader({
             <p className="mt-0.5 text-sm font-medium text-content-neutral-primary">
               {stats.totalReviews > 0
                 ? `${stats.averageRating.toFixed(1)} · ${stats.totalReviews} reviews`
-                : "New on Asap"}
+                : "New on Asapu"}
             </p>
           </div>
         </div>

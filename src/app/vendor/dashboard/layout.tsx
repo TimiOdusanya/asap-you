@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { ListIcon } from "@phosphor-icons/react";
 import VendorSidebar from "@/components/vendor/dashboard/vendor-sidebar";
 import { RealtimeSync } from "@/components/shared/realtime-sync";
+import { VendorApprovalGuard } from "@/components/vendor/vendor-approval-guard";
+import { OtpVerificationGuard } from "@/components/auth/otp-verification-guard";
 
 export default function VendorDashboardLayout({
   children,
@@ -13,27 +15,31 @@ export default function VendorDashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
-      <RealtimeSync />
-      <VendorSidebar
-        mobileOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+    <OtpVerificationGuard>
+      <VendorApprovalGuard>
+      <div className="flex h-[100dvh] min-h-0 overflow-hidden bg-surface-subtle">
+        <RealtimeSync />
+        <VendorSidebar
+          mobileOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex shrink-0 items-center gap-3 border-b border-border-muted bg-white px-4 py-3 lg:hidden">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
-            className="cursor-pointer rounded-lg p-1.5 hover:bg-surface-muted"
-          >
-            <ListIcon className="size-5 text-content-neutral-secondary" />
-          </button>
-          <span className="text-base font-semibold text-content-neutral-primary">Dashboard</span>
-        </header>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <header className="flex shrink-0 items-center gap-3 border-b border-border-muted bg-white px-4 py-3 lg:hidden">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+              className="cursor-pointer rounded-lg p-1.5 hover:bg-surface-muted"
+            >
+              <ListIcon className="size-5 text-content-neutral-secondary" />
+            </button>
+            <span className="text-base font-semibold text-content-neutral-primary">Dashboard</span>
+          </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+          <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+        </div>
       </div>
-    </div>
+    </VendorApprovalGuard>
+    </OtpVerificationGuard>
   );
 }

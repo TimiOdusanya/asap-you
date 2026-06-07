@@ -69,7 +69,7 @@ const RiderSidebar = ({ mobileOpen = false, onClose }: RiderSidebarProps) => {
     <div className="flex flex-col h-full bg-white border-r border-border-muted">
       <div className="p-4 sm:p-6 flex items-center justify-between">
         <Link href="/rider">
-          <Image src="/images/logo.svg" alt="Rushly" width={64} height={26} className="h-7 w-auto" />
+          <Image src="/images/logo.svg" alt="Asapu" width={64} height={26} className="h-7 w-auto" />
         </Link>
         {onClose && (
           <button type="button" onClick={onClose} className="lg:hidden text-content-neutral-muted hover:text-content-neutral-primary cursor-pointer">

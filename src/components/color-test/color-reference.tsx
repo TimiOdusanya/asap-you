@@ -20,7 +20,7 @@ export function ColorReference() {
             Design system
           </p>
           <h1 className="mt-2 text-3xl font-bold text-content-neutral-primary">
-            ASAP You — colors & patterns
+            Asapu — colors & patterns
           </h1>
           <p className="mt-3 max-w-2xl text-base text-content-neutral-secondary">
             Single source of truth:{" "}

@@ -17,6 +17,8 @@ import { riderLogin } from "@/services/rider/rider.api";
 import { getApiErrorMessage, toastApiSuccessMessage } from "@/lib/toast-api";
 import { postLoginPathForRole } from "@/lib/auth-redirect";
 import RiderAuthBg from "./rider-auth-bg";
+import { RoleOtpVerificationStep } from "@/components/auth/role-otp-verification-step";
+import { isOtpVerified } from "@/lib/auth-otp";
 
 const iCls = "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] pl-11 text-sm sm:text-base";
 const iToggle = "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] pl-11 pr-11 text-sm sm:text-base";
@@ -28,6 +30,7 @@ const RiderLogin = () => {
   const setSession = useAuthStore((s) => s.setSession);
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPw, setShowPw] = useState(false);
+  const [needsOtp, setNeedsOtp] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const loginMutation = useMutation({
@@ -35,6 +38,10 @@ const RiderLogin = () => {
     onSuccess: (res) => {
       toastApiSuccessMessage(res.message);
       setSession(res.data.token, res.data.user);
+      if (!isOtpVerified(res.data.user)) {
+        setNeedsOtp(true);
+        return;
+      }
       const path = postLoginPathForRole(res.data.user.role);
       if (path !== "/rider/dashboard") {
         toast.info("Signed in with a different account type. Taking you to the right place.");
@@ -60,6 +67,15 @@ const RiderLogin = () => {
   return (
     <RiderAuthBg>
       <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm">
+        {needsOtp ? (
+          <RoleOtpVerificationStep
+            email={form.email}
+            password={form.password}
+            title="Verify your email"
+            subtitle="Enter the verification code we sent to your email before continuing."
+            onVerified={() => router.push("/rider/dashboard")}
+          />
+        ) : (
         <div className="flex flex-col gap-6">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-surface-brand">Rider Login</h2>
@@ -119,6 +135,7 @@ const RiderLogin = () => {
             <Link href="/rider/signup" className="text-surface-brand font-medium hover:underline">Sign up</Link>
           </p>
         </div>
+        )}
       </div>
     </RiderAuthBg>
   );

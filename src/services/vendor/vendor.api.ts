@@ -36,9 +36,13 @@ export async function registerVendor(
   form.append("address[state]", payload.address.state);
   form.append("address[country]", payload.address.country);
   form.append("address[postalCode]", payload.address.postalCode);
+  if (payload.address.coordinates) {
+    form.append("address[coordinates][lat]", String(payload.address.coordinates.lat));
+    form.append("address[coordinates][lng]", String(payload.address.coordinates.lng));
+  }
 
   if (payload.businessRegistrationCertificate) {
-    form.append("businessRegistrationCertificate", payload.businessRegistrationCertificate);
+    form.append("businessRegistrationFile", payload.businessRegistrationCertificate);
   }
 
   form.append("operatingHours", JSON.stringify(payload.operatingHours));

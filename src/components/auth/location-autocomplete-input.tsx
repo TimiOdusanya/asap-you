@@ -108,8 +108,8 @@ export function LocationAutocompleteInput({
             status === google.maps.places.PlacesServiceStatus.OK &&
             place
           ) {
-            onPlaceResolved(place);
             onChangeValue(place.formatted_address ?? prediction.description);
+            onPlaceResolved(place);
             setOpen(false);
             setPredictions([]);
             setSessionToken(new google.maps.places.AutocompleteSessionToken());

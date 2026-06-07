@@ -45,6 +45,7 @@ export function CustomerOtpVerifyForm({
   isResending,
   shakeTrigger,
   resendCooldownSeconds,
+  showHeader = true,
 }: {
   email: string;
   onVerify: (otpCode: string) => void;
@@ -53,6 +54,7 @@ export function CustomerOtpVerifyForm({
   isResending: boolean;
   shakeTrigger: number;
   resendCooldownSeconds: number;
+  showHeader?: boolean;
 }) {
   const formId = useId();
   const { digits, setDigits, setDigitAt, fillFromPaste, inputsRef } =
@@ -148,30 +150,35 @@ export function CustomerOtpVerifyForm({
       id={formId}
       noValidate
       onSubmit={handleSubmit}
-      className="flex min-h-0 w-full flex-1 flex-col justify-center gap-6 p-6"
+      className={cn(
+        "flex w-full flex-col items-center gap-6",
+        showHeader ? "min-h-0 flex-1 justify-center p-6" : "px-0 py-2"
+      )}
     >
-      <div>
-        <h3
-          className="text-center text-lg font-semibold sm:text-2xl md:text-3xl"
-          style={authBrandStyle}
-        >
-          Verify your email
-        </h3>
-        <p className="mt-2 text-center text-sm text-gray-150">
-          Enter the 6-digit code sent to{" "}
-          <span className="font-medium text-content-neutral-secondary">
-            {maskedEmail}
-          </span>
-        </p>
-      </div>
+      {showHeader ? (
+        <div className="w-full">
+          <h3
+            className="text-center text-lg font-semibold sm:text-2xl md:text-3xl"
+            style={authBrandStyle}
+          >
+            Verify your email
+          </h3>
+          <p className="mt-2 text-center text-sm text-gray-150">
+            Enter the 6-digit code sent to{" "}
+            <span className="font-medium text-content-neutral-secondary">
+              {maskedEmail}
+            </span>
+          </p>
+        </div>
+      ) : null}
 
-      <div className="mx-auto w-full max-w-[min(100%,460px)] px-0.5 sm:px-0">
-        <fieldset>
+      <div className="mx-auto w-full max-w-[17.5rem] sm:max-w-[21rem] md:max-w-[24rem]">
+        <fieldset className="w-full">
           <legend className="sr-only">One-time password</legend>
           <div
             className={cn(
-              "flex w-full justify-center gap-2 sm:gap-3",
-              shake && "animate-otp-shake",
+              "grid w-full grid-cols-6 gap-1.5 sm:gap-2 md:gap-3",
+              shake && "animate-otp-shake"
             )}
           >
             {digits.map((d, i) => (
@@ -192,7 +199,7 @@ export function CustomerOtpVerifyForm({
                 onPaste={handlePaste}
                 disabled={isVerifying}
                 className={cn(
-                  "flex size-12 shrink-0 rounded-xl border-2 bg-[var(--surface-subtle)] text-center text-base font-semibold tabular-nums text-content-neutral-primary shadow-sm outline-none transition-[border-color,box-shadow] sm:size-14 sm:text-xl md:size-16 md:text-2xl lg:text-3xl",
+                  "aspect-square w-full min-w-0 rounded-lg border-2 bg-[var(--surface-subtle)] text-center text-base font-semibold tabular-nums text-content-neutral-primary shadow-sm outline-none transition-[border-color,box-shadow] sm:rounded-xl sm:text-lg md:text-xl",
                   "border-border-muted focus:border-surface-brand focus:ring-2 focus:ring-surface-brand/35",
                   hasErrorStyle && "border-destructive"
                 )}
@@ -203,7 +210,7 @@ export function CustomerOtpVerifyForm({
         </fieldset>
       </div>
 
-      <div className="flex flex-col items-center gap-3 mt-4">
+      <div className="flex w-full flex-col items-center gap-3">
         <Button
           type="submit"
           disabled={!isComplete || isVerifying}

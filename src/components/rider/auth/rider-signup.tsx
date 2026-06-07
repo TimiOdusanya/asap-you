@@ -7,9 +7,11 @@ import { toast } from "sonner";
 import RiderAuthBg from "./rider-auth-bg";
 import RiderStepBasic, { type RiderBasicData } from "./rider-step-basic";
 import RiderStepProfile, { type RiderProfileData } from "./rider-step-profile";
-import RiderStepSuccess from "./rider-step-success";
 import { registerRider } from "@/services/rider/rider.api";
-import { getApiErrorMessage } from "@/lib/toast-api";
+import { getApiErrorMessage, toastApiSuccessMessage } from "@/lib/toast-api";
+import { RoleOtpVerificationStep } from "@/components/auth/role-otp-verification-step";
+import { useAuthStore } from "@/stores/auth-store";
+import { postLoginPathForRole } from "@/lib/auth-redirect";
 
 type Step = 1 | 2 | 3;
 
@@ -34,7 +36,8 @@ const RiderSignup = () => {
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
+      toastApiSuccessMessage(res.message);
       setStep(3);
     },
     onError: (err) => {
@@ -51,6 +54,11 @@ const RiderSignup = () => {
     registerMutation.mutate(data);
   };
 
+  const handleOtpVerified = () => {
+    const user = useAuthStore.getState().user;
+    router.push(user ? postLoginPathForRole(user.role) : "/rider/dashboard");
+  };
+
   return (
     <RiderAuthBg>
       {step === 1 && (
@@ -62,8 +70,16 @@ const RiderSignup = () => {
           onBack={() => setStep(1)}
         />
       )}
-      {step === 3 && (
-        <RiderStepSuccess onContinue={() => router.push("/rider/dashboard")} />
+      {step === 3 && basicData && (
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm">
+          <RoleOtpVerificationStep
+            email={basicData.email}
+            password={basicData.password}
+            title="Verify your email"
+            subtitle="Enter the code we sent to your email to finish creating your rider account."
+            onVerified={handleOtpVerified}
+          />
+        </div>
       )}
     </RiderAuthBg>
   );

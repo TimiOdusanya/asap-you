@@ -5,6 +5,12 @@ import type { AddressCoordinates, AddressEntity } from "@/services/address/addre
 export const DELIVERY_UNAVAILABLE_MESSAGE =
   "Sorry, delivery is not available in your area.";
 
+export const DELIVERY_ZONE_FIELD_MESSAGE =
+  "This address is outside our Oshodi–Ikeja delivery zone.";
+
+export const ADDRESS_SUGGESTION_FIELD_MESSAGE =
+  "Pick a suggested address from the list so we can verify your location.";
+
 export function coordinatesFromAddress(
   address: Pick<AddressEntity, "coordinates"> | null | undefined
 ): AddressCoordinates | null {

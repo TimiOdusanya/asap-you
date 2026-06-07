@@ -34,7 +34,7 @@ export function PatternDemo({ pattern }: { pattern: UsagePattern }) {
       return (
         <Input
           type="text"
-          placeholder="Search Asap you"
+          placeholder="Search Asapu"
           readOnly
           className="w-full max-w-sm rounded-sm border-none bg-surface-input-dim py-6 text-base text-content-on-brand placeholder:text-white/75"
         />

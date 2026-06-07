@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AdminPageShell } from "@/components/admin/admin-page-shell";
 import { AdminBadge } from "@/components/admin/admin-badge";
@@ -8,38 +9,66 @@ import { AdminActionPanel } from "@/components/admin/admin-action-panel";
 import { AdminKvGrid } from "@/components/admin/admin-kv";
 import { AdminSectionCard } from "@/components/admin/admin-section-card";
 import { AdminTable, AdminTd, AdminTh } from "@/components/admin/admin-table";
-import { mockRiders, mockOrders, mockReviews } from "@/components/admin/mock-admin-data";
+import { AdminDetailSkeleton } from "@/components/admin/admin-page-skeletons";
+import { adminRiderQueryKey, fetchAdminRider } from "@/services/admin/admin.api";
+import {
+  displayName,
+  entityIdString,
+  formatAdminDate,
+  orderStatusBadgeVariant,
+  riderVerificationStatus,
+  userStatus,
+} from "@/lib/admin-mappers";
 
 export default function AdminRiderDetailPage({ id }: { id: string }) {
-  const rider = mockRiders.find((r) => r.id === id) ?? null;
+  const { data, isPending, isError } = useQuery({
+    queryKey: adminRiderQueryKey(id),
+    queryFn: () => fetchAdminRider(id),
+  });
 
-  if (!rider) {
+  if (isPending) {
+    return (
+      <AdminPageShell title="Rider" subtitle="Loading rider profile…">
+        <AdminDetailSkeleton />
+      </AdminPageShell>
+    );
+  }
+
+  const rider = data?.data.rider;
+  if (isError || !rider) {
     return (
       <AdminPageShell title="Rider" subtitle="Rider not found.">
         <EmptyState
           title="Rider not found"
-          description="This rider ID doesn’t exist in the current mock dataset. Once endpoints are connected, this will look up the real record."
+          description="This rider ID does not exist or could not be loaded."
           action={{ label: "Back to riders", href: "/admin/riders" }}
         />
       </AdminPageShell>
     );
   }
 
-  const riderReviews = mockReviews.filter((r) => r.target === "rider" && r.targetName === rider.name);
-  const recentOrders = mockOrders.slice(0, 2);
+  const user = data.data.user;
+  const recentOrders = data.data.recentOrders ?? [];
+  const reviews = data.data.reviews ?? [];
+  const riderId = entityIdString(rider);
+  const verification = riderVerificationStatus(rider);
+  const status = userStatus(rider.isActive);
+  const userId = String(rider.userId);
 
   return (
     <AdminPageShell
-      title={rider.name}
+      title={displayName({ user })}
       subtitle="Full rider profile, onboarding details, documents, and performance."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <AdminActionPanel
             backHref="/admin/riders"
-            status={rider.status}
-            verificationStatus={rider.verificationStatus}
+            status={status}
+            verificationStatus={verification}
             actionsLabel="Rider actions"
+            userId={userId}
+            riderId={riderId}
           />
         </div>
 
@@ -48,14 +77,19 @@ export default function AdminRiderDetailPage({ id }: { id: string }) {
             <AdminKvGrid
               columns={2}
               items={[
-                { label: "Name", value: rider.name },
-                { label: "Email", value: rider.email },
-                { label: "Phone", value: rider.onboarding.basic.phone },
-                { label: "Vehicle type", value: rider.onboarding.profile.vehicleType },
-                { label: "Created", value: rider.createdAt },
-                { label: "Submitted", value: rider.submittedAt ?? "—" },
-                { label: "Deliveries", value: rider.deliveriesCount },
-                { label: "Avg rating", value: rider.averageRating ? `${rider.averageRating.toFixed(1)}/5` : "—" },
+                { label: "Name", value: displayName({ user }) },
+                { label: "Email", value: user?.email ?? "—" },
+                { label: "Phone", value: user?.phone ?? "—" },
+                { label: "Vehicle type", value: rider.vehicleType },
+                { label: "Created", value: formatAdminDate(rider.createdAt) },
+                { label: "Deliveries", value: rider.stats?.totalDeliveries ?? 0 },
+                {
+                  label: "Avg rating",
+                  value: rider.stats?.averageRating
+                    ? `${rider.stats.averageRating.toFixed(1)}/5`
+                    : "—",
+                },
+                { label: "Total earnings", value: `₦${(rider.stats?.totalEarnings ?? 0).toLocaleString()}` },
               ]}
             />
           </AdminSectionCard>
@@ -66,8 +100,8 @@ export default function AdminRiderDetailPage({ id }: { id: string }) {
               items={[
                 {
                   label: "License",
-                  value: rider.onboarding.profile.licenseUrl ? (
-                    <a className="text-surface-brand hover:underline" href={rider.onboarding.profile.licenseUrl}>
+                  value: rider.license ? (
+                    <a className="text-surface-brand hover:underline" href={rider.license} target="_blank" rel="noreferrer">
                       View
                     </a>
                   ) : (
@@ -76,86 +110,82 @@ export default function AdminRiderDetailPage({ id }: { id: string }) {
                 },
                 {
                   label: "Profile photo",
-                  value: rider.onboarding.profile.photoUrl ? (
-                    <a className="text-surface-brand hover:underline" href={rider.onboarding.profile.photoUrl}>
+                  value: rider.photo ? (
+                    <a className="text-surface-brand hover:underline" href={rider.photo} target="_blank" rel="noreferrer">
                       View
                     </a>
                   ) : (
                     "—"
                   ),
                 },
-                { label: "Bank name", value: rider.onboarding.profile.bankAccount.bankName },
-                { label: "Account number", value: rider.onboarding.profile.bankAccount.accountNumber },
-                { label: "Account holder", value: rider.onboarding.profile.bankAccount.accountHolderName },
-                { label: "Bank code", value: rider.onboarding.profile.bankAccount.bankCode ?? "—" },
+                { label: "Bank name", value: rider.bankAccount.bankName },
+                { label: "Account number", value: rider.bankAccount.accountNumber },
+                { label: "Account holder", value: rider.bankAccount.accountHolderName },
+                { label: "Bank code", value: rider.bankAccount.bankCode ?? "—" },
               ]}
             />
           </AdminSectionCard>
 
           <AdminSectionCard
-            title="History"
-            subtitle="Recent deliveries (sample data until endpoints are wired)."
+            title="Delivery history"
+            subtitle="Recent deliveries assigned to this rider."
             right={<AdminBadge variant="neutral">{recentOrders.length} records</AdminBadge>}
           >
-            <AdminTable>
-              <thead>
-                <tr className="border-b border-border-muted">
-                  <AdminTh>Order</AdminTh>
-                  <AdminTh>Customer</AdminTh>
-                  <AdminTh>Status</AdminTh>
-                  <AdminTh>Total</AdminTh>
-                  <AdminTh>Date</AdminTh>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((o) => (
-                  <tr key={o.id} className="border-b border-border-muted/50 hover:bg-surface-subtle">
-                    <AdminTd className="text-content-neutral-primary">{o.id}</AdminTd>
-                    <AdminTd>{o.customerName}</AdminTd>
-                    <AdminTd>
-                      <AdminBadge
-                        variant={
-                          o.status === "delivered"
-                            ? "success"
-                            : o.status === "cancelled"
-                              ? "danger"
-                              : "warning"
-                        }
-                      >
-                        {o.status.replaceAll("_", " ")}
-                      </AdminBadge>
-                    </AdminTd>
-                    <AdminTd className="text-content-neutral-primary">₦{o.total.toLocaleString()}</AdminTd>
-                    <AdminTd>{o.createdAt}</AdminTd>
+            {recentOrders.length === 0 ? (
+              <EmptyState size="sm" title="No deliveries yet" description="This rider has no delivery history." />
+            ) : (
+              <AdminTable>
+                <thead>
+                  <tr className="border-b border-border-muted">
+                    <AdminTh>Order</AdminTh>
+                    <AdminTh>Customer</AdminTh>
+                    <AdminTh>Status</AdminTh>
+                    <AdminTh>Total</AdminTh>
+                    <AdminTh>Date</AdminTh>
                   </tr>
-                ))}
-              </tbody>
-            </AdminTable>
+                </thead>
+                <tbody>
+                  {recentOrders.map((o) => (
+                    <tr key={o._id} className="border-b border-border-muted/50 hover:bg-surface-subtle">
+                      <AdminTd className="text-content-neutral-primary">{o.orderId}</AdminTd>
+                      <AdminTd>{o.customerName}</AdminTd>
+                      <AdminTd>
+                        <AdminBadge variant={orderStatusBadgeVariant(o.status)}>
+                          {o.status.replaceAll("_", " ")}
+                        </AdminBadge>
+                      </AdminTd>
+                      <AdminTd className="text-content-neutral-primary">
+                        ₦{o.pricing.total.toLocaleString()}
+                      </AdminTd>
+                      <AdminTd>{formatAdminDate(o.createdAt)}</AdminTd>
+                    </tr>
+                  ))}
+                </tbody>
+              </AdminTable>
+            )}
           </AdminSectionCard>
 
           <AdminSectionCard
             title="Ratings"
-            subtitle="Reviews mentioning this rider."
-            right={<AdminBadge variant="neutral">{riderReviews.length} reviews</AdminBadge>}
+            subtitle="Reviews for this rider."
+            right={<AdminBadge variant="neutral">{reviews.length} reviews</AdminBadge>}
           >
-            {riderReviews.length === 0 ? (
-              <EmptyState
-                size="sm"
-                title="No rider reviews"
-                description="Once endpoints are connected, this will show rider feedback and ratings trends."
-              />
+            {reviews.length === 0 ? (
+              <EmptyState size="sm" title="No rider reviews" description="This rider has not received reviews yet." />
             ) : (
               <div className="space-y-3">
-                {riderReviews.map((r) => (
-                  <div key={r.id} className="rounded-xl border border-border-muted bg-surface-canvas p-4">
+                {reviews.map((r) => (
+                  <div key={r._id} className="rounded-xl border border-border-muted bg-surface-canvas p-4">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-content-neutral-primary">
-                        {r.authorName}
+                        {r.customerName || "Customer"}
                       </p>
-                      <AdminBadge variant="neutral">{r.rating}/5</AdminBadge>
+                      <AdminBadge variant={r.isActive ? "neutral" : "danger"}>
+                        {r.isActive ? `${r.rating}/5` : "Hidden"}
+                      </AdminBadge>
                     </div>
-                    <p className="mt-2 text-sm text-content-neutral-secondary">{r.comment}</p>
-                    <p className="mt-2 text-xs text-content-neutral-muted">{r.createdAt}</p>
+                    <p className="mt-2 text-sm text-content-neutral-secondary">{r.comment ?? "—"}</p>
+                    <p className="mt-2 text-xs text-content-neutral-muted">{formatAdminDate(r.createdAt)}</p>
                   </div>
                 ))}
               </div>
@@ -166,4 +196,3 @@ export default function AdminRiderDetailPage({ id }: { id: string }) {
     </AdminPageShell>
   );
 }
-

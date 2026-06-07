@@ -169,7 +169,7 @@ export type CheckoutPaymentMethod = "cod" | "wallet" | "card" | "transfer";
 
 const PAY_OPTIONS: { id: CheckoutPaymentMethod; label: string }[] = [
   { id: "cod", label: "Cash on delivery" },
-  { id: "wallet", label: "Asap wallet" },
+  { id: "wallet", label: "Asapu wallet" },
   { id: "card", label: "Debit / credit card" },
   { id: "transfer", label: "Bank transfer" },
 ];
@@ -266,7 +266,7 @@ export function StoreCheckoutSummaryColumn({
         <div>
           <p className="text-sm font-semibold text-content-neutral-primary">Earn 5% cash back</p>
           <p className="mt-0.5 text-xs leading-relaxed text-content-neutral-secondary">
-            Anytime you use Asap wallet.
+            Anytime you use Asapu wallet.
           </p>
         </div>
       </div>

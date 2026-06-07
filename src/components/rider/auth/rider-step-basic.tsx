@@ -66,7 +66,7 @@ const RiderStepBasic = ({ defaultValues = {}, onNext }: Props) => {
       </div>
       <h2 className="text-center text-2xl font-semibold text-surface-brand">Sign up</h2>
       <RiderStepIndicator currentStep={1} />
-      <p className="text-sm font-medium text-content-neutral-secondary">Basic Details</p>
+      <p className="text-sm font-normal text-content-neutral-tertiary">Basic Details</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {(["firstName", "lastName"] as const).map((field) => (

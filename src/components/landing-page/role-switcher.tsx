@@ -24,10 +24,10 @@ export type RoleKey = keyof typeof roles;
 export type NavLink = { label: string; href: string };
 
 const defaultNavLinks = [
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Services", href: "#services" },
-  { label: "Blog", href: "#blog" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "Chat us", href: "/chat-us" },
+  { label: "Services", href: "/services" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export type NavbarVariant = "default" | "inverted";
@@ -70,8 +70,9 @@ export function RoleSwitcher({
       : "text-content-neutral-secondary"
   );
   const selectTriggerClass = cn(
-    "w-[130px] min-h-11 flex-shrink-0 rounded-3xl border px-4 py-5 sm:py-6",
+    "min-w-[148px] w-[148px] min-h-11 flex-shrink-0 rounded-3xl border px-4 py-5 sm:py-6",
     "font-normal text-sm sm:text-base leading-[100%]",
+    "[&_[data-slot=select-value]]:line-clamp-none [&_[data-slot=select-value]]:overflow-visible",
     isInverted
       ? "border-white/40 bg-white/5 text-content-on-dark-section data-[state=open]:ring-white/20"
       : "border border-primary text-content-neutral-secondary"
@@ -98,7 +99,7 @@ export function RoleSwitcher({
             <Link href="/" className="shrink-0 self-center">
               <Image
                 src="/images/logo.svg"
-                alt="Rushly"
+                alt="Asapu"
                 height={62}
                 width={90}
                 className={logoClass}
@@ -159,7 +160,7 @@ export function RoleSwitcher({
             <div className="flex items-center justify-between">
               <Image
                 src="/images/logo.svg"
-                alt="Rushly"
+                alt="Asapu"
                 height={40}
                 width={60}
                 className="h-9 w-auto"
@@ -192,7 +193,7 @@ export function RoleSwitcher({
                 Switch role
               </span>
               <Select value={current} onValueChange={handleRoleChange}>
-                <SelectTrigger className="w-full rounded-2xl border border-primary py-5 px-4 text-base font-normal text-content-neutral-secondary leading-[100%]">
+                <SelectTrigger className={cn(selectTriggerClass, "w-full")}>
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>

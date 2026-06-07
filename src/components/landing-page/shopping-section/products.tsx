@@ -195,54 +195,54 @@ const Products = () => {
                     .map((product) => (
                       <div
                         key={product.id}
-                        className={`${cardBasis} min-w-0 bg-surface-brand-tint rounded-lg relative flex flex-col`}
+                        className={`${cardBasis} relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-white/80 bg-surface-canvas shadow-[0_8px_28px_rgba(25,58,27,0.1)]`}
                       >
                         {product.lowStock && (
-                          <div className="absolute top-2 right-2 bg-content-warning text-content-neutral-primary text-xs px-2 py-1 rounded-[8px] font-medium z-10">
+                          <div className="absolute top-2 right-2 z-10 rounded-[8px] bg-content-warning px-2 py-1 text-xs font-medium text-content-neutral-primary">
                             Low Stock
                           </div>
                         )}
 
-                        <div className="w-full h-40 sm:h-48 mb-4 flex items-center justify-center">
+                        <div className="mb-4 flex h-40 w-full items-center justify-center bg-surface-brand-soft/50 p-3 sm:h-48 sm:p-4">
                           <Image
                             src={product.image}
                             alt={product.name}
                             width={260}
                             height={160}
-                            className="w-full h-full max-w-[260px] object-cover rounded-lg"
+                            className="h-full w-full max-w-[260px] rounded-lg object-cover"
                           />
                         </div>
 
-                        <div className="space-y-2 flex-1 flex flex-col pb-6 px-4">
-                          <h3 className="text-surface-forest font-medium text-base sm:text-lg">
+                        <div className="flex flex-1 flex-col space-y-2 px-4 pb-6">
+                          <h3 className="text-base font-medium text-surface-forest sm:text-lg">
                             {product.name}
                           </h3>
 
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 text-content-warning fill-current" />
-                              <span className="text-content-neutral-tertiary text-xs sm:text-sm">
+                              <Star className="h-4 w-4 fill-current text-content-warning" />
+                              <span className="text-xs text-content-neutral-tertiary sm:text-sm">
                                 ({product.rating})
                               </span>
                             </div>
-                            <span className="text-surface-forest font-normal text-sm sm:text-base text-right">
+                            <span className="text-right text-sm font-normal text-surface-forest sm:text-base">
                               {product.price}
                             </span>
                           </div>
 
-                          <p className="text-content-neutral-tertiary text-xs sm:text-sm">
+                          <p className="text-xs text-content-neutral-tertiary sm:text-sm">
                             {product.market}
                           </p>
 
-                          <div className="flex items-center gap-1 mb-4">
-                            <Clock className="w-4 h-4 text-content-neutral-tertiary" />
-                            <span className="text-content-neutral-tertiary text-xs sm:text-sm">
+                          <div className="mb-4 flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-content-neutral-tertiary" />
+                            <span className="text-xs text-content-neutral-tertiary sm:text-sm">
                               {product.deliveryTime}
                             </span>
                           </div>
 
-                          <button className="w-full bg-surface-brand-tint border border-surface-forest text-surface-forest py-2 px-4 rounded-xl hover:bg-surface-canvas transition-colors flex items-center justify-center gap-2 mt-auto cursor-pointer text-sm sm:text-base">
-                            <ShoppingCart className="w-4 h-4" />
+                          <button className="mt-auto flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-surface-brand px-4 py-2.5 text-sm font-medium text-content-on-brand shadow-sm transition-colors hover:bg-surface-brand/90 sm:text-base">
+                            <ShoppingCart className="h-4 w-4" />
                             Add to cart
                           </button>
                         </div>

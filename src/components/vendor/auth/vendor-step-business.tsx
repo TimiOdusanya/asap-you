@@ -6,6 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/auth/field-error";
 import { cn } from "@/lib/utils";
+import { LocationAutocompleteInput } from "@/components/auth/location-autocomplete-input";
+import { parsePlaceResultToAddress } from "@/lib/parse-google-place";
+import {
+  ADDRESS_SUGGESTION_FIELD_MESSAGE,
+  DELIVERY_ZONE_FIELD_MESSAGE,
+  ensureDeliveryCoverage,
+} from "@/lib/delivery-coverage-client";
 import {
   Select,
   SelectContent,
@@ -24,6 +31,7 @@ export interface BusinessInfoData {
   state: string;
   country: string;
   postalCode: string;
+  coordinates?: { lat: number; lng: number };
   contactEmail: string;
   legalName: string;
   isBusinessRegistered: string;
@@ -38,7 +46,7 @@ interface VendorStepBusinessProps {
 const inputCls =
   "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4 text-sm sm:text-base";
 const selectCls =
-  "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] text-sm sm:text-base";
+  "h-10 min-h-10 w-full rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4 text-sm shadow-none sm:h-12 sm:min-h-12 sm:text-base data-[size=default]:h-10 sm:data-[size=default]:h-12";
 const errorRing = "ring-1 ring-destructive/50 focus-visible:ring-destructive/50";
 
 const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBusinessProps) => {
@@ -51,30 +59,71 @@ const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBu
     state: defaultValues.state ?? "",
     country: defaultValues.country ?? "Nigeria",
     postalCode: defaultValues.postalCode ?? "",
+    coordinates: defaultValues.coordinates,
     contactEmail: defaultValues.contactEmail ?? "",
     legalName: defaultValues.legalName ?? "",
     isBusinessRegistered: defaultValues.isBusinessRegistered ?? "true",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof BusinessInfoData, string>>>({});
+  const [isCheckingAddress, setIsCheckingAddress] = useState(false);
+  const [addressInZone, setAddressInZone] = useState<boolean | null>(null);
 
   const set = (key: keyof BusinessInfoData, val: string) =>
     setForm((p) => ({ ...p, [key]: val }));
+
+  const clearAddressError = () =>
+    setErrors((prev) => {
+      if (!prev.addressLine1) return prev;
+      const { addressLine1: _removed, ...rest } = prev;
+      return rest;
+    });
+
+  const verifyAddressCoverage = async (lat: number, lng: number) => {
+    setIsCheckingAddress(true);
+    try {
+      const covered = await ensureDeliveryCoverage(lat, lng, { silent: true });
+      setAddressInZone(covered);
+      if (!covered) {
+        setErrors((prev) => ({
+          ...prev,
+          addressLine1: DELIVERY_ZONE_FIELD_MESSAGE,
+        }));
+        return false;
+      }
+      clearAddressError();
+      return true;
+    } finally {
+      setIsCheckingAddress(false);
+    }
+  };
 
   const validate = () => {
     const e: typeof errors = {};
     if (!form.businessName.trim()) e.businessName = "Required";
     if (!form.category) e.category = "Select a category";
     if (!form.phone.trim()) e.phone = "Required";
-    if (!form.addressLine1.trim()) e.addressLine1 = "Required";
+    if (!form.addressLine1.trim()) {
+      e.addressLine1 = "Required";
+    } else if (!form.coordinates) {
+      e.addressLine1 = ADDRESS_SUGGESTION_FIELD_MESSAGE;
+    } else if (addressInZone === false) {
+      e.addressLine1 = DELIVERY_ZONE_FIELD_MESSAGE;
+    }
     if (!form.city.trim()) e.city = "Required";
     if (!form.contactEmail.trim()) e.contactEmail = "Required";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (validate()) onNext(form);
+    if (isCheckingAddress) return;
+    if (!validate()) return;
+    const coords = form.coordinates;
+    if (!coords) return;
+    const covered = await verifyAddressCoverage(coords.lat, coords.lng);
+    if (!covered) return;
+    onNext(form);
   };
 
   return (
@@ -83,7 +132,7 @@ const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBu
         Sign up
       </h2>
       <VendorStepIndicator currentStep={2} />
-      <p className="text-sm font-medium text-content-neutral-secondary">Business Setup</p>
+      <p className="text-sm font-normal text-content-neutral-tertiary">Business Setup</p>
 
       <div className="space-y-1.5">
         <Label htmlFor="vb-name" className="text-sm text-content-neutral-secondary">Business Name</Label>
@@ -100,9 +149,12 @@ const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBu
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="vb-cat" className="text-sm text-content-neutral-secondary">Business Category</Label>
-          <Select value={form.category} onValueChange={(v) => set("category", v)}>
+          <Select
+            value={form.category || undefined}
+            onValueChange={(v) => set("category", v)}
+          >
             <SelectTrigger id="vb-cat" className={cn(selectCls, errors.category && errorRing)}>
-              <SelectValue placeholder="Restaurant" />
+              <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="restaurant">Restaurant</SelectItem>
@@ -132,12 +184,47 @@ const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBu
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="vb-addr" className="text-sm text-content-neutral-secondary">Business Address</Label>
-          <Input
-            id="vb-addr"
-            placeholder="Business Address"
-            className={cn(inputCls, errors.addressLine1 && errorRing)}
+          <LocationAutocompleteInput
             value={form.addressLine1}
-            onChange={(e) => set("addressLine1", e.target.value)}
+            onChangeValue={(v) => {
+              set("addressLine1", v);
+              setForm((p) => ({ ...p, coordinates: undefined }));
+              setAddressInZone(null);
+              clearAddressError();
+            }}
+            onPlaceResolved={(place) => {
+              const parsed = parsePlaceResultToAddress(place);
+              if (!parsed) {
+                setForm((p) => ({ ...p, coordinates: undefined }));
+                setAddressInZone(null);
+                setErrors((prev) => ({
+                  ...prev,
+                  addressLine1: "Could not read this address. Try another suggestion.",
+                }));
+                return;
+              }
+              setForm((p) => ({
+                ...p,
+                addressLine1:
+                  parsed.addressLine1 || (place.formatted_address ?? p.addressLine1),
+                city: parsed.city || p.city,
+                state: parsed.state || p.state,
+                country: parsed.country || p.country,
+                coordinates: parsed.coordinates,
+              }));
+              setAddressInZone(null);
+              clearAddressError();
+              void verifyAddressCoverage(
+                parsed.coordinates.lat,
+                parsed.coordinates.lng
+              );
+            }}
+            disabled={isCheckingAddress}
+            showMapPin={false}
+            placeholder="Type your street, area, or city…"
+            countryRestriction="ng"
+            inputClassName={cn(inputCls, errors.addressLine1 && errorRing)}
+            containerClassName="relative w-full"
           />
           <FieldError message={errors.addressLine1} id="vb-addr-error" />
         </div>
@@ -197,8 +284,12 @@ const VendorStepBusiness = ({ defaultValues = {}, onNext, onBack }: VendorStepBu
         <Button type="button" variant="ghost" onClick={onBack} className="text-content-neutral-muted">
           Back
         </Button>
-        <Button type="submit" className="rounded-full px-10 bg-surface-brand hover:bg-surface-brand/90">
-          Continue
+        <Button
+          type="submit"
+          disabled={isCheckingAddress}
+          className="rounded-full px-10 bg-surface-brand hover:bg-surface-brand/90"
+        >
+          {isCheckingAddress ? "Checking address…" : "Continue"}
         </Button>
       </div>
     </form>

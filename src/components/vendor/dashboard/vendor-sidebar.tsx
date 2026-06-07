@@ -75,7 +75,7 @@ const VendorSidebar = ({ mobileOpen = false, onClose }: VendorSidebarProps) => {
         <Link href="/vendor">
           <Image
             src="/images/logo.svg"
-            alt="Rushly"
+            alt="Asapu"
             width={64}
             height={26}
             className="h-7 w-auto"

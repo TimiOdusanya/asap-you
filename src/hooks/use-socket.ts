@@ -149,11 +149,13 @@ export function useAdminOrdersSocket(onUpdate?: () => void, enabled = true) {
     socket.on("order:status_updated", refresh);
     socket.on("order:rider_assigned", refresh);
     socket.on("order:delivered", refresh);
+    socket.on("admin:entity_updated", refresh);
 
     return () => {
       socket.off("order:status_updated", refresh);
       socket.off("order:rider_assigned", refresh);
       socket.off("order:delivered", refresh);
+      socket.off("admin:entity_updated", refresh);
     };
   }, [enabled]);
 }

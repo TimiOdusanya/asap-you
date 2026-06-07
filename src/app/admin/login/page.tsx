@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
                 <ShieldCheckIcon className="size-5" aria-hidden />
               </div>
               <div>
-                <p className="text-sm font-semibold">ASAP You</p>
+                <p className="text-sm font-semibold">Asapu</p>
                 <p className="text-xs text-white/70">Admin Console</p>
               </div>
             </div>

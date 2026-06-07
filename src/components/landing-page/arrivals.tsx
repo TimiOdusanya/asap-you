@@ -1,27 +1,29 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+
+import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion, useAnimation } from 'framer-motion'
+import { motion } from 'framer-motion'
+
+const images = [
+  { src: "/images/landing/arrival-1.png", alt: "Browse stores on Asapu" },
+  { src: "/images/landing/arrival-2.png", alt: "Build your grocery cart" },
+  { src: "/images/landing/arrival-3.png", alt: "Secure checkout" },
+  { src: "/images/landing/arrival-4.png", alt: "Track delivery to your door" },
+]
+
+const GAP = 24
+
+const extendedImages = [...images, ...images]
 
 const Arrivals = () => {
-  const [paused, setPaused] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const [transitionEnabled, setTransitionEnabled] = useState(true)
   const [cardWidth, setCardWidth] = useState(260)
 
-  const controls = useAnimation()
-
-  const images = [
-    { src: "/images/landing/arrival-1.png", alt: "arrivals" },
-    { src: "/images/landing/arrival-2.png", alt: "arrivals" },
-    { src: "/images/landing/arrival-3.png", alt: "arrivals" },
-    { src: "/images/landing/arrival-4.png", alt: "arrivals" },
-  ]
-
-  const gap = 24
-  const slideWidth = cardWidth + gap
-
-  const looped = [...images, ...images]
+  const slideWidth = cardWidth + GAP
+  const dotIndex = ((activeIndex % images.length) + images.length) % images.length
 
   useEffect(() => {
     const update = () => {
@@ -35,42 +37,60 @@ const Arrivals = () => {
   }, [])
 
   useEffect(() => {
-    if (!paused) {
-      controls.start({
-        x: [-0, -looped.length * slideWidth / 2],
-        transition: {
-          x: {
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "linear",
-            duration: 20
-          }
-        }
-      })
-    } else {
-      controls.stop()
-    }
-  }, [paused, looped.length, slideWidth, controls])
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-    if (!paused) {
-      interval = setInterval(() => {
-        setActiveIndex(prev => (prev + 1) % images.length)
-      }, 5000)
-    }
+    if (paused) return
+    const interval = setInterval(() => {
+      setTransitionEnabled(true)
+      setActiveIndex((prev) => prev + 1)
+    }, 5000)
     return () => clearInterval(interval)
-  }, [paused, images.length])
+  }, [paused])
+
+  const goTo = useCallback((index: number) => {
+    setPaused(true)
+    setTransitionEnabled(true)
+    setActiveIndex(index)
+  }, [])
 
   const handlePrev = () => {
-    setActiveIndex(prev => (prev - 1 + images.length) % images.length)
-    controls.start({ x: `+=${slideWidth}`, transition: { duration: 0.6 } })
+    setPaused(true)
+    if (activeIndex === 0) {
+      setTransitionEnabled(false)
+      setActiveIndex(images.length)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionEnabled(true)
+          setActiveIndex(images.length - 1)
+        })
+      })
+      return
+    }
+    setTransitionEnabled(true)
+    setActiveIndex((prev) => prev - 1)
   }
 
   const handleNext = () => {
-    setActiveIndex(prev => (prev + 1) % images.length)
-    controls.start({ x: `-=${slideWidth}`, transition: { duration: 0.6 } })
+    setPaused(true)
+    setTransitionEnabled(true)
+    setActiveIndex((prev) => prev + 1)
   }
+
+  const handleAnimationComplete = () => {
+    if (activeIndex >= images.length) {
+      setTransitionEnabled(false)
+      setActiveIndex(0)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionEnabled(true)
+        })
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (!paused) return
+    const resume = window.setTimeout(() => setPaused(false), 8000)
+    return () => window.clearTimeout(resume)
+  }, [paused, activeIndex])
 
   return (
     <div className="bg-surface-forest w-full py-16 sm:py-20 lg:py-24">
@@ -92,13 +112,19 @@ const Arrivals = () => {
           >
             <div className="overflow-hidden w-full max-w-7xl">
               <motion.div
-                className="flex gap-[24px]"
-                animate={controls}
-                style={{ width: 'max-content' }}
+                className="flex"
+                style={{ gap: GAP, width: 'max-content' }}
+                animate={{ x: -activeIndex * slideWidth }}
+                transition={
+                  transitionEnabled
+                    ? { type: 'spring', stiffness: 260, damping: 32 }
+                    : { duration: 0 }
+                }
+                onAnimationComplete={handleAnimationComplete}
               >
-                {looped.map((image, index) => (
+                {extendedImages.map((image, index) => (
                   <motion.div
-                    key={index}
+                    key={`${image.src}-${index}`}
                     className="flex-shrink-0 flex justify-center"
                     style={{ width: cardWidth, height: cardWidth * (374 / 340) }}
                     whileHover={{
@@ -120,15 +146,17 @@ const Arrivals = () => {
             </div>
 
             <button
+              type="button"
               onClick={handlePrev}
-              aria-label="Previous"
+              aria-label="Previous slide"
               className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors z-10 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
             </button>
             <button
+              type="button"
               onClick={handleNext}
-              aria-label="Next"
+              aria-label="Next slide"
               className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors z-10 cursor-pointer"
             >
               <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -139,10 +167,12 @@ const Arrivals = () => {
             {images.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setActiveIndex(i)}
+                type="button"
+                onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
+                aria-current={dotIndex === i ? "true" : undefined}
                 className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-colors cursor-pointer ${
-                  activeIndex === i ? "bg-surface-brand-muted" : "bg-white/30"
+                  dotIndex === i ? "bg-surface-brand-muted" : "bg-white/30"
                 }`}
               />
             ))}

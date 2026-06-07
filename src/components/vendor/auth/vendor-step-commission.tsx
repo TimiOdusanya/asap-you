@@ -16,7 +16,7 @@ const VendorStepCommission = ({ onSubmit, onBack, isPending }: VendorStepCommiss
   return (
     <div className="flex flex-col gap-6">
       <h2 className="text-center text-xl sm:text-2xl font-semibold text-surface-brand">
-        : Pricing &amp; Commission Agreement
+        Pricing &amp; Commission Agreement
       </h2>
 
       <div className="flex flex-col gap-4">

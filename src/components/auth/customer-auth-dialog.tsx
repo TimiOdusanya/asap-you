@@ -192,11 +192,11 @@ export function CustomerAuthDialog() {
       ? {
           title: "Don't have an account?",
           subtitle:
-            "Sign up to Asap You for fresh and fast delivery.",
+            "Sign up to Asapu for fresh and fast delivery.",
         }
       : view === "signUp"
         ? {
-            title: "Welcome to Asap You",
+            title: "Welcome to Asapu",
             subtitle: "Your one-stop shop for fresh and fast delivery.",
           }
         : view === "verifyOtp"

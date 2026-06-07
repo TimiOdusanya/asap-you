@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useAuthStore } from "@/stores/auth-store";
 import { registerVendor } from "@/services/vendor/vendor.api";
 import { getApiErrorMessage, toastApiSuccessMessage } from "@/lib/toast-api";
 import VendorAuthBg from "./vendor-auth-bg";
@@ -13,8 +12,9 @@ import VendorStepVerification, { type VerificationData } from "./vendor-step-ver
 import VendorStepCommission from "./vendor-step-commission";
 import VendorStepWelcome from "./vendor-step-welcome";
 import VendorStepGetReady from "./vendor-step-get-ready";
+import { RoleOtpVerificationStep } from "@/components/auth/role-otp-verification-step";
 
-type Step = "basic" | "business" | "verification" | "commission" | "welcome" | "get-ready";
+type Step = "basic" | "business" | "verification" | "commission" | "otp" | "welcome" | "get-ready";
 
 const DEFAULT_HOURS = [0, 1, 2, 3].map((day) => ({
   day,
@@ -30,7 +30,6 @@ const VendorSignup = () => {
   const [basic, setBasic] = useState<BasicDetailsData | null>(null);
   const [business, setBusiness] = useState<BusinessInfoData | null>(null);
   const [verification, setVerification] = useState<VerificationData | null>(null);
-  const setSession = useAuthStore((s) => s.setSession);
 
   const registerMutation = useMutation({
     mutationFn: () => {
@@ -64,13 +63,14 @@ const VendorSignup = () => {
           state: business.state || business.city,
           country: business.country,
           postalCode: business.postalCode || "000000",
+          coordinates: business.coordinates,
         },
         operatingHours: DEFAULT_HOURS,
       });
     },
     onSuccess: (res) => {
       toastApiSuccessMessage(res.message);
-      setStep("welcome");
+      setStep("otp");
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err));
@@ -106,6 +106,15 @@ const VendorSignup = () => {
             isPending={registerMutation.isPending}
             onSubmit={() => registerMutation.mutate()}
             onBack={() => setStep("verification")}
+          />
+        )}
+        {step === "otp" && basic && (
+          <RoleOtpVerificationStep
+            email={basic.email}
+            password={basic.password}
+            title="Verify your email"
+            subtitle="Enter the code we sent to your email to finish creating your vendor account."
+            onVerified={() => setStep("welcome")}
           />
         )}
         {step === "welcome" && basic && (

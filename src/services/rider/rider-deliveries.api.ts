@@ -33,6 +33,8 @@ export interface RiderProfileData {
   userId: RiderUserRef | string;
   vehicleType: string;
   license: string;
+  photo?: string;
+  isActive?: boolean;
   status: string;
   stats: {
     totalDeliveries: number;

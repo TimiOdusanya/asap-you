@@ -7,12 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/auth/field-error";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import VendorStepIndicator from "./vendor-step-indicator";
+
+export type VendorBusinessSize = "small" | "medium" | "large";
 
 export interface VerificationData {
   logo: File | null;
   registrationCertificate: File | null;
-  businessSize: string;
+  businessSize: VendorBusinessSize | "";
   accountNumber: string;
   bankName: string;
   accountHolderName: string;
@@ -25,6 +34,8 @@ interface VendorStepVerificationProps {
 
 const inputCls =
   "h-10 sm:h-12 rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4 text-sm sm:text-base";
+const selectCls =
+  "h-10 min-h-10 w-full rounded-[10px] border-0 bg-[var(--surface-subtle)] px-4 text-sm shadow-none sm:h-12 sm:min-h-12 sm:text-base data-[size=default]:h-10 sm:data-[size=default]:h-12";
 const errorRing = "ring-1 ring-destructive/50 focus-visible:ring-destructive/50";
 
 function FileDropZone({
@@ -84,7 +95,7 @@ const VendorStepVerification = ({ onNext, onBack }: VendorStepVerificationProps)
   const validate = () => {
     const e: typeof errors = {};
     if (!form.logo) e.logo = "Business logo is required";
-    if (!form.businessSize.trim()) e.businessSize = "Required";
+    if (!form.businessSize) e.businessSize = "Select a business size";
     if (!form.accountNumber.trim()) e.accountNumber = "Required";
     if (!form.bankName.trim()) e.bankName = "Required";
     if (!form.accountHolderName.trim()) e.accountHolderName = "Required";
@@ -103,7 +114,7 @@ const VendorStepVerification = ({ onNext, onBack }: VendorStepVerificationProps)
         Sign up
       </h2>
       <VendorStepIndicator currentStep={3} />
-      <p className="text-sm font-medium text-content-neutral-secondary">Business Setup</p>
+      <p className="text-sm font-normal text-content-neutral-tertiary">Business Setup</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -131,13 +142,19 @@ const VendorStepVerification = ({ onNext, onBack }: VendorStepVerificationProps)
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="vv-size" className="text-sm text-content-neutral-secondary">Business Size</Label>
-          <Input
-            id="vv-size"
-            placeholder="e.g. Small, Medium, Large"
-            className={cn(inputCls, errors.businessSize && errorRing)}
-            value={form.businessSize}
-            onChange={(e) => set("businessSize", e.target.value)}
-          />
+          <Select
+            value={form.businessSize || undefined}
+            onValueChange={(v) => set("businessSize", v as VendorBusinessSize)}
+          >
+            <SelectTrigger id="vv-size" className={cn(selectCls, errors.businessSize && errorRing)}>
+              <SelectValue placeholder="Select business size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="small">Small</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="large">Large</SelectItem>
+            </SelectContent>
+          </Select>
           <FieldError message={errors.businessSize} id="vv-size-error" />
         </div>
         <div className="space-y-1.5">

@@ -42,7 +42,7 @@ export function AuthModalShell({
       <div className="relative z-10 shrink-0 p-4 sm:p-6">
         <Image
           src="/images/logo.svg"
-          alt="Asap You"
+          alt="Asapu"
           width={ 80 }
           height={ 32 }
           className="h-6 w-auto"

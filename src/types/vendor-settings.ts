@@ -34,6 +34,10 @@ export interface VendorSettingsDto {
     preparationTime: number;
     autoAcceptOrders: boolean;
   };
+  verification?: {
+    isVerified: boolean;
+    verifiedAt?: string | null;
+  };
   stats: {
     totalOrders: number;
     completedOrders: number;

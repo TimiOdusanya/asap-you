@@ -73,7 +73,7 @@ const VendorStepBasic = ({ defaultValues = {}, onNext }: VendorStepBasicProps) =
 
       <VendorStepIndicator currentStep={1} />
 
-      <p className="text-sm font-medium text-content-neutral-secondary">Basic Details</p>
+      <p className="text-sm font-normal text-content-neutral-tertiary">Basic Details</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
